@@ -3,7 +3,7 @@
     "allow": [
       "Bash(cargo build *)",
       "Bash(.\\target\\release\\resmate.exe *)",
-      "Bash($env:resmate_base_url=\"https://e9c6-103-169-178-8.ngrok-free.app\")",
+      "Bash($env:resmate_base_url=\"https://api-dev-ai.vithiit.com\")",
       "Bash(set *)",
       "Bash(type *)",
       "Read(C:\\Vithi\\VGEN_BE\\vgen-be/**)",
@@ -13,7 +13,17 @@
       "Bash(test-netconnection *)",
       "Bash(curl *)",
       "Bash(powershell *)",
-      "Bash(docker ps)"
+      "Bash(docker ps)",
+      "Bash(cargo run)",
+      "Bash(get-nettcpconnection *)",
+      "Bash(select-object *)",
+      "Bash(tasklist *)",
+      "Bash(cmd *)",
+      "Bash(c:\\windows\\system32\\tasklist.exe *)",
+      "Bash(wsl.exe *)",
+      "Bash(start *)",
+      "Bash(taskkill *)",
+      "Bash(c:\\windows\\system32\\taskkill.exe *)"
     ]
   },
   "$version": 3

@@ -2,7 +2,7 @@ use serde::Deserialize;
 use std::env;
 use std::path::PathBuf;
 
-const DEFAULT_BASE_URL: &str = "https://e9c6-103-169-178-8.ngrok-free.app";
+const DEFAULT_BASE_URL: &str = "https://api-dev-ai.vithiit.com";
 const ENV_BASE_URL: &str = "RESMATE_BASE_URL";
 const ENV_API_KEY: &str = "RESMATE_API_KEY";
 const ENV_ROC_SESSION: &str = "RESMATE_ROC_SESSION";

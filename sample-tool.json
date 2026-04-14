@@ -1,27 +1,20 @@
 {
-  "name": "Sample Tool",
+  "id":"69de37f34c96ba87422dea8a",
+  "name": "Tool - 2",
   "description": "A sample tool for testing",
   "tags": ["sample", "test"],
-  "examples": [
-    "Sample example 1"
-  ],
+  "examples": ["Sample example 1"],
   "input_modes": ["text/plain"],
   "output_modes": ["text/plain"],
-  "systemInstructions": [
-    "You are a sample tool for testing purposes."
-  ],
+  "systemInstructions": ["You are a sample tool for testing purposes."],
   "version": "0.1.0",
-  "type": "FAAS",
+  "type": "JS",
   "code": "const _ = require('lodash'); async function handler(event) { const context = event.context; return { context, message: 'Sample Tool Working!' }; }",
   "arguments": {
     "input": {
       "type": "string",
       "description": "Sample input"
     }
-  },
-  "packageJson": {
-    "name": "sample-tool",
-    "dependencies": {}
   },
   "createdBy": "1211",
   "managedBy": []
