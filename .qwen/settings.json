@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cargo build *)",
+      "Bash(.\\target\\release\\resmate.exe *)",
+      "Bash($env:resmate_base_url=\"https://e9c6-103-169-178-8.ngrok-free.app\")",
+      "Bash(set *)",
+      "Bash(type *)",
+      "Read(C:\\Vithi\\VGEN_BE\\vgen-be/**)",
+      "Read(C:\\Vithi\\VGEN_BE\\vgen-be\\kriya\\src/**)",
+      "Bash(findstr *)",
+      "Bash(netstat *)",
+      "Bash(test-netconnection *)",
+      "Bash(curl *)",
+      "Bash(powershell *)",
+      "Bash(docker ps)"
+    ]
+  },
+  "$version": 3
+}

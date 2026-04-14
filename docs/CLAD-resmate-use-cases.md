@@ -19,7 +19,7 @@ The CLI loads configuration from the environment. A `.env` file in the project r
 
 | Variable | Purpose | Required / Default |
 |----------|---------|--------------------|
-| `RESMATE_BASE_URL` | API base URL for the ResMate platform. | Optional; default: `https://api-dev.ai.resmed.com`. |
+| `RESMATE_BASE_URL` | API base URL for the ResMate platform. | Optional; default: `https://e9c6-103-169-178-8.ngrok-free.app`. |
 | `RESMATE_API_KEY` | API key (or JWT) for authenticating requests. | **Required** for push/pull and `config validate`. |
 | `RESMATE_SECRET` | Secret used to sign JWTs for API calls (when using JWT auth). | Required when the client uses JWT. |
 | `RESMATE_ROC_SESSION` | Optional ROC session value. | Optional. |

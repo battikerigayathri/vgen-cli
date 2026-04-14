@@ -5,7 +5,7 @@
 ### Create Tool
 
 ``` bash
-curl --location 'https://api-dev.ai.resmed.com/tool/create' \
+curl --location 'https://e9c6-103-169-178-8.ngrok-free.app/tool/create' \
 --header 'x-api-key: 5ba266fb7bee9a60' \
 --header 'Content-Type: application/json' \
 --data '{
@@ -49,7 +49,7 @@ curl --location 'https://api-dev.ai.resmed.com/tool/create' \
 
 ### Update Tool
 ``` bash
-curl --location 'https://api-dev.ai.resmed.com/tool/update' \
+curl --location 'https://e9c6-103-169-178-8.ngrok-free.app/tool/update' \
 --header 'x-api-key: 5ba266fb7bee9a60' \
 --header 'Content-Type: application/json' \
 --data '{
@@ -105,7 +105,7 @@ curl --location 'https://api-dev.ai.resmed.com/tool/update' \
 ### Create Agent
 
 ``` bash
-curl --location 'https://api-dev.ai.resmed.com/agent/create' \
+curl --location 'https://e9c6-103-169-178-8.ngrok-free.app/agent/create' \
 --header 'x-api-key: 5ba266fb7bee9a60' \
 --header 'Content-Type: application/json' \
 --data '{
@@ -138,7 +138,7 @@ curl --location 'https://api-dev.ai.resmed.com/agent/create' \
 ### Update Agent
 
 ``` bash
-curl --location 'https://api-dev.ai.resmed.com/update-record' \
+curl --location 'https://e9c6-103-169-178-8.ngrok-free.app/update-record' \
 --header 'x-api-key: 5ba266fb7bee9a60' \
 --header 'Content-Type: application/json' \
 --data '{
@@ -176,7 +176,7 @@ curl --location 'https://api-dev.ai.resmed.com/update-record' \
 ### Create Assistant
 
 ``` bash
-curl --location 'https://api-dev.ai.resmed.com/create-record' \
+curl --location 'https://e9c6-103-169-178-8.ngrok-free.app/create-record' \
 --header 'x-api-key: 5ba266fb7bee9a60' \
 --header 'roc-session: 694a36c6dcc8eef834b644e1' \
 --header 'Content-Type: application/json' \
@@ -207,7 +207,7 @@ curl --location 'https://api-dev.ai.resmed.com/create-record' \
 ### Create HITL
 
 ``` bash
-curl --location 'https://api-dev.ai.resmed.com/create-record' \
+curl --location 'https://e9c6-103-169-178-8.ngrok-free.app/create-record' \
 --header 'x-api-key: 5ba266fb7bee9a60' \
 --header 'Content-Type: application/json' \
 --data '{
@@ -225,7 +225,7 @@ curl --location 'https://api-dev.ai.resmed.com/create-record' \
 ### Update HITL
 
 ``` bash
-curl --location 'https://api-dev.ai.resmed.com/update-record' \
+curl --location 'https://e9c6-103-169-178-8.ngrok-free.app/update-record' \
 --header 'x-api-key: 5ba266fb7bee9a60' \
 --header 'Content-Type: application/json' \
 --data '{
