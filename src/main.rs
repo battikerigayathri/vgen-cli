@@ -8,8 +8,8 @@ mod store;
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
-#[command(name = "resmate")]
-#[command(about = "ResMate CLI for tools, agents, assistants, and HITL", long_about = None)]
+#[command(name = "vgen")]
+#[command(about = "vgen CLI for tools, agents, assistants, and HITL", long_about = None)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -57,7 +57,7 @@ enum ToolSubcommand {
     Push {
         /// Tool name (folder name under tools dir)
         name: String,
-        /// Directory containing tool folders (default: tools, or RESMATE_TOOLS_DIR)
+        /// Directory containing tool folders (default: tools, or vgen_TOOLS_DIR)
         #[arg(long)]
         tools_dir: Option<std::path::PathBuf>,
     },
@@ -65,6 +65,14 @@ enum ToolSubcommand {
     Pull {
         /// Tool name (folder name under tools dir)
         name: String,
+        #[arg(long)]
+        tools_dir: Option<std::path::PathBuf>,
+    },
+    /// Test a FaaS tool using payload.json from its folder.
+    Test {
+        /// Tool name (folder name under tools dir)
+        name: String,
+        /// Directory containing tool folders (default: tools, or vgen_TOOLS_DIR)
         #[arg(long)]
         tools_dir: Option<std::path::PathBuf>,
     },
@@ -161,7 +169,7 @@ enum HitlSubcommand {
     Push {
         /// HITL name (folder name under hitl dir)
         name: String,
-        /// Directory containing HITL folders (default: hitl, or RESMATE_HITL_DIR)
+        /// Directory containing HITL folders (default: hitl, or vgen_HITL_DIR)
         #[arg(long)]
         hitl_dir: Option<std::path::PathBuf>,
     },
@@ -198,7 +206,7 @@ fn read_json_file(
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-    // Load .env from cwd so RESMATE_SECRET and others are available
+    // Load .env from cwd so vgen_SECRET and others are available
     dotenvy::dotenv().ok();
 
     let cli = Cli::parse();
@@ -257,6 +265,34 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
                     .ok_or("get-record response has no data")?;
                 specs::write_tool_from_record(&tool_dir, data)?;
                 println!("Pulled tool: {}", name);
+            }
+            ToolSubcommand::Test { name, tools_dir } => {
+                let base = tools_dir.unwrap_or_else(specs::default_tools_dir);
+                let tool_dir = base.join(&name);
+
+                let (yaml, _) = specs::load_tool_yaml(&tool_dir)?;
+
+                let tool_type = yaml.get("type").and_then(|v| v.as_str()).unwrap_or("");
+                if !tool_type.eq_ignore_ascii_case("faas") {
+                    return Err(format!("Tool '{}' is of type '{}'. Test command only supports 'FaaS' tools.", name, tool_type).into());
+                }
+
+                let function_id = yaml.get("functionId").and_then(|v| v.as_str()).ok_or_else(|| "No functionId found in tool.yaml. Please ensure it's a valid FaaS tool.")?;
+
+                let payload_path = tool_dir.join("payload.json");
+                if !payload_path.exists() {
+                    return Err(format!("payload.json not found in {}. It is required for testing.", tool_dir.display()).into());
+                }
+
+                let mut payload = read_json_file(&payload_path)?;
+                if let Some(obj) = payload.as_object_mut() {
+                    obj.insert("function_id".to_string(), serde_json::Value::String(function_id.to_string()));
+                } else {
+                    return Err("payload.json must contain a JSON object".into());
+                }
+
+                let result = api::test_faas_tool(&payload).await?;
+                println!("{}", serde_json::to_string_pretty(&result)?);
             }
         },
         Commands::Agent(cmd) => match cmd.subcommand {

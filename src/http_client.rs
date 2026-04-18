@@ -8,6 +8,7 @@ use std::time::Duration;
 pub fn build_client() -> Client {
     Client::builder()
         .timeout(Duration::from_secs(30))
+        .no_proxy()
         .build()
         .expect("reqwest client")
 }
@@ -28,11 +29,11 @@ pub async fn validate_connection() -> Result<(), Box<dyn std::error::Error + Sen
     let cfg = config::load_config().map_err(|e| format!("Config: {}", e))?;
 
     let api_key = cfg.api_key.as_deref().ok_or_else(|| {
-        "RESMATE_API_KEY is not set. Set it in the environment or in ~/.resmate/config.yaml (or path in RESMATE_CONFIG)."
+        "vgen_API_KEY is not set. Set it in the environment or in ~/.vgen/config.yaml (or path in vgen_CONFIG)."
     })?;
 
     if api_key.is_empty() {
-        return Err("RESMATE_API_KEY is empty.".into());
+        return Err("vgen_API_KEY is empty.".into());
     }
 
     let client = build_client();
@@ -51,7 +52,7 @@ pub async fn validate_connection() -> Result<(), Box<dyn std::error::Error + Sen
     }
 
     if status.as_u16() == 401 {
-        return Err("Invalid API key, JWT, or unauthorized (401). Check RESMATE_API_KEY and RESMATE_SECRET.".into());
+        return Err("Invalid API key, JWT, or unauthorized (401). Check vgen_API_KEY and vgen_SECRET.".into());
     }
 
     let body = res.text().await.unwrap_or_default();

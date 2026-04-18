@@ -1,6 +1,6 @@
-# resmate-cli
+# vgen-cli
 
-ResMate platform CLI.
+vgen platform CLI.
 
 ## Building for Windows from macOS
 
@@ -31,7 +31,7 @@ brew install mingw-w64
 
 Output:
 
-- **x64:** `target/x86_64-pc-windows-gnu/release/resmate.exe`
-- **x86:** `target/i686-pc-windows-gnu/release/resmate.exe`
+- **x64:** `target/x86_64-pc-windows-gnu/release/vgen.exe`
+- **x86:** `target/i686-pc-windows-gnu/release/vgen.exe`
 
 Test the `.exe` on a real Windows machine (or use [Wine](https://www.winehq.org/) for a quick smoke test on macOS).

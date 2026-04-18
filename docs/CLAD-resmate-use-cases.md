@@ -1,43 +1,43 @@
-# Developing ResMate Use Cases with the CLI
+# Developing vgen Use Cases with the CLI
 
-This document is a standalone reference for developing use cases on the ResMate agent platform using the ResMate CLI. It covers folder layout, YAML semantics, how agents connect to tools and assistants to agents, environment configuration, CLI operations (push and pull), and how to write system context, agent instructions, and JS tool handlers.
+This document is a standalone reference for developing use cases on the vgen agent platform using the vgen CLI. It covers folder layout, YAML semantics, how agents connect to tools and assistants to agents, environment configuration, CLI operations (push and pull), and how to write system context, agent instructions, and JS tool handlers.
 
 ---
 
 ## Prerequisites
 
-- **ResMate CLI** – Built and available as `resmate` in your path (Rust project under repo root).
+- **vgen CLI** – Built and available as `vgen` in your path (Rust project under repo root).
 - **Configuration** – Set up via a `.env` file in the project root (or cwd) or via a config file. See [Environment and .env](#environment-and-env) below.
 
 ---
 
 ## Environment and .env
 
-The CLI loads configuration from the environment. A `.env` file in the project root (or cwd) is loaded at startup. Config can also be read from a YAML file (path from `RESMATE_CONFIG` or default `~/.resmate/config.yaml`); **environment variables override** the config file.
+The CLI loads configuration from the environment. A `.env` file in the project root (or cwd) is loaded at startup. Config can also be read from a YAML file (path from `vgen_CONFIG` or default `~/.vgen/config.yaml`); **environment variables override** the config file.
 
 ### Allowed properties (environment variables)
 
 | Variable | Purpose | Required / Default |
 |----------|---------|--------------------|
-| `RESMATE_BASE_URL` | API base URL for the ResMate platform. | Optional; default: `https://api-dev-ai.vithiit.com`. |
-| `RESMATE_API_KEY` | API key (or JWT) for authenticating requests. | **Required** for push/pull and `config validate`. |
-| `RESMATE_SECRET` | Secret used to sign JWTs for API calls (when using JWT auth). | Required when the client uses JWT. |
-| `RESMATE_ROC_SESSION` | Optional ROC session value. | Optional. |
-| `RESMATE_CONFIG` | Path to a YAML config file (overrides default `~/.resmate/config.yaml`). | Optional. |
-| `RESMATE_IDS_FILE` | Path to the IDs store file (slug → id mapping). | Optional; default: `~/.resmate/ids.yaml`. |
-| `RESMATE_TOOLS_DIR` | Directory containing tool folders. | Optional; default: `tools` under cwd. |
-| `RESMATE_AGENTS_DIR` | Directory containing agent YAML files. | Optional; default: `agents` under cwd. |
-| `RESMATE_ASSISTANTS_DIR` | Directory containing assistant YAML files. | Optional; default: `assistants` under cwd. |
+| `vgen_BASE_URL` | API base URL for the vgen platform. | Optional; default: `https://api-dev-ai.vithiit.com`. |
+| `vgen_API_KEY` | API key (or JWT) for authenticating requests. | **Required** for push/pull and `config validate`. |
+| `vgen_SECRET` | Secret used to sign JWTs for API calls (when using JWT auth). | Required when the client uses JWT. |
+| `vgen_ROC_SESSION` | Optional ROC session value. | Optional. |
+| `vgen_CONFIG` | Path to a YAML config file (overrides default `~/.vgen/config.yaml`). | Optional. |
+| `vgen_IDS_FILE` | Path to the IDs store file (slug → id mapping). | Optional; default: `~/.vgen/ids.yaml`. |
+| `vgen_TOOLS_DIR` | Directory containing tool folders. | Optional; default: `tools` under cwd. |
+| `vgen_AGENTS_DIR` | Directory containing agent YAML files. | Optional; default: `agents` under cwd. |
+| `vgen_ASSISTANTS_DIR` | Directory containing assistant YAML files. | Optional; default: `assistants` under cwd. |
 
 ### How to use .env to achieve the use case workflow
 
 1. Create a `.env` file in the repo root (or cwd) with at least:
-   - `RESMATE_API_KEY=<your-api-key>`
-   - `RESMATE_SECRET=<your-secret>` (if your setup uses JWT auth)
-2. Optionally set `RESMATE_BASE_URL` for a different environment (e.g. production).
-3. Optionally set `RESMATE_TOOLS_DIR`, `RESMATE_AGENTS_DIR`, `RESMATE_ASSISTANTS_DIR` if your folders live elsewhere.
-4. Run `resmate config show` to verify base_url and that api_key is set.
-5. Run `resmate config validate` to check connectivity.
+   - `vgen_API_KEY=<your-api-key>`
+   - `vgen_SECRET=<your-secret>` (if your setup uses JWT auth)
+2. Optionally set `vgen_BASE_URL` for a different environment (e.g. production).
+3. Optionally set `vgen_TOOLS_DIR`, `vgen_AGENTS_DIR`, `vgen_ASSISTANTS_DIR` if your folders live elsewhere.
+4. Run `vgen config show` to verify base_url and that api_key is set.
+5. Run `vgen config validate` to check connectivity.
 6. Use **push** to upload tools/agents/assistants and **pull** to sync from the platform.
 
 **Note:** `.env` is in `.gitignore`; do not commit secrets.
@@ -52,31 +52,31 @@ The primary workflow is **push** (local → platform) and **pull** (platform →
 
 | Command | Description |
 |---------|-------------|
-| `resmate tool push <name> [--tools-dir <PATH>]` | Loads `tools/<name>/` (or `<PATH>/<name>/`): `tool.yaml` + handler (and `package.json` for non-JS). If YAML has no `id`, creates the tool via API and writes the new `id` back to the YAML; if `id` is present, updates the tool. Output: `Pushed tool: <id>`. |
-| `resmate tool pull <name> [--tools-dir <PATH>]` | Requires `id` in `tools/<name>/tool.yaml`. Fetches the tool from the API and overwrites local YAML, handler, and (if present) `package.json`. Output: `Pulled tool: <name>`. |
+| `vgen tool push <name> [--tools-dir <PATH>]` | Loads `tools/<name>/` (or `<PATH>/<name>/`): `tool.yaml` + handler (and `package.json` for non-JS). If YAML has no `id`, creates the tool via API and writes the new `id` back to the YAML; if `id` is present, updates the tool. Output: `Pushed tool: <id>`. |
+| `vgen tool pull <name> [--tools-dir <PATH>]` | Requires `id` in `tools/<name>/tool.yaml`. Fetches the tool from the API and overwrites local YAML, handler, and (if present) `package.json`. Output: `Pulled tool: <name>`. |
 
 ### Agents
 
 | Command | Description |
 |---------|-------------|
-| `resmate agent push <name> [--agents-dir <PATH>]` | Loads `agents/<name>.yaml` (or `<PATH>/<name>.yaml`). No `id` → create and write `id` back; with `id` → update. Output: `Pushed agent: <id>`. |
-| `resmate agent pull <name> [--agents-dir <PATH>]` | Requires `id` in the agent YAML. Fetches the agent and overwrites the local YAML. Output: `Pulled agent: <name>`. |
+| `vgen agent push <name> [--agents-dir <PATH>]` | Loads `agents/<name>.yaml` (or `<PATH>/<name>.yaml`). No `id` → create and write `id` back; with `id` → update. Output: `Pushed agent: <id>`. |
+| `vgen agent pull <name> [--agents-dir <PATH>]` | Requires `id` in the agent YAML. Fetches the agent and overwrites the local YAML. Output: `Pulled agent: <name>`. |
 
 ### Assistants
 
 | Command | Description |
 |---------|-------------|
-| `resmate assistant push <name> [--assistants-dir <PATH>]` | Loads `assistants/<name>.yaml`. No `id` → create and write `id` back; with `id` → update. Output: `Pushed assistant: <id>`. |
-| `resmate assistant pull <name> [--assistants-dir <PATH>]` | Requires `id` in the assistant YAML. Fetches the assistant and overwrites the local YAML. Output: `Pulled assistant: <name>`. |
+| `vgen assistant push <name> [--assistants-dir <PATH>]` | Loads `assistants/<name>.yaml`. No `id` → create and write `id` back; with `id` → update. Output: `Pushed assistant: <id>`. |
+| `vgen assistant pull <name> [--assistants-dir <PATH>]` | Requires `id` in the assistant YAML. Fetches the assistant and overwrites the local YAML. Output: `Pulled assistant: <name>`. |
 
 ### Config
 
 | Command | Description |
 |---------|-------------|
-| `resmate config show` | Print current config (base_url, masked api_key, roc_session, config file path, env var names). |
-| `resmate config validate` | Validate base URL and API key with a test request. |
+| `vgen config show` | Print current config (base_url, masked api_key, roc_session, config file path, env var names). |
+| `vgen config validate` | Validate base URL and API key with a test request. |
 
-Directory overrides (`--tools-dir`, `--agents-dir`, `--assistants-dir`) align with the env vars `RESMATE_TOOLS_DIR`, `RESMATE_AGENTS_DIR`, `RESMATE_ASSISTANTS_DIR` when not passed.
+Directory overrides (`--tools-dir`, `--agents-dir`, `--assistants-dir`) align with the env vars `vgen_TOOLS_DIR`, `vgen_AGENTS_DIR`, `vgen_ASSISTANTS_DIR` when not passed.
 
 ---
 
@@ -124,7 +124,7 @@ flowchart LR
 
 ### Tools
 
-- **Location:** `tools/<name>/` (or `RESMATE_TOOLS_DIR/<name>/`).
+- **Location:** `tools/<name>/` (or `vgen_TOOLS_DIR/<name>/`).
 - **Required files:** A single YAML file (`tool.yaml`, `tool.yml`, `config.yaml`, or `config.yml`) and a handler file (`handler.js`, `index.js`, `handler.ts`, or `index.ts`). For type other than **JS**, `package.json` is also required.
 
 **Key fields in tool YAML:**
@@ -144,7 +144,7 @@ flowchart LR
 
 ### Agents
 
-- **Location:** `agents/<name>.yaml` or `agents/<name>.yml` (or under `RESMATE_AGENTS_DIR`).
+- **Location:** `agents/<name>.yaml` or `agents/<name>.yml` (or under `vgen_AGENTS_DIR`).
 
 **Key fields in agent YAML:**
 
@@ -163,7 +163,7 @@ Other fields (e.g. `version`, `createdBy`, `guardrailsContext`) may appear; see 
 
 ### Assistants
 
-- **Location:** `assistants/<name>.yaml` or `assistants/<name>.yml` (or under `RESMATE_ASSISTANTS_DIR`).
+- **Location:** `assistants/<name>.yaml` or `assistants/<name>.yml` (or under `vgen_ASSISTANTS_DIR`).
 
 **Key fields in assistant YAML:**
 
@@ -187,8 +187,8 @@ Other fields (e.g. `version`, `createdBy`, `guardrailsContext`) may appear; see 
 1. **Create tool folder(s):** For each tool, create `tools/<name>/` with `tool.yaml` and `handler.js` (or other allowed handler name). Set `type: JS` if no `package.json`; otherwise include `package.json`. Leave `id` empty for a new tool (CLI will write it on first push).
 2. **Create or update agent YAML:** Create or edit `agents/<name>.yaml`. Set **`skills`** to the list of **tool IDs** (from each `tools/<folder>/tool.yaml` `id`). Write **system instructions**: role, tool order, when to use each tool, rules.
 3. **Create or update assistant YAML:** Create or edit `assistants/<name>.yaml`. Set **`agents`** to the list of **agent IDs** (from `agents/*.yaml`). Write **system context**: what the assistant is, which agent/tools, scope, error handling.
-4. **Push:** Run `resmate tool push <name>` for each tool, then `resmate agent push <name>`, then `resmate assistant push <name>`.
-5. **Pull (when needed):** To refresh local YAML/handlers from the platform after changes elsewhere, use `resmate tool pull <name>`, `resmate agent pull <name>`, `resmate assistant pull <name>`.
+4. **Push:** Run `vgen tool push <name>` for each tool, then `vgen agent push <name>`, then `vgen assistant push <name>`.
+5. **Pull (when needed):** To refresh local YAML/handlers from the platform after changes elsewhere, use `vgen tool pull <name>`, `vgen agent pull <name>`, `vgen assistant pull <name>`.
 
 ---
 

@@ -1,4 +1,4 @@
-# ResMate Platform CLI
+# vgen Platform CLI
 
 ## Tools
 

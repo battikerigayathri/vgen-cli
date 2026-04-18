@@ -30,11 +30,26 @@ fn tool_type_is_js(yaml: &Value) -> bool {
         .unwrap_or(false)
 }
 
-/// Resolve tools directory: env RESMATE_TOOLS_DIR or default "tools" under cwd.
+/// Resolve tools directory: env vgen_TOOLS_DIR or default "tools" under cwd.
 pub fn default_tools_dir() -> PathBuf {
-    std::env::var("RESMATE_TOOLS_DIR")
+    std::env::var("vgen_TOOLS_DIR")
         .map(PathBuf::from)
         .unwrap_or_else(|_| PathBuf::from("tools"))
+}
+
+/// Load only the tool YAML and return (serde_json::Value, PathBuf).
+pub fn load_tool_yaml(
+    tool_dir: &Path,
+) -> Result<(Value, PathBuf), Box<dyn std::error::Error + Send + Sync>> {
+    if !tool_dir.exists() || !tool_dir.is_dir() {
+        return Err(format!("Tool folder not found: {}", tool_dir.display()).into());
+    }
+    let yaml_path = find_yaml(tool_dir)?;
+    let content = std::fs::read_to_string(&yaml_path)
+        .map_err(|e| format!("Failed to read {}: {}", yaml_path.display(), e))?;
+    let value: Value = serde_yaml::from_str(&content)
+        .map_err(|e| format!("Invalid YAML in {}: {}", yaml_path.display(), e))?;
+    Ok((value, yaml_path))
 }
 
 /// Load only the tool YAML and return (id, yaml_path). Used for pull when handler/package may be missing.

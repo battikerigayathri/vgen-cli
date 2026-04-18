@@ -25,7 +25,7 @@ pub async fn create_hitl(
     let api_key = cfg
         .api_key
         .as_deref()
-        .ok_or("RESMATE_API_KEY is not set")?;
+        .ok_or("vgen_API_KEY is not set")?;
     let base = cfg.base_url.trim_end_matches('/');
     let url = format!("{}/create-record", base);
 
@@ -66,7 +66,7 @@ pub async fn update_hitl(
     let api_key = cfg
         .api_key
         .as_deref()
-        .ok_or("RESMATE_API_KEY is not set")?;
+        .ok_or("vgen_API_KEY is not set")?;
     let base = cfg.base_url.trim_end_matches('/');
     let url = format!("{}/update-record", base);
 

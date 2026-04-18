@@ -3,14 +3,14 @@ use std::env;
 use std::path::PathBuf;
 
 const DEFAULT_BASE_URL: &str = "https://api-dev-ai.vithiit.com";
-const ENV_BASE_URL: &str = "RESMATE_BASE_URL";
-const ENV_API_KEY: &str = "RESMATE_API_KEY";
-const ENV_ROC_SESSION: &str = "RESMATE_ROC_SESSION";
-const ENV_CONFIG: &str = "RESMATE_CONFIG";
+const ENV_BASE_URL: &str = "vgen_BASE_URL";
+const ENV_API_KEY: &str = "vgen_API_KEY";
+const ENV_ROC_SESSION: &str = "vgen_ROC_SESSION";
+const ENV_CONFIG: &str = "vgen_CONFIG";
 
 /// Configuration loaded from env and optional config file.
 #[derive(Debug, Clone)]
-pub struct ResMateConfig {
+pub struct vgenConfig {
     pub base_url: String,
     pub api_key: Option<String>,
     pub roc_session: Option<String>,
@@ -24,7 +24,7 @@ struct ConfigFile {
 }
 
 fn config_dir() -> Option<PathBuf> {
-    dirs::home_dir().map(|h| h.join(".resmate"))
+    dirs::home_dir().map(|h| h.join(".vgen"))
 }
 
 fn config_file_path() -> Option<PathBuf> {
@@ -35,7 +35,7 @@ fn config_file_path() -> Option<PathBuf> {
 }
 
 /// Load config from optional file and env (env overrides file).
-pub fn load_config() -> Result<ResMateConfig, String> {
+pub fn load_config() -> Result<vgenConfig, String> {
     let mut base_url = None::<String>;
     let mut api_key = None::<String>;
     let mut roc_session = None::<String>;
@@ -64,7 +64,7 @@ pub fn load_config() -> Result<ResMateConfig, String> {
         roc_session = Some(v);
     }
 
-    Ok(ResMateConfig {
+    Ok(vgenConfig {
         base_url: base_url.unwrap_or_else(|| DEFAULT_BASE_URL.to_string()),
         api_key,
         roc_session,

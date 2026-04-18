@@ -16,9 +16,9 @@ const AGENT_YAML_KEY_ORDER: &[&str] = &[
     "version",
 ];
 
-/// Resolve agents directory: env RESMATE_AGENTS_DIR or default "agents" under cwd.
+/// Resolve agents directory: env vgen_AGENTS_DIR or default "agents" under cwd.
 pub fn default_agents_dir() -> PathBuf {
-    std::env::var("RESMATE_AGENTS_DIR")
+    std::env::var("vgen_AGENTS_DIR")
         .map(PathBuf::from)
         .unwrap_or_else(|_| PathBuf::from("agents"))
 }

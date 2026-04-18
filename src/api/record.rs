@@ -11,7 +11,7 @@ pub async fn get_record(
     let api_key = cfg
         .api_key
         .as_deref()
-        .ok_or("RESMATE_API_KEY is not set")?;
+        .ok_or("vgen_API_KEY is not set")?;
     let base = cfg.base_url.trim_end_matches('/');
     let url = format!("{}/get-record", base);
 

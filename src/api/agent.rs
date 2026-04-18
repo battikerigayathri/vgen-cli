@@ -24,7 +24,7 @@ pub async fn create_agent(body: &Value) -> Result<String, Box<dyn std::error::Er
     let api_key = cfg
         .api_key
         .as_deref()
-        .ok_or("RESMATE_API_KEY is not set")?;
+        .ok_or("vgen_API_KEY is not set")?;
     let base = cfg.base_url.trim_end_matches('/');
     let url = format!("{}/agent/create", base);
 
@@ -52,7 +52,7 @@ pub async fn update_agent(
     let api_key = cfg
         .api_key
         .as_deref()
-        .ok_or("RESMATE_API_KEY is not set")?;
+        .ok_or("vgen_API_KEY is not set")?;
     let base = cfg.base_url.trim_end_matches('/');
     let url = format!("{}/update-record", base);
 

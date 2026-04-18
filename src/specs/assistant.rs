@@ -18,9 +18,9 @@ const ASSISTANT_YAML_KEY_ORDER: &[&str] = &[
     "managedBy",
 ];
 
-/// Resolve assistants directory: env RESMATE_ASSISTANTS_DIR or default "assistants" under cwd.
+/// Resolve assistants directory: env vgen_ASSISTANTS_DIR or default "assistants" under cwd.
 pub fn default_assistants_dir() -> PathBuf {
-    std::env::var("RESMATE_ASSISTANTS_DIR")
+    std::env::var("vgen_ASSISTANTS_DIR")
         .map(PathBuf::from)
         .unwrap_or_else(|_| PathBuf::from("assistants"))
 }

@@ -5,9 +5,9 @@ use std::path::{Path, PathBuf};
 /// Canonical key order for meta.yaml: id first, then name, slug, preMessage, postMessage.
 const HITL_META_KEY_ORDER: &[&str] = &["id", "name", "slug", "preMessage", "postMessage"];
 
-/// Resolve HITL directory: env RESMATE_HITL_DIR or default "hitl" under cwd.
+/// Resolve HITL directory: env vgen_HITL_DIR or default "hitl" under cwd.
 pub fn default_hitl_dir() -> PathBuf {
-    std::env::var("RESMATE_HITL_DIR")
+    std::env::var("vgen_HITL_DIR")
         .map(PathBuf::from)
         .unwrap_or_else(|_| PathBuf::from("hitl"))
 }

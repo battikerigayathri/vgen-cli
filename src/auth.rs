@@ -3,7 +3,7 @@ use serde::Serialize;
 use std::env;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-const ENV_SECRET: &str = "RESMATE_SECRET";
+const ENV_SECRET: &str = "vgen_SECRET";
 
 /// EAT payload: expiry timestamp (unix).
 #[derive(Debug, Serialize)]

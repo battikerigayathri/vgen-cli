@@ -2,8 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(cargo build *)",
-      "Bash(.\\target\\release\\resmate.exe *)",
-      "Bash($env:resmate_base_url=\"https://api-dev-ai.vithiit.com\")",
+      "Bash(.\\target\\release\\vgen.exe *)",
+      "Bash($env:vgen_base_url=\"https://api-dev-ai.vithiit.com\")",
       "Bash(set *)",
       "Bash(type *)",
       "Read(C:\\Vithi\\VGEN_BE\\vgen-be/**)",
@@ -23,7 +23,8 @@
       "Bash(wsl.exe *)",
       "Bash(start *)",
       "Bash(taskkill *)",
-      "Bash(c:\\windows\\system32\\taskkill.exe *)"
+      "Bash(c:\\windows\\system32\\taskkill.exe *)",
+      "Bash(node *)"
     ]
   },
   "$version": 3
