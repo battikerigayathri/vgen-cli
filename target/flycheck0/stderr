@@ -1,12 +1,456 @@
-   3.194004500s  INFO prepare_target{force=false package_id=resmate v0.1.0 (C:\Users\vithi\Downloads\Archive 3) target="resmate"}: cargo::core::compiler::fingerprint: stale: changed "C:\\Users\\vithi\\Downloads\\Archive 3\\src\\config.rs"
-   3.194766800s  INFO prepare_target{force=false package_id=resmate v0.1.0 (C:\Users\vithi\Downloads\Archive 3) target="resmate"}: cargo::core::compiler::fingerprint:           (vs) "C:\\Users\\vithi\\Downloads\\Archive 3\\target\\debug\\.fingerprint\\resmate-4f9a3a77f1135b7f\\dep-bin-resmate"
-   3.194782300s  INFO prepare_target{force=false package_id=resmate v0.1.0 (C:\Users\vithi\Downloads\Archive 3) target="resmate"}: cargo::core::compiler::fingerprint:                FileTime { seconds: 13420637617, nanos: 383965400 } < FileTime { seconds: 13420643475, nanos: 910521300 }
-   3.196721200s  INFO prepare_target{force=false package_id=resmate v0.1.0 (C:\Users\vithi\Downloads\Archive 3) target="resmate"}: cargo::core::compiler::fingerprint: fingerprint dirty for resmate v0.1.0 (C:\Users\vithi\Downloads\Archive 3)/Check { test: false }/TargetInner { name: "resmate", doc: true, ..: with_path("C:\\Users\\vithi\\Downloads\\Archive 3\\src\\main.rs", Edition2021) }
-   3.198421500s  INFO prepare_target{force=false package_id=resmate v0.1.0 (C:\Users\vithi\Downloads\Archive 3) target="resmate"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleItem(ChangedFile { reference: "C:\\Users\\vithi\\Downloads\\Archive 3\\target\\debug\\.fingerprint\\resmate-4f9a3a77f1135b7f\\dep-bin-resmate", reference_mtime: FileTime { seconds: 13420637617, nanos: 383965400 }, stale: "C:\\Users\\vithi\\Downloads\\Archive 3\\src\\config.rs", stale_mtime: FileTime { seconds: 13420643475, nanos: 910521300 } }))
-   3.260507900s  INFO prepare_target{force=false package_id=resmate v0.1.0 (C:\Users\vithi\Downloads\Archive 3) target="resmate"}: cargo::core::compiler::fingerprint: stale: changed "C:\\Users\\vithi\\Downloads\\Archive 3\\src\\config.rs"
-   3.260542900s  INFO prepare_target{force=false package_id=resmate v0.1.0 (C:\Users\vithi\Downloads\Archive 3) target="resmate"}: cargo::core::compiler::fingerprint:           (vs) "C:\\Users\\vithi\\Downloads\\Archive 3\\target\\debug\\.fingerprint\\resmate-bf35c3f7edb3a417\\dep-test-bin-resmate"
-   3.260551600s  INFO prepare_target{force=false package_id=resmate v0.1.0 (C:\Users\vithi\Downloads\Archive 3) target="resmate"}: cargo::core::compiler::fingerprint:                FileTime { seconds: 13420637617, nanos: 383965400 } < FileTime { seconds: 13420643475, nanos: 910521300 }
-   3.260863000s  INFO prepare_target{force=false package_id=resmate v0.1.0 (C:\Users\vithi\Downloads\Archive 3) target="resmate"}: cargo::core::compiler::fingerprint: fingerprint dirty for resmate v0.1.0 (C:\Users\vithi\Downloads\Archive 3)/Check { test: true }/TargetInner { name: "resmate", doc: true, ..: with_path("C:\\Users\\vithi\\Downloads\\Archive 3\\src\\main.rs", Edition2021) }
-   3.260907700s  INFO prepare_target{force=false package_id=resmate v0.1.0 (C:\Users\vithi\Downloads\Archive 3) target="resmate"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleItem(ChangedFile { reference: "C:\\Users\\vithi\\Downloads\\Archive 3\\target\\debug\\.fingerprint\\resmate-bf35c3f7edb3a417\\dep-test-bin-resmate", reference_mtime: FileTime { seconds: 13420637617, nanos: 383965400 }, stale: "C:\\Users\\vithi\\Downloads\\Archive 3\\src\\config.rs", stale_mtime: FileTime { seconds: 13420643475, nanos: 910521300 } }))
-    Checking resmate v0.1.0 (C:\Users\vithi\Downloads\Archive 3)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 4.80s
+   0.067277083s  INFO prepare_target{force=false package_id=vgen v0.1.0 (/Users/vithiit/Desktop/Vithi/vgen-cli) target="vgen"}: cargo::core::compiler::fingerprint: fingerprint error for vgen v0.1.0 (/Users/vithiit/Desktop/Vithi/vgen-cli)/Check { test: false }/TargetInner { name: "vgen", doc: true, ..: with_path("/Users/vithiit/Desktop/Vithi/vgen-cli/src/main.rs", Edition2021) }
+   0.067304625s  INFO prepare_target{force=false package_id=vgen v0.1.0 (/Users/vithiit/Desktop/Vithi/vgen-cli) target="vgen"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/vithiit/Desktop/Vithi/vgen-cli/target/debug/.fingerprint/vgen-b028e78113f1670f/bin-vgen`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+   0.071180875s  INFO prepare_target{force=false package_id=indexmap v2.13.0 target="indexmap"}: cargo::core::compiler::fingerprint: fingerprint error for indexmap v2.13.0/Check { test: false }/TargetInner { benched: false, ..: lib_target("indexmap", ["lib"], "/Users/vithiit/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/indexmap-2.13.0/src/lib.rs", Edition2021) }
+   0.071191041s  INFO prepare_target{force=false package_id=indexmap v2.13.0 target="indexmap"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/vithiit/Desktop/Vithi/vgen-cli/target/debug/.fingerprint/indexmap-ab9e98d4d3826e7f/lib-indexmap`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::main
+  14: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  15: std::rt::lang_start::<()>::{closure#0}
+  16: std::rt::lang_start_internal
+  17: _main
+   0.071551250s  INFO prepare_target{force=false package_id=jsonwebtoken v9.3.1 target="jsonwebtoken"}: cargo::core::compiler::fingerprint: fingerprint error for jsonwebtoken v9.3.1/Check { test: false }/TargetInner { ..: lib_target("jsonwebtoken", ["lib"], "/Users/vithiit/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/jsonwebtoken-9.3.1/src/lib.rs", Edition2021) }
+   0.071555291s  INFO prepare_target{force=false package_id=jsonwebtoken v9.3.1 target="jsonwebtoken"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/vithiit/Desktop/Vithi/vgen-cli/target/debug/.fingerprint/jsonwebtoken-4ab516e913cf33db/lib-jsonwebtoken`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::main
+  14: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  15: std::rt::lang_start::<()>::{closure#0}
+  16: std::rt::lang_start_internal
+  17: _main
+   0.072401041s  INFO prepare_target{force=false package_id=serde_json v1.0.149 target="serde_json"}: cargo::core::compiler::fingerprint: fingerprint error for serde_json v1.0.149/Check { test: false }/TargetInner { ..: lib_target("serde_json", ["lib"], "/Users/vithiit/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.149/src/lib.rs", Edition2021) }
+   0.072405833s  INFO prepare_target{force=false package_id=serde_json v1.0.149 target="serde_json"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/vithiit/Desktop/Vithi/vgen-cli/target/debug/.fingerprint/serde_json-4a00988280e3d82e/lib-serde_json`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   9: cargo::ops::cargo_compile::compile_ws
+  10: cargo::ops::cargo_compile::compile_with_exec
+  11: cargo::ops::cargo_compile::compile
+  12: cargo::commands::check::exec
+  13: <cargo::cli::Exec>::exec
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+  18: _main
+   0.072894250s  INFO prepare_target{force=false package_id=simple_asn1 v0.6.4 target="simple_asn1"}: cargo::core::compiler::fingerprint: fingerprint error for simple_asn1 v0.6.4/Check { test: false }/TargetInner { ..: lib_target("simple_asn1", ["lib"], "/Users/vithiit/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/simple_asn1-0.6.4/src/lib.rs", Edition2018) }
+   0.072897166s  INFO prepare_target{force=false package_id=simple_asn1 v0.6.4 target="simple_asn1"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/vithiit/Desktop/Vithi/vgen-cli/target/debug/.fingerprint/simple_asn1-4003b4ca6fd88b52/lib-simple_asn1`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   9: cargo::ops::cargo_compile::compile_ws
+  10: cargo::ops::cargo_compile::compile_with_exec
+  11: cargo::ops::cargo_compile::compile
+  12: cargo::commands::check::exec
+  13: <cargo::cli::Exec>::exec
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+  18: _main
+   0.073436500s  INFO prepare_target{force=false package_id=time v0.3.47 target="time"}: cargo::core::compiler::fingerprint: fingerprint error for time v0.3.47/Check { test: false }/TargetInner { benched: false, ..: lib_target("time", ["lib"], "/Users/vithiit/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/time-0.3.47/src/lib.rs", Edition2024) }
+   0.073439333s  INFO prepare_target{force=false package_id=time v0.3.47 target="time"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/vithiit/Desktop/Vithi/vgen-cli/target/debug/.fingerprint/time-9cb3d8aba3d6d3f5/lib-time`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+  19: _main
+   0.073815333s  INFO prepare_target{force=false package_id=reqwest v0.11.27 target="reqwest"}: cargo::core::compiler::fingerprint: fingerprint error for reqwest v0.11.27/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("reqwest", ["lib"], "/Users/vithiit/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/reqwest-0.11.27/src/lib.rs", Edition2021) }
+   0.073818125s  INFO prepare_target{force=false package_id=reqwest v0.11.27 target="reqwest"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/vithiit/Desktop/Vithi/vgen-cli/target/debug/.fingerprint/reqwest-7dab1a4c6cae6fd8/lib-reqwest`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::main
+  14: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  15: std::rt::lang_start::<()>::{closure#0}
+  16: std::rt::lang_start_internal
+  17: _main
+   0.074660833s  INFO prepare_target{force=false package_id=h2 v0.3.27 target="h2"}: cargo::core::compiler::fingerprint: fingerprint error for h2 v0.3.27/Check { test: false }/TargetInner { ..: lib_target("h2", ["lib"], "/Users/vithiit/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/h2-0.3.27/src/lib.rs", Edition2018) }
+   0.074663750s  INFO prepare_target{force=false package_id=h2 v0.3.27 target="h2"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/vithiit/Desktop/Vithi/vgen-cli/target/debug/.fingerprint/h2-441526c35c9add62/lib-h2`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   9: cargo::ops::cargo_compile::compile_ws
+  10: cargo::ops::cargo_compile::compile_with_exec
+  11: cargo::ops::cargo_compile::compile
+  12: cargo::commands::check::exec
+  13: <cargo::cli::Exec>::exec
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+  18: _main
+   0.075045416s  INFO prepare_target{force=false package_id=tokio v1.50.0 target="tokio"}: cargo::core::compiler::fingerprint: fingerprint error for tokio v1.50.0/Check { test: false }/TargetInner { ..: lib_target("tokio", ["lib"], "/Users/vithiit/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tokio-1.50.0/src/lib.rs", Edition2021) }
+   0.075047833s  INFO prepare_target{force=false package_id=tokio v1.50.0 target="tokio"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/vithiit/Desktop/Vithi/vgen-cli/target/debug/.fingerprint/tokio-18b55707f4564adb/lib-tokio`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+  19: _main
+   0.075284041s  INFO prepare_target{force=false package_id=tokio-util v0.7.18 target="tokio_util"}: cargo::core::compiler::fingerprint: fingerprint error for tokio-util v0.7.18/Check { test: false }/TargetInner { ..: lib_target("tokio_util", ["lib"], "/Users/vithiit/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tokio-util-0.7.18/src/lib.rs", Edition2021) }
+   0.075286208s  INFO prepare_target{force=false package_id=tokio-util v0.7.18 target="tokio_util"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/vithiit/Desktop/Vithi/vgen-cli/target/debug/.fingerprint/tokio-util-3708589a73043645/lib-tokio_util`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+  19: _main
+   0.075528833s  INFO prepare_target{force=false package_id=hyper v0.14.32 target="hyper"}: cargo::core::compiler::fingerprint: fingerprint error for hyper v0.14.32/Check { test: false }/TargetInner { ..: lib_target("hyper", ["lib"], "/Users/vithiit/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/hyper-0.14.32/src/lib.rs", Edition2018) }
+   0.075531041s  INFO prepare_target{force=false package_id=hyper v0.14.32 target="hyper"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/vithiit/Desktop/Vithi/vgen-cli/target/debug/.fingerprint/hyper-61ce7a07c1150383/lib-hyper`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   9: cargo::ops::cargo_compile::compile_ws
+  10: cargo::ops::cargo_compile::compile_with_exec
+  11: cargo::ops::cargo_compile::compile
+  12: cargo::commands::check::exec
+  13: <cargo::cli::Exec>::exec
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+  18: _main
+   0.076167375s  INFO prepare_target{force=false package_id=hyper-rustls v0.24.2 target="hyper_rustls"}: cargo::core::compiler::fingerprint: fingerprint error for hyper-rustls v0.24.2/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("hyper_rustls", ["lib"], "/Users/vithiit/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/hyper-rustls-0.24.2/src/lib.rs", Edition2021) }
+   0.076170250s  INFO prepare_target{force=false package_id=hyper-rustls v0.24.2 target="hyper_rustls"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/vithiit/Desktop/Vithi/vgen-cli/target/debug/.fingerprint/hyper-rustls-c88fe04e723b41d7/lib-hyper_rustls`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   9: cargo::ops::cargo_compile::compile_ws
+  10: cargo::ops::cargo_compile::compile_with_exec
+  11: cargo::ops::cargo_compile::compile
+  12: cargo::commands::check::exec
+  13: <cargo::cli::Exec>::exec
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+  18: _main
+   0.076404166s  INFO prepare_target{force=false package_id=rustls v0.21.12 target="rustls"}: cargo::core::compiler::fingerprint: fingerprint error for rustls v0.21.12/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("rustls", ["lib"], "/Users/vithiit/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustls-0.21.12/src/lib.rs", Edition2021) }
+   0.076406541s  INFO prepare_target{force=false package_id=rustls v0.21.12 target="rustls"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/vithiit/Desktop/Vithi/vgen-cli/target/debug/.fingerprint/rustls-99dff33bb8a96197/lib-rustls`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+  19: _main
+   0.076756291s  INFO prepare_target{force=false package_id=tokio-rustls v0.24.1 target="tokio_rustls"}: cargo::core::compiler::fingerprint: fingerprint error for tokio-rustls v0.24.1/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("tokio_rustls", ["lib"], "/Users/vithiit/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tokio-rustls-0.24.1/src/lib.rs", Edition2018) }
+   0.076758625s  INFO prepare_target{force=false package_id=tokio-rustls v0.24.1 target="tokio_rustls"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/vithiit/Desktop/Vithi/vgen-cli/target/debug/.fingerprint/tokio-rustls-05d883582a32a5b0/lib-tokio_rustls`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+  19: _main
+   0.076984833s  INFO prepare_target{force=false package_id=serde_urlencoded v0.7.1 target="serde_urlencoded"}: cargo::core::compiler::fingerprint: fingerprint error for serde_urlencoded v0.7.1/Check { test: false }/TargetInner { name_inferred: true, tested: false, ..: lib_target("serde_urlencoded", ["lib"], "/Users/vithiit/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_urlencoded-0.7.1/src/lib.rs", Edition2018) }
+   0.076987125s  INFO prepare_target{force=false package_id=serde_urlencoded v0.7.1 target="serde_urlencoded"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/vithiit/Desktop/Vithi/vgen-cli/target/debug/.fingerprint/serde_urlencoded-9872e2b89894eeb6/lib-serde_urlencoded`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   9: cargo::ops::cargo_compile::compile_ws
+  10: cargo::ops::cargo_compile::compile_with_exec
+  11: cargo::ops::cargo_compile::compile
+  12: cargo::commands::check::exec
+  13: <cargo::cli::Exec>::exec
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+  18: _main
+   0.078479166s  INFO prepare_target{force=false package_id=serde_yaml v0.9.34+deprecated target="serde_yaml"}: cargo::core::compiler::fingerprint: fingerprint error for serde_yaml v0.9.34+deprecated/Check { test: false }/TargetInner { name_inferred: true, doc_scrape_examples: Disabled, ..: lib_target("serde_yaml", ["lib"], "/Users/vithiit/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_yaml-0.9.34+deprecated/src/lib.rs", Edition2021) }
+   0.078486833s  INFO prepare_target{force=false package_id=serde_yaml v0.9.34+deprecated target="serde_yaml"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/vithiit/Desktop/Vithi/vgen-cli/target/debug/.fingerprint/serde_yaml-cfd68906ca366396/lib-serde_yaml`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::main
+  14: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  15: std::rt::lang_start::<()>::{closure#0}
+  16: std::rt::lang_start_internal
+  17: _main
+   0.078717000s  INFO prepare_target{force=false package_id=vgen v0.1.0 (/Users/vithiit/Desktop/Vithi/vgen-cli) target="vgen"}: cargo::core::compiler::fingerprint: fingerprint error for vgen v0.1.0 (/Users/vithiit/Desktop/Vithi/vgen-cli)/Check { test: true }/TargetInner { name: "vgen", doc: true, ..: with_path("/Users/vithiit/Desktop/Vithi/vgen-cli/src/main.rs", Edition2021) }
+   0.078720458s  INFO prepare_target{force=false package_id=vgen v0.1.0 (/Users/vithiit/Desktop/Vithi/vgen-cli) target="vgen"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/vithiit/Desktop/Vithi/vgen-cli/target/debug/.fingerprint/vgen-10bac8a671c6d027/test-bin-vgen`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+    Checking tokio v1.50.0
+    Checking indexmap v2.13.0
+    Checking rustls v0.21.12
+    Checking time v0.3.47
+    Checking serde_json v1.0.149
+    Checking serde_urlencoded v0.7.1
+    Checking serde_yaml v0.9.34+deprecated
+    Checking simple_asn1 v0.6.4
+    Checking jsonwebtoken v9.3.1
+    Checking tokio-util v0.7.18
+    Checking tokio-rustls v0.24.1
+    Checking h2 v0.3.27
+    Checking hyper v0.14.32
+    Checking hyper-rustls v0.24.2
+    Checking reqwest v0.11.27
+    Checking vgen v0.1.0 (/Users/vithiit/Desktop/Vithi/vgen-cli)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.32s
