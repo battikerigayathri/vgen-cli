@@ -1,0 +1,19 @@
+{
+  "id":"69df655a820926c9577a0414",
+  "name": "TestAssistant1",
+  "slug": "test-assistant",
+  "description": "This assistant helps with basic queries and testing.",
+  "systemContext": "You are a helpful AI assistant that responds clearly and concisely.",
+  "status": "PENDING",
+  "visibility": "PRIVATE",
+  "owner": "user_123",
+  "type": "JS",
+  "is_public": false,
+  "roles": ["admin", "user"],
+  "agents": ["69df6ac2820926c9577a0415"],
+  "managedBy": ["manager_1"],
+  "guardrailsContext": "Ensure responses are safe and compliant.",
+  "guardrailsViolationFallback": "Sorry, I cannot respond to that request.",
+  "welcomeMessage": "Welcome to Test Assistant!",
+  "welcomeDescription": "I can help you with testing and basic assistance."
+}

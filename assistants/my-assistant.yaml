@@ -1,0 +1,21 @@
+id: 69e0a1d74c96ba87422dec90
+name: TestAssistant1
+slug: test-assistant
+description: This assistant helps with basic queries and testing.
+status: DRAFT
+visibility: PRIVATE
+agents:
+- 69df6ac2820926c9577a0415
+systemContext: You are a helpful AI assistant that responds clearly and concisely.
+guardrailsContext: Ensure responses are safe and compliant.
+guardrailsViolationFallback: Sorry, I cannot respond to that request.
+owner: user_123
+managedBy:
+- manager_1
+is_public: false
+roles:
+- admin
+- user
+type: JS
+welcomeDescription: I can help you with testing and basic assistance.
+welcomeMessage: Welcome to Test Assistant!

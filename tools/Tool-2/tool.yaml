@@ -1,0 +1,22 @@
+id: 69e0a8414c96ba87422decb0
+name: Tool - 2
+description: A sample 2 tool for testing
+type: JS
+input_modes:
+- text/plain
+output_modes:
+- text/plain
+systemInstructions:
+- You are a sample tool for testing purposes.
+arguments:
+  input:
+    description: Sample input
+    type: string
+examples:
+- Sample example 1
+tags:
+- sample
+- test
+createdBy: '1211'
+managedBy: []
+version: 0.1.0

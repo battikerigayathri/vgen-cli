@@ -1,0 +1,19 @@
+{
+    "id":"69df6ac2820926c9577a0415",
+    "name": "Test Agent1",
+    "description": "Test agent1 description",
+    "slug": "test-agent",
+    "systemInstructions": ["Follow instructions carefully"],
+    "version": "1.0",
+    "skills": [],
+    "icon": "icon-url",
+    "is_public": false,
+    "roles": [],
+    "createdBy": "user_123",
+    "status":"REVIEW",
+    "managedBy": [],
+    "admins": [],
+    "guardrailsContext": "context",
+    "guardrailsViolationFallback": "fallback response",
+    "correlationId": "correlation-id-123"
+}

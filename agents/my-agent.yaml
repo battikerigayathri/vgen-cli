@@ -1,0 +1,18 @@
+id: 69e09fb64c96ba87422dec7f
+name: Test Agent1
+slug: test-agent
+description: Test agent1 description
+systemInstructions:
+- Follow instructions carefully
+skills: []
+is_public: true
+roles: []
+admins: []
+version: '1.0'
+correlationId: correlation-id-123
+createdBy: user_123
+guardrailsContext: context
+guardrailsViolationFallback: fallback response
+icon: icon-url
+managedBy: []
+status: REVIEW
