@@ -155,6 +155,15 @@ enum AssistantSubcommand {
         #[arg(long)]
         assistants_dir: Option<std::path::PathBuf>,
     },
+    /// Test an assistant using prompt.json from assistants/<name>/prompt.json
+    Test {
+        name: String,
+        #[arg(long)]
+        assistants_dir: Option<std::path::PathBuf>,
+        /// Force create a new session instead of continuing the existing one
+        #[arg(long)]
+        new_session: bool,
+    },
 }
 
 #[derive(Parser)]
@@ -415,6 +424,40 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
                     .ok_or("get-record response has no data")?;
                 specs::write_assistant_yaml_from_record(&yaml_path, data)?;
                 println!("Pulled assistant: {}", name);
+            }
+            AssistantSubcommand::Test { name, assistants_dir, new_session } => {
+                let base = assistants_dir.unwrap_or_else(specs::default_assistants_dir);
+                let (yaml, _) = specs::load_assistant(&base, &name)?;
+
+                let chat_id = yaml.get("id").and_then(|v| v.as_str()).ok_or_else(|| {
+                    format!("No id in assistants/{}.yaml. Please push first to get an id.", name)
+                })?;
+
+                let prompt_path = base.join(&name).join("prompt.json");
+                if !prompt_path.exists() {
+                    return Err(format!("{} not found. Please create it to configure your test.", prompt_path.display()).into());
+                }
+
+                let mut prompt = read_json_file(&prompt_path)?;
+                let mut session_id = prompt.get("sessionId").and_then(|v| v.as_str()).map(String::from);
+
+                if new_session || session_id.as_deref().unwrap_or("").is_empty() {
+                    println!("Creating a new session...");
+                    let new_id = api::create_assistant_session(chat_id).await?;
+                    session_id = Some(new_id.clone());
+
+                    if let Some(obj) = prompt.as_object_mut() {
+                        obj.insert("sessionId".to_string(), serde_json::Value::String(new_id));
+                    }
+                    std::fs::write(&prompt_path, serde_json::to_string_pretty(&prompt)?)?;
+                    println!("Updated prompt.json with new sessionId.");
+                }
+
+                let session_id = session_id.unwrap();
+
+                println!("Asking assistant (Chat ID: {}, Session ID: {})...", chat_id, session_id);
+                let result = api::ask_assistant(chat_id, &session_id, &prompt).await?;
+                println!("{}", serde_json::to_string_pretty(&result)?);
             }
         },
         Commands::Hitl(cmd) => match cmd.subcommand {
