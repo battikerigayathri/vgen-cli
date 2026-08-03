@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "resmate": {
+      "command": "<RESMATE_MCP_PATH>",
+      "args": [],
+      "env": {
+        "RESMATE_API_KEY": "${env:RESMATE_API_KEY}",
+        "RESMATE_BASE_URL": "${env:RESMATE_BASE_URL}",
+        "RESMATE_TEMPLATES_DIR": "${env:RESMATE_TEMPLATES_DIR}"
+      }
+    }
+  }
+}
