@@ -17,6 +17,8 @@ const TOOL_YAML_KEY_ORDER: &[&str] = &[
     "createdBy",
     "managedBy",
     "version",
+    "feeds",
+    "output",
 ];
 
 const YAML_NAMES: &[&str] = &["tool.yaml", "tool.yml", "config.yaml", "config.yml"];
@@ -30,14 +32,34 @@ fn tool_type_is_js(yaml: &Value) -> bool {
         .unwrap_or(false)
 }
 
-/// Resolve tools directory: env vgen_TOOLS_DIR or default "tools" under cwd.
+/// True when a directory contains a recognised tool YAML file.
+pub fn is_tool_dir(path: &Path) -> bool {
+    YAML_NAMES.iter().any(|name| path.join(name).is_file())
+}
+
+/// List tool directories that contain a tool YAML file.
+pub fn list_tool_dirs(base: &Path) -> Vec<PathBuf> {
+    if !base.is_dir() {
+        return Vec::new();
+    }
+    std::fs::read_dir(base)
+        .into_iter()
+        .flatten()
+        .filter_map(|entry| entry.ok())
+        .map(|entry| entry.path())
+        .filter(|path| path.is_dir() && is_tool_dir(path))
+        .collect()
+}
+
+/// Resolve tools directory: env RESMATE_TOOLS_DIR or default "tools" under cwd.
 pub fn default_tools_dir() -> PathBuf {
-    std::env::var("vgen_TOOLS_DIR")
+    std::env::var("RESMATE_TOOLS_DIR")
         .map(PathBuf::from)
         .unwrap_or_else(|_| PathBuf::from("tools"))
 }
 
-/// Load only the tool YAML and return (serde_json::Value, PathBuf).
+/// Load only the tool YAML (without handler/package.json) and return (Value, yaml_path).
+/// Used for the test command where only YAML metadata is needed.
 pub fn load_tool_yaml(
     tool_dir: &Path,
 ) -> Result<(Value, PathBuf), Box<dyn std::error::Error + Send + Sync>> {
@@ -184,10 +206,10 @@ fn handler_path_for_write(dir: &Path) -> PathBuf {
 }
 
 /// Build a map with keys in canonical order so tool.yaml serializes consistently.
-fn reorder_tool_yaml_keys(mut value: Value) -> Result<IndexMap<String, Value>, Box<dyn std::error::Error + Send + Sync>> {
-    let obj = value
-        .as_object_mut()
-        .ok_or("YAML root is not an object")?;
+fn reorder_tool_yaml_keys(
+    mut value: Value,
+) -> Result<IndexMap<String, Value>, Box<dyn std::error::Error + Send + Sync>> {
+    let obj = value.as_object_mut().ok_or("YAML root is not an object")?;
     let mut ordered: IndexMap<String, Value> = IndexMap::new();
     for &key in TOOL_YAML_KEY_ORDER {
         if let Some(v) = obj.remove(key) {
@@ -247,6 +269,58 @@ pub fn write_tool_from_record(
     Ok(())
 }
 
+/// Derive a filesystem-safe folder name from a tool's `name` field:
+/// lowercase, spaces/slashes replaced with hyphens, non-alphanumeric (except `-` and `.`) stripped.
+fn tool_name_to_folder(name: &str) -> String {
+    name.to_lowercase()
+        .chars()
+        .map(|c| if c == ' ' || c == '/' { '-' } else { c })
+        .filter(|c| c.is_alphanumeric() || *c == '-' || *c == '.')
+        .collect::<String>()
+        .trim_matches('-')
+        .to_string()
+}
+
+/// Upsert a tool from API response data into tools_dir/<folder>/. Creates the directory and a
+/// stub tool.yaml if the folder doesn't already exist, then writes the full record (YAML + handler
+/// + package.json). Used by `resmate sync`.
+pub fn upsert_tool_from_api_data(
+    tools_dir: &Path,
+    data: &serde_json::Value,
+) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
+    let name = data
+        .get("name")
+        .and_then(|v| v.as_str())
+        .filter(|s| !s.is_empty())
+        .ok_or("Tool record has no name field")?;
+
+    let folder = tool_name_to_folder(name);
+    let tool_dir = tools_dir.join(&folder);
+    std::fs::create_dir_all(&tool_dir)
+        .map_err(|e| format!("Failed to create tool dir {}: {}", tool_dir.display(), e))?;
+
+    // Ensure a yaml stub exists so write_tool_from_record can find it via find_yaml.
+    let yaml_path = tool_dir.join("tool.yaml");
+    if !yaml_path.exists() {
+        // Also check for the other recognised YAML names before creating one.
+        let has_yaml = YAML_NAMES.iter().any(|n| tool_dir.join(n).exists());
+        if !has_yaml {
+            std::fs::write(&yaml_path, "")
+                .map_err(|e| format!("Failed to create stub tool.yaml: {}", e))?;
+        }
+    }
+
+    // Ensure handler stub exists so write_tool_from_record's find_yaml path is satisfied.
+    let handler_path = tool_dir.join("handler.js");
+    if !HANDLER_NAMES.iter().any(|n| tool_dir.join(n).exists()) {
+        std::fs::write(&handler_path, "")
+            .map_err(|e| format!("Failed to create stub handler.js: {}", e))?;
+    }
+
+    write_tool_from_record(&tool_dir, data)?;
+    Ok(folder)
+}
+
 /// Update the tool's YAML file to set id. Parses YAML to Value, sets id, reorders keys, writes back.
 pub fn write_tool_id_to_yaml(
     yaml_path: &Path,
@@ -254,8 +328,8 @@ pub fn write_tool_id_to_yaml(
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let content = std::fs::read_to_string(yaml_path)
         .map_err(|e| format!("Failed to read {}: {}", yaml_path.display(), e))?;
-    let mut value: Value = serde_yaml::from_str(&content)
-        .map_err(|e| format!("Invalid YAML: {}", e))?;
+    let mut value: Value =
+        serde_yaml::from_str(&content).map_err(|e| format!("Invalid YAML: {}", e))?;
 
     if let Some(obj) = value.as_object_mut() {
         obj.insert("id".to_string(), Value::String(id.to_string()));
@@ -265,6 +339,7 @@ pub fn write_tool_id_to_yaml(
 
     let ordered = reorder_tool_yaml_keys(value)?;
     let out = serde_yaml::to_string(&ordered).map_err(|e| e.to_string())?;
-    std::fs::write(yaml_path, out).map_err(|e| format!("Failed to write {}: {}", yaml_path.display(), e))?;
+    std::fs::write(yaml_path, out)
+        .map_err(|e| format!("Failed to write {}: {}", yaml_path.display(), e))?;
     Ok(())
 }

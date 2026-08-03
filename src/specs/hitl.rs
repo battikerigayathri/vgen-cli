@@ -5,9 +5,29 @@ use std::path::{Path, PathBuf};
 /// Canonical key order for meta.yaml: id first, then name, slug, preMessage, postMessage.
 const HITL_META_KEY_ORDER: &[&str] = &["id", "name", "slug", "preMessage", "postMessage"];
 
-/// Resolve HITL directory: env vgen_HITL_DIR or default "hitl" under cwd.
+/// True when a directory contains HITL `config.json` and `meta.yaml`.
+pub fn is_hitl_dir(path: &Path) -> bool {
+    path.join("config.json").is_file()
+        && (path.join("meta.yaml").is_file() || path.join("meta.yml").is_file())
+}
+
+/// List HITL directories with `config.json` and `meta.yaml`.
+pub fn list_hitl_dirs(base: &Path) -> Vec<PathBuf> {
+    if !base.is_dir() {
+        return Vec::new();
+    }
+    std::fs::read_dir(base)
+        .into_iter()
+        .flatten()
+        .filter_map(|entry| entry.ok())
+        .map(|entry| entry.path())
+        .filter(|path| path.is_dir() && is_hitl_dir(path))
+        .collect()
+}
+
+/// Resolve HITL directory: env RESMATE_HITL_DIR or default "hitl" under cwd.
 pub fn default_hitl_dir() -> PathBuf {
-    std::env::var("vgen_HITL_DIR")
+    std::env::var("RESMATE_HITL_DIR")
         .map(PathBuf::from)
         .unwrap_or_else(|_| PathBuf::from("hitl"))
 }
@@ -27,8 +47,8 @@ pub fn load_hitl_from_dir(
     }
     let config_str = std::fs::read_to_string(&config_path)
         .map_err(|e| format!("Failed to read config.json: {}", e))?;
-    let config_value: Value = serde_json::from_str(&config_str)
-        .map_err(|e| format!("Invalid config.json: {}", e))?;
+    let config_value: Value =
+        serde_json::from_str(&config_str).map_err(|e| format!("Invalid config.json: {}", e))?;
     let config_string = serde_json::to_string(&config_value).map_err(|e| e.to_string())?;
 
     let meta_path = hitl_dir.join("meta.yaml");
@@ -37,8 +57,8 @@ pub fn load_hitl_from_dir(
     }
     let meta_content = std::fs::read_to_string(&meta_path)
         .map_err(|e| format!("Failed to read meta.yaml: {}", e))?;
-    let meta_value: Value = serde_yaml::from_str(&meta_content)
-        .map_err(|e| format!("Invalid meta.yaml: {}", e))?;
+    let meta_value: Value =
+        serde_yaml::from_str(&meta_content).map_err(|e| format!("Invalid meta.yaml: {}", e))?;
 
     let meta_obj = meta_value
         .as_object()
@@ -72,7 +92,11 @@ pub fn load_hitl_from_dir(
         "postMessage": post_message,
     });
 
-    if let Some(id) = meta_obj.get("id").and_then(|v| v.as_str()).filter(|s| !s.is_empty()) {
+    if let Some(id) = meta_obj
+        .get("id")
+        .and_then(|v| v.as_str())
+        .filter(|s| !s.is_empty())
+    {
         body["id"] = Value::String(id.to_string());
     }
 
@@ -113,8 +137,12 @@ pub fn write_hitl_from_record(
     Ok(())
 }
 
-fn reorder_hitl_meta_keys(mut value: Value) -> Result<IndexMap<String, Value>, Box<dyn std::error::Error + Send + Sync>> {
-    let obj = value.as_object_mut().ok_or("HITL record is not an object")?;
+fn reorder_hitl_meta_keys(
+    mut value: Value,
+) -> Result<IndexMap<String, Value>, Box<dyn std::error::Error + Send + Sync>> {
+    let obj = value
+        .as_object_mut()
+        .ok_or("HITL record is not an object")?;
     let mut ordered: IndexMap<String, Value> = IndexMap::new();
     for &key in HITL_META_KEY_ORDER {
         if let Some(v) = obj.remove(key) {
@@ -143,8 +171,8 @@ pub fn get_hitl_id_and_meta_path(
     }
     let content = std::fs::read_to_string(&meta_path)
         .map_err(|e| format!("Failed to read meta.yaml: {}", e))?;
-    let value: Value = serde_yaml::from_str(&content)
-        .map_err(|e| format!("Invalid meta.yaml: {}", e))?;
+    let value: Value =
+        serde_yaml::from_str(&content).map_err(|e| format!("Invalid meta.yaml: {}", e))?;
     let id = value
         .get("id")
         .and_then(|v| v.as_str())
@@ -166,7 +194,8 @@ pub fn write_hitl_id_to_meta(
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let content = std::fs::read_to_string(meta_path)
         .map_err(|e| format!("Failed to read {}: {}", meta_path.display(), e))?;
-    let mut value: Value = serde_yaml::from_str(&content).map_err(|e| format!("Invalid YAML: {}", e))?;
+    let mut value: Value =
+        serde_yaml::from_str(&content).map_err(|e| format!("Invalid YAML: {}", e))?;
 
     if let Some(obj) = value.as_object_mut() {
         obj.insert("id".to_string(), Value::String(id.to_string()));
