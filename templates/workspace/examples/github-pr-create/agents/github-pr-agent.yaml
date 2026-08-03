@@ -1,0 +1,25 @@
+# Leave id empty; the CLI writes back the assigned ID on push (see docs/id-lifecycle.md)
+id: ""
+name: GitHub PR Agent
+slug: github-pr-agent
+description: GitHub PR create workflow agent — collect intent then open PR (agent_task).
+systemInstructions:
+- 'Role: GitHub PR agent for github-pr-create-v1 workflow.'
+- 'Stage collect_intent: call GitHub PR Intent HITLConfig, then after HITL submit call GitHub PR Intent Save.'
+- 'Stage generate_and_open_pr (agent_task): call GitHub PR Open to produce prUrl artifact; stage does NOT advance until macro validator passes.'
+- Never call intent save on the same turn as intent HITLConfig.
+- GitHub PR Open returns workflowPatch.artifacts only — no advanceStage.
+skills: []
+# Wire after pushing the tools below (see docs/push-pull-wire.md), then re-run `resmate agent push github-pr-agent`:
+#   - <tool-id-after-push> (copy the written-back id from tools/github-pr-intent-hitlconfig/tool.yaml)
+#   - <tool-id-after-push> (copy the written-back id from tools/github-pr-intent-save/tool.yaml)
+#   - <tool-id-after-push> (copy the written-back id from tools/github-pr-open/tool.yaml)
+is_public: false
+roles: []
+admins: []
+version: '1.0'
+createdBy: ''
+guardrailsContext: null
+guardrailsViolationFallback: null
+icon: null
+managedBy: []

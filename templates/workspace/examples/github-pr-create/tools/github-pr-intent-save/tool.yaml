@@ -1,0 +1,29 @@
+# Leave id empty; the CLI writes back the assigned ID on push (see docs/id-lifecycle.md)
+id: ""
+name: GitHub PR Intent Save
+description: Saves repoName and featureDescription to workflow inputs via workflowPatch.
+type: JS
+input_modes:
+- text
+output_modes:
+- application/json
+systemInstructions:
+- Call ONLY after github-pr-intent-form HITL submit.
+- NEVER call on the same turn as GitHub PR Intent HITLConfig.
+- Returns workflowPatch.inputs only.
+arguments:
+  repoName:
+    description: Repository org/repo from HITL
+    required: true
+    type: string
+  featureDescription:
+    description: Feature description from HITL
+    required: true
+    type: string
+examples: []
+tags:
+- github
+- workflow
+createdBy: ''
+managedBy: []
+version: '1.0'

@@ -1,0 +1,16 @@
+{
+    "event": {
+        "context": {
+            "input": {
+                "issueKey": "CGA-909"
+            },
+            "assigned_agent": "jira-agent",
+            "roc_user_session": {
+                "id": "66559e8a6fb5883e7b4ff995",
+                "email": "praveen.vuddagiri@resmed.co.in",
+                "firstName": "Praveen",
+                "lastName": "Vuddagiri"
+            }
+        }
+    }
+}

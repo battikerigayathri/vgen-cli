@@ -1,0 +1,27 @@
+# Leave id empty; the CLI writes back the assigned ID on push (see docs/id-lifecycle.md)
+id: ""
+name: Purchase Req Vendor HITLConfig
+description: Shows the vendor collect card for purchase-requisition workflow collect_vendor stage.
+type: JS
+input_modes:
+- text
+output_modes:
+- application/json
+systemInstructions:
+- Call when workflow stage is collect_vendor and the user needs to enter vendor ID.
+- NEVER call Purchase Req Vendor Save on the same turn as this tool.
+- Returns config, preMessage, postMessage for the HITL UI.
+arguments:
+  vendorId:
+    description: Optional vendor ID to pre-fill the card
+    required: false
+    type: string
+examples: []
+tags:
+- purchase-requisition
+- hitl
+- hitlconfig
+- workflow
+createdBy: ''
+managedBy: []
+version: '1.0'

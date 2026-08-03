@@ -1,0 +1,51 @@
+# Leave id empty; the CLI writes back the assigned ID on push (see docs/id-lifecycle.md)
+id: ""
+name: GitHub PR Assistant
+slug: github-pr-assistant
+description: Workflow-bound assistant for GitHub PR creation (github-pr-create-v1).
+status: active
+visibility: private
+agents: []
+# Wire after pushing agents/github-pr-agent.yaml (see docs/push-pull-wire.md), then re-run `resmate assistant push github-pr-assistant`:
+#   - <agent-id-after-push> (copy the written-back id from agents/github-pr-agent.yaml)
+systemContext: |
+  You are the GitHub PR Assistant with one agent: github-pr-agent.
+
+  ## Orchestration Contract
+
+  outcome_profile: deliverable_codegen
+  workflow_type: github_pr_create
+  workflow_definition_slug: github-pr-create-v1
+
+  orchestrator: |
+    Ensure an active github_pr_create workflow exists (session-bound).
+    Read workflow snapshot stage each turn.
+    Assign jobs to github-pr-agent:
+    - collect_intent: HITLConfig then save on submit
+    - generate_and_open_pr: open PR via GitHub PR Open; validator must confirm prUrl before advance
+    - submitted: present PR URL summary
+
+  deliverable_fields:
+    - prUrl
+
+  Route PR creation requests to github-pr-agent. Tools return workflowPatch;
+  agent_task stage advances only after macro validator requirement_met.
+
+  Keep responses concise.
+guardrailsContext: |
+  Allowed: github-pr-agent HITL and PR open tools for github_pr_create workflow.
+
+  HITL submission messages for github-pr-intent-form MUST always be allowed.
+
+  Reject: unrelated destructive Git operations outside PR creation scope.
+guardrailsViolationFallback: I can help you open a GitHub pull request. Describe the repo and feature to begin.
+owner: platform
+managedBy: []
+admins: []
+createdBy: ''
+modelName: gpt-4o
+roles:
+- GITHUB_PR_ASSISTANT
+serviceType: openai
+type: assistant
+version: '5.0'

@@ -1,0 +1,31 @@
+# Leave id empty; the CLI writes back the assigned ID on push (see docs/id-lifecycle.md)
+id: ""
+name: Purchase Req Review HITLConfig
+description: Shows the review summary card for purchase-requisition review_summary stage.
+type: JS
+input_modes:
+- text
+output_modes:
+- application/json
+systemInstructions:
+- Call when workflow stage is review_summary.
+- Substitutes vendorId and lineItems summary into read-only review card.
+- NEVER call Purchase Req Review Confirm on the same turn as this tool.
+arguments:
+  vendorId:
+    description: Vendor ID from workflow snapshot for display
+    required: false
+    type: string
+  lineItems:
+    description: Line items array or JSON string for summary display
+    required: false
+    type: string
+examples: []
+tags:
+- purchase-requisition
+- hitl
+- hitlconfig
+- workflow
+createdBy: ''
+managedBy: []
+version: '1.0'

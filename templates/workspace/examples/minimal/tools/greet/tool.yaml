@@ -1,0 +1,23 @@
+name: Greet
+description: Returns a greeting for the given name.
+type: JS
+input_modes:
+- text
+output_modes:
+- application/json
+systemInstructions:
+- Call when the user asks for a greeting or wants to be greeted by name.
+- Requires name in input; ask the user if missing.
+- Returns greeting text and agentResponseContext for presentation.
+arguments:
+  name:
+    description: Name to greet
+    required: true
+    type: string
+examples: []
+tags:
+- sample
+- greet
+createdBy: ''
+managedBy: []
+version: '1.0'

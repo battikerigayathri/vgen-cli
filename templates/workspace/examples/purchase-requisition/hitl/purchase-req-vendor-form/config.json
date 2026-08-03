@@ -1,0 +1,37 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Purchase requisition — vendor",
+      "weight": "bolder",
+      "size": "medium"
+    },
+    {
+      "type": "TextBlock",
+      "text": "Enter the vendor ID for this requisition.",
+      "wrap": true
+    },
+    {
+      "type": "Input.Text",
+      "id": "vendorId",
+      "label": "Vendor ID",
+      "placeholder": "e.g. V-10042",
+      "value": "${vendorId}"
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "Continue",
+      "data": { "action": "submit" }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "Cancel",
+      "data": { "action": "cancel" }
+    }
+  ]
+}

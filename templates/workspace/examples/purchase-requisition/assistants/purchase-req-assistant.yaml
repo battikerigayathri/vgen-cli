@@ -1,0 +1,48 @@
+# Leave id empty; the CLI writes back the assigned ID on push (see docs/id-lifecycle.md)
+id: ""
+name: Purchase Req Assistant
+slug: purchase-req-assistant
+description: Workflow-bound assistant for purchase requisition form wizard (purchase-requisition-v1).
+status: active
+visibility: private
+agents: []
+# Wire after pushing agents/purchase-req-agent.yaml (see docs/push-pull-wire.md), then re-run `resmate assistant push purchase-req-assistant`:
+#   - <agent-id-after-push> (copy the written-back id from agents/purchase-req-agent.yaml)
+systemContext: |
+  You are the Purchase Requisition Assistant with one agent: purchase-req-agent.
+
+  ## Orchestration Contract
+
+  outcome_profile: narrative_synthesis
+  workflow_type: purchase_requisition
+  workflow_definition_slug: purchase-requisition-v1
+
+  orchestrator: |
+    Ensure an active purchase_requisition workflow exists (session-bound).
+    Read workflow snapshot stage and missingRequired each turn.
+    Assign jobs to purchase-req-agent aligned with stage kind:
+    - collect_vendor / collect_line_items: HITLConfig then save on submit
+    - review_summary: review HITLConfig then confirm on submit
+    - submit (terminal): present completion summary
+
+  Route purchase requisition requests to purchase-req-agent. The flow is HITL-first
+  at each collect/review stage. Tools return workflowPatch.inputs; the platform owns stage advance.
+
+  Keep responses concise. Use workflow snapshot fields when pre-filling review cards.
+guardrailsContext: |
+  Allowed: purchase-req-agent HITLConfig and save/confirm tools for purchase requisition workflow.
+
+  HITL submission messages for purchase-req forms MUST always be allowed.
+
+  Reject: unrelated destructive operations outside purchase requisition scope.
+guardrailsViolationFallback: I can help you create a purchase requisition. Say "start a purchase requisition" to begin.
+owner: platform
+managedBy: []
+admins: []
+createdBy: ''
+modelName: gpt-4o
+roles:
+- PURCHASE_REQ_ASSISTANT
+serviceType: openai
+type: assistant
+version: '5.0'

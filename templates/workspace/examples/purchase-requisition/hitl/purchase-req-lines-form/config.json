@@ -1,0 +1,37 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Purchase requisition — line items",
+      "weight": "bolder",
+      "size": "medium"
+    },
+    {
+      "type": "TextBlock",
+      "text": "Enter line items as a JSON array, e.g. [{\"sku\":\"A-1\",\"qty\":2}].",
+      "wrap": true
+    },
+    {
+      "type": "Input.Text",
+      "id": "lineItems",
+      "label": "Line items (JSON)",
+      "isMultiline": true,
+      "placeholder": "[{\"sku\":\"A-1\",\"qty\":2}]"
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "Continue",
+      "data": { "action": "submit" }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "Cancel",
+      "data": { "action": "cancel" }
+    }
+  ]
+}

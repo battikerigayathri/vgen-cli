@@ -1,0 +1,31 @@
+initialStage: collect_requester
+stages:
+  - id: collect_requester
+    label: Collect Requester
+    kind: collect
+    hitlSlug: roc-select-requester-form
+    agentSlug: oracle-pr-agent
+    doneWhen: [requesterId]
+    # DAG feature (optional, disabled by default — this workflow ships with the
+    # legacy `next` fallback below active). Uncomment to route pre-approved
+    # requesters straight to submission. Inline field comparison (no gates.yaml):
+    #
+    # transitions:
+    #   - target: submit
+    #     when:
+    #       eq:
+    #         field: inputs.requesterId
+    #         value: "FAST_TRACK"
+    #
+    # Or use a reusable named predicate — rename gates.yaml.example to gates.yaml:
+    #
+    # transitions:
+    #   - target: submit
+    #     when:
+    #       gate: is_pre_approved_requester
+    next: submit
+  - id: submit
+    label: Submitted
+    kind: terminal
+    terminal: true
+    doneWhen: terminal

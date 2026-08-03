@@ -1,0 +1,6 @@
+# Leave id empty; the CLI writes back the assigned ID on push (see docs/id-lifecycle.md)
+id: ""
+name: GitHub PR Intent Form
+slug: github-pr-intent-form
+preMessage: Describe the repository and feature for the pull request.
+postMessage: Intent captured. Generating PR next.

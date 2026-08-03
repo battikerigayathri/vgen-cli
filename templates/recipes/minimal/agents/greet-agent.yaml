@@ -1,0 +1,4 @@
+name: Greet Agent
+slug: greet-agent
+systemInstructions: Greet the user.
+skills: []

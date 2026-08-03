@@ -1,0 +1,6 @@
+id: ""
+name: Purchase Requisition
+slug: purchase-requisition-v1
+workflowType: purchase_requisition
+version: 1
+description: Multi-step purchase requisition form wizard with review before submit.

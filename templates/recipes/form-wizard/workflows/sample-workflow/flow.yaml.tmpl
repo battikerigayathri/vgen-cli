@@ -1,0 +1,16 @@
+initialStage: collect
+stages:
+  - id: collect
+    label: Collect
+    kind: collect
+    hitlSlug: sample-form
+    doneWhen: [submitted]
+    # This workflow uses the simple linear `next` field. For conditional branching,
+    # rework loops, or reusable named predicates, replace `next` with a `transitions`
+    # array — see docs/spec-workflow.md §2.4 "Conditional Transitions & gates.yaml".
+    next: done
+  - id: done
+    label: Done
+    kind: terminal
+    terminal: true
+    doneWhen: terminal

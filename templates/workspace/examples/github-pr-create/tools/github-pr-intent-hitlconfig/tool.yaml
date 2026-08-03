@@ -1,0 +1,30 @@
+# Leave id empty; the CLI writes back the assigned ID on push (see docs/id-lifecycle.md)
+id: ""
+name: GitHub PR Intent HITLConfig
+description: Shows the intent collect card for github-pr-create workflow collect_intent stage.
+type: JS
+input_modes:
+- text
+output_modes:
+- application/json
+systemInstructions:
+- Call when workflow stage is collect_intent.
+- NEVER call GitHub PR Intent Save on the same turn as this tool.
+arguments:
+  repoName:
+    description: Optional repo to pre-fill
+    required: false
+    type: string
+  featureDescription:
+    description: Optional feature description to pre-fill
+    required: false
+    type: string
+examples: []
+tags:
+- github
+- hitl
+- hitlconfig
+- workflow
+createdBy: ''
+managedBy: []
+version: '1.0'

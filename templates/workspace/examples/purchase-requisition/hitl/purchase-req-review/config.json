@@ -1,0 +1,53 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Purchase requisition — review",
+      "weight": "bolder",
+      "size": "medium"
+    },
+    {
+      "type": "TextBlock",
+      "text": "Confirm vendor and line items before submit.",
+      "wrap": true
+    },
+    {
+      "type": "Input.Text",
+      "id": "vendorId",
+      "label": "Vendor ID (read-only)",
+      "value": "${vendorId}",
+      "isReadOnly": true
+    },
+    {
+      "type": "Input.Text",
+      "id": "lineItemsSummary",
+      "label": "Line items summary",
+      "value": "${lineItemsSummary}",
+      "isReadOnly": true,
+      "isMultiline": true
+    },
+    {
+      "type": "Input.Toggle",
+      "id": "reviewConfirmed",
+      "title": "I confirm this requisition is correct",
+      "value": "false",
+      "valueOn": "true",
+      "valueOff": "false"
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "Submit requisition",
+      "data": { "action": "submit" }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "Go back",
+      "data": { "action": "cancel" }
+    }
+  ]
+}

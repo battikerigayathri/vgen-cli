@@ -1,0 +1,4 @@
+name: Sample Form
+slug: sample-form
+preMessage: Please complete the form.
+postMessage: Thank you.

@@ -1,0 +1,25 @@
+# Leave id empty; the CLI writes back the assigned ID on push (see docs/id-lifecycle.md)
+id: ""
+name: GitHub PR Open
+description: Mock PR open — returns workflowPatch.artifacts.prUrl; stage advance via macro validator pass only.
+type: JS
+input_modes:
+- text
+output_modes:
+- application/json
+systemInstructions:
+- Call when workflow stage is generate_and_open_pr (agent_task).
+- Requires repoName and featureDescription in workflow inputs or tool input.
+- Returns workflowPatch.artifacts only — does NOT advance stage; macro validator must pass.
+arguments:
+  repoName:
+    description: Target repository org/repo
+    required: false
+    type: string
+examples: []
+tags:
+- github
+- workflow
+createdBy: ''
+managedBy: []
+version: '1.0'

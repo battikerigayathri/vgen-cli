@@ -1,0 +1,27 @@
+# Leave id empty; the CLI writes back the assigned ID on push (see docs/id-lifecycle.md)
+id: ""
+name: Jira Read Issue
+description: FaaS tool to read a Jira issue and return a short summary. Uses smriti.secrets.get to obtain the API key for the current user session.
+type: FAAS
+input_modes:
+- text
+output_modes:
+- application/json
+systemInstructions:
+- ONLY call AFTER the user submits the Jira Read Issue HITL form with issueKey and action submit.
+- NEVER call when the user first asks to read or summarise an issue — call Jira Read Issue HITLConfig instead.
+- Returns success, issueKey, summary, status, assignee, description, and agentResponseContext.
+arguments:
+  issueKey:
+    description: Issue key (e.g. JIRA-123)
+    required: true
+    type: string
+examples: []
+tags:
+- jira
+- issue
+- faas
+createdBy: ''
+managedBy: []
+version: '1.0'
+functionId: 8a8d08aa-3819-4860-a79f-7f069c9d8a05

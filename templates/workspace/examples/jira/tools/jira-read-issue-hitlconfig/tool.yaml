@@ -1,0 +1,27 @@
+# Leave id empty; the CLI writes back the assigned ID on push (see docs/id-lifecycle.md)
+id: ""
+name: Jira Read Issue HITLConfig
+description: Shows the Jira read issue confirmation card. Fetches hitlConfig by slug and substitutes issueKey placeholder.
+type: JS
+input_modes:
+- text
+output_modes:
+- application/json
+systemInstructions:
+- Call when the user wants to read or summarise a Jira issue — BEFORE calling jira-read-issue.
+- NEVER call jira-read-issue on the same turn as this tool.
+- Optional issueKey in input pre-fills the adaptive card field.
+- Returns config, preMessage, postMessage for the HITL UI.
+arguments:
+  issueKey:
+    description: Optional issue key to pre-fill the card (e.g. CGA-123)
+    required: false
+    type: string
+examples: []
+tags:
+- jira
+- hitl
+- hitlconfig
+createdBy: ''
+managedBy: []
+version: '1.0'

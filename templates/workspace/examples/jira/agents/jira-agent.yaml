@@ -1,0 +1,23 @@
+# Leave id empty; the CLI writes back the assigned ID on push (see docs/id-lifecycle.md)
+id: ""
+name: Jira Agent
+slug: jira-agent
+description: Jira read agent — fetch and summarise issues after user confirms via HITL.
+systemInstructions:
+- 'Role: Jira read agent — fetch and summarise issues after user confirms via HITL.'
+- 'Read — step 1: When user wants to read or summarise an issue, call Jira Read Issue HITLConfig with optional issueKey pre-fill.'
+- 'Read — step 2: After read HITL submit, call jira-read-issue with issueKey from form.'
+- Never call jira-read-issue before HITL submit. Never call jira-read-issue on the same turn as HITLConfig.
+skills: []
+# Wire after pushing the tools below (see docs/push-pull-wire.md), then re-run `resmate agent push jira-agent`:
+#   - <tool-id-after-push> (copy the written-back id from tools/jira-read-issue-hitlconfig/tool.yaml)
+#   - <tool-id-after-push> (copy the written-back id from tools/jira-read-issue/tool.yaml)
+is_public: false
+roles: []
+admins: []
+version: '1.0'
+createdBy: ''
+guardrailsContext: null
+guardrailsViolationFallback: null
+icon: null
+managedBy: []

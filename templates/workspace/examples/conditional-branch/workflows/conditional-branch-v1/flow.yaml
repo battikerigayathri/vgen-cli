@@ -1,0 +1,41 @@
+initialStage: collect_vendor
+stages:
+  - id: collect_vendor
+    label: Collect vendor
+    kind: collect
+    hitlSlug: branch-vendor-form
+    doneWhen: [vendorId]
+    transitions:
+      - target: express_review
+        when:
+          eq:
+            field: inputs.vip
+            value: true
+    next: collect_line_items
+
+  - id: express_review
+    label: Express review (VIP fast-track)
+    kind: collect
+    hitlSlug: branch-express-form
+    doneWhen: [expressReason]
+    next: review_summary
+
+  - id: collect_line_items
+    label: Collect line items
+    kind: collect
+    hitlSlug: branch-line-items-form
+    doneWhen: [lineItems]
+    next: review_summary
+
+  - id: review_summary
+    label: Review summary
+    kind: review
+    hitlSlug: branch-review-form
+    doneWhen: [reviewConfirmed]
+    next: submit
+
+  - id: submit
+    label: Submitted
+    kind: terminal
+    terminal: true
+    doneWhen: terminal

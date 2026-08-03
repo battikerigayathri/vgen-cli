@@ -1,0 +1,6 @@
+id: ""
+name: Conditional Branch
+slug: conditional-branch-v1
+workflowType: conditional_branch
+version: 1
+description: Example workflow with VIP fast-track branching and path-aware requiredFromStage fields (expressReason on express_review skip branch).

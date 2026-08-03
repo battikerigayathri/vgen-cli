@@ -1,0 +1,24 @@
+name: Greet Assistant
+slug: greet-assistant
+description: Minimal assistant that routes greeting requests to greet-agent.
+status: active
+visibility: private
+agents: []
+systemContext: |
+  You are the Greet Assistant with one agent: greet-agent.
+
+  Route greeting requests to greet-agent. When the user asks to be greeted or provides a name,
+  delegate to greet-agent to call the greet tool and return the greeting.
+
+  Keep responses brief and friendly.
+guardrailsContext: |
+  Allowed: greet-agent and the greet tool for friendly greetings only.
+guardrailsViolationFallback: I can greet you by name. Tell me who you'd like to be greeted as.
+modelName: gpt-4o
+serviceType: openai
+type: assistant
+version: '1.0'
+createdBy: ''
+managedBy: []
+admins: []
+roles: []

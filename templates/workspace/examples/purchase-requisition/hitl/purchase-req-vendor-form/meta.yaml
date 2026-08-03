@@ -1,0 +1,6 @@
+# Leave id empty; the CLI writes back the assigned ID on push (see docs/id-lifecycle.md)
+id: ""
+name: Purchase Req Vendor Form
+slug: purchase-req-vendor-form
+preMessage: Enter the vendor ID for this purchase requisition.
+postMessage: Vendor submitted. Collecting line items next.

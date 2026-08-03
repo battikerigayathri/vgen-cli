@@ -1,0 +1,20 @@
+fields:
+  - key: vendorId
+    label: Vendor ID
+    type: string
+    bag: inputs
+    requiredFromStage: collect_vendor
+    hitlFieldId: vendorId
+
+  - key: lineItems
+    label: Line items
+    type: array
+    bag: inputs
+    requiredFromStage: collect_line_items
+
+  - key: reviewConfirmed
+    label: Review confirmed
+    type: boolean
+    bag: inputs
+    requiredFromStage: review_summary
+    hitlFieldId: reviewConfirmed

@@ -1,0 +1,45 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "GitHub PR — intent",
+      "weight": "bolder",
+      "size": "medium"
+    },
+    {
+      "type": "TextBlock",
+      "text": "Enter the target repository and feature description.",
+      "wrap": true
+    },
+    {
+      "type": "Input.Text",
+      "id": "repoName",
+      "label": "Repository",
+      "placeholder": "org/repo",
+      "value": "${repoName}"
+    },
+    {
+      "type": "Input.Text",
+      "id": "featureDescription",
+      "label": "Feature description",
+      "isMultiline": true,
+      "placeholder": "Add dark mode toggle to settings page",
+      "value": "${featureDescription}"
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "Continue",
+      "data": { "action": "submit" }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "Cancel",
+      "data": { "action": "cancel" }
+    }
+  ]
+}

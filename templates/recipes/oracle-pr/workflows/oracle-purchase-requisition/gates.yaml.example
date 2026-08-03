@@ -1,0 +1,8 @@
+# Rename to `gates.yaml` (drop the `.example` suffix) to activate.
+# Referenced by the commented-out `transitions` block in flow.yaml.
+- id: is_pre_approved_requester
+  name: Requester Is Pre-Approved
+  when:
+    eq:
+      field: inputs.requesterId
+      value: "PRE_APPROVED"

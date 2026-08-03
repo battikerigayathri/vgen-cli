@@ -1,0 +1,17 @@
+name: Greet Agent
+slug: greet-agent
+description: Greets the user by name using the greet tool.
+systemInstructions:
+- 'Role: Greet agent — call the greet tool when the user wants a greeting.'
+- When the user provides a name (or asks to be greeted), call greet with name in input.
+- Present the greeting from the tool result to the user.
+skills: []
+is_public: false
+roles: []
+admins: []
+version: '1.0'
+createdBy: ''
+guardrailsContext: null
+guardrailsViolationFallback: null
+icon: null
+managedBy: []

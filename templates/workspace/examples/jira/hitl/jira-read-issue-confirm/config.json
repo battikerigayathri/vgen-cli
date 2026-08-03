@@ -1,0 +1,41 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "actions": [
+        {
+            "data": {
+                "action": "submit"
+            },
+            "title": "Read issue",
+            "type": "Action.Submit"
+        },
+        {
+            "data": {
+                "action": "cancel"
+            },
+            "title": "Cancel",
+            "type": "Action.Submit"
+        }
+    ],
+    "body": [
+        {
+            "size": "medium",
+            "text": "Read Jira issue",
+            "type": "TextBlock",
+            "weight": "bolder"
+        },
+        {
+            "text": "Enter the issue key to fetch and summarise.",
+            "type": "TextBlock",
+            "wrap": true
+        },
+        {
+            "id": "issueKey",
+            "label": "Issue key",
+            "placeholder": "e.g. CGA-123",
+            "type": "Input.Text",
+            "value": "${issueKey}"
+        }
+    ],
+    "type": "AdaptiveCard",
+    "version": "1.5"
+}

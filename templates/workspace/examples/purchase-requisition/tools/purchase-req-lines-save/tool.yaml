@@ -1,0 +1,25 @@
+# Leave id empty; the CLI writes back the assigned ID on push (see docs/id-lifecycle.md)
+id: ""
+name: Purchase Req Lines Save
+description: Saves lineItems to workflow inputs via workflowPatch after HITL submit.
+type: JS
+input_modes:
+- text
+output_modes:
+- application/json
+systemInstructions:
+- Call ONLY after the user submits purchase-req-lines-form HITL.
+- NEVER call on the same turn as Purchase Req Lines HITLConfig.
+- Parses lineItems JSON array from form input; returns workflowPatch.inputs only.
+arguments:
+  lineItems:
+    description: JSON array string or array of line items from HITL
+    required: true
+    type: string
+examples: []
+tags:
+- purchase-requisition
+- workflow
+createdBy: ''
+managedBy: []
+version: '1.0'

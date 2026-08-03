@@ -1,0 +1,29 @@
+# Leave id empty; the CLI writes back the assigned ID on push (see docs/id-lifecycle.md)
+id: ""
+name: Purchase Req Agent
+slug: purchase-req-agent
+description: Purchase requisition workflow agent — HITL collect/review stages with workflowPatch save tools.
+systemInstructions:
+- 'Role: Purchase requisition agent — drive collect and review stages for purchase-requisition-v1 workflow.'
+- 'Stage collect_vendor: call Purchase Req Vendor HITLConfig, then after HITL submit call Purchase Req Vendor Save.'
+- 'Stage collect_line_items: call Purchase Req Lines HITLConfig, then after HITL submit call Purchase Req Lines Save.'
+- 'Stage review_summary: call Purchase Req Review HITLConfig (pass vendorId and lineItems from snapshot), then after confirm call Purchase Req Review Confirm.'
+- Never call a save/confirm tool on the same turn as its HITLConfig tool.
+- Save tools return workflowPatch.inputs only — do not request stage advance.
+skills: []
+# Wire after pushing the tools below (see docs/push-pull-wire.md), then re-run `resmate agent push purchase-req-agent`:
+#   - <tool-id-after-push> (copy the written-back id from tools/purchase-req-vendor-hitlconfig/tool.yaml)
+#   - <tool-id-after-push> (copy the written-back id from tools/purchase-req-vendor-save/tool.yaml)
+#   - <tool-id-after-push> (copy the written-back id from tools/purchase-req-lines-hitlconfig/tool.yaml)
+#   - <tool-id-after-push> (copy the written-back id from tools/purchase-req-lines-save/tool.yaml)
+#   - <tool-id-after-push> (copy the written-back id from tools/purchase-req-review-hitlconfig/tool.yaml)
+#   - <tool-id-after-push> (copy the written-back id from tools/purchase-req-review-confirm/tool.yaml)
+is_public: false
+roles: []
+admins: []
+version: '1.0'
+createdBy: ''
+guardrailsContext: null
+guardrailsViolationFallback: null
+icon: null
+managedBy: []

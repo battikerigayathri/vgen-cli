@@ -1,0 +1,6 @@
+# Leave id empty; the CLI writes back the assigned ID on push (see docs/id-lifecycle.md)
+id: ""
+name: Jira Read Issue Confirm
+slug: jira-read-issue-confirm
+preMessage: Enter the Jira issue key below to read and summarise.
+postMessage: Issue key submitted. Fetching the Jira issue now.
