@@ -3,10 +3,10 @@ use std::collections::HashMap;
 use std::env;
 use std::path::PathBuf;
 
-const ENV_IDS_FILE: &str = "vgen_IDS_FILE";
+const ENV_IDS_FILE: &str = "RESMATE_IDS_FILE";
 
 fn default_ids_path() -> Option<PathBuf> {
-    dirs::home_dir().map(|h| h.join(".vgen").join("ids.yaml"))
+    dirs::home_dir().map(|h| h.join(".resmate").join("ids.yaml"))
 }
 
 pub fn ids_file_path() -> Option<PathBuf> {
@@ -34,7 +34,8 @@ impl IdStore {
         }
         let contents = std::fs::read_to_string(&path)
             .map_err(|e| format!("Failed to read {}: {}", path.display(), e))?;
-        serde_yaml::from_str(&contents).map_err(|e| format!("Invalid YAML in {}: {}", path.display(), e))
+        serde_yaml::from_str(&contents)
+            .map_err(|e| format!("Invalid YAML in {}: {}", path.display(), e))
     }
 
     pub fn save(&self) -> Result<(), String> {
@@ -44,7 +45,8 @@ impl IdStore {
                 .map_err(|e| format!("Failed to create directory {}: {}", parent.display(), e))?;
         }
         let contents = serde_yaml::to_string(self).map_err(|e| e.to_string())?;
-        std::fs::write(&path, contents).map_err(|e| format!("Failed to write {}: {}", path.display(), e))
+        std::fs::write(&path, contents)
+            .map_err(|e| format!("Failed to write {}: {}", path.display(), e))
     }
 
     pub fn get_tool_id(&self, slug: &str) -> Option<&str> {
