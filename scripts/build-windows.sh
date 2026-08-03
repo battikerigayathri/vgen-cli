@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build vgen CLI for Windows (x64 or x86) from macOS.
+# Build resmate CLI for Windows (x64 or x86) from macOS.
 # One-time: rustup target add x86_64-pc-windows-gnu i686-pc-windows-gnu
 #           brew install mingw-w64
 
@@ -52,14 +52,19 @@ esac
 echo "Building for Windows: $TARGET (arch: $ARCH)"
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-$ROOT/target}"
 cd "$ROOT"
 
 if [[ "$RELEASE" == true ]]; then
-  cargo build --release --target "$TARGET"
-  EXE="$ROOT/target/$TARGET/release/vgen.exe"
+  cargo build --release --target "$TARGET" --bin resmate --bin resmate-mcp
+  EXE="$ROOT/target/$TARGET/release/resmate.exe"
+  MCP_EXE="$ROOT/target/$TARGET/release/resmate-mcp.exe"
 else
-  cargo build --target "$TARGET"
-  EXE="$ROOT/target/$TARGET/debug/vgen.exe"
+  cargo build --target "$TARGET" --bin resmate --bin resmate-mcp
+  EXE="$ROOT/target/$TARGET/debug/resmate.exe"
+  MCP_EXE="$ROOT/target/$TARGET/debug/resmate-mcp.exe"
 fi
 
-echo "Done. Binary: $EXE"
+echo "Done. Binaries:"
+echo "  resmate:     $EXE"
+echo "  resmate-mcp: $MCP_EXE"
