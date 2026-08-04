@@ -1,0 +1,5 @@
+id: ""
+name: Invalid Next Fixture
+slug: invalid-bad-next-v1
+workflowType: test_invalid
+version: 1

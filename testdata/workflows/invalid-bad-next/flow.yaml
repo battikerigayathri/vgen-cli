@@ -1,0 +1,14 @@
+initialStage: s1
+stages:
+  - id: s1
+    label: S1
+    kind: collect
+    hitlSlug: form
+    doneWhen: [a]
+    next: missing_stage
+
+  - id: done
+    label: Done
+    kind: terminal
+    terminal: true
+    doneWhen: terminal

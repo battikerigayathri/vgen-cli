@@ -1,0 +1,5 @@
+fields:
+  - key: a
+    label: A
+    type: string
+    bag: inputs
