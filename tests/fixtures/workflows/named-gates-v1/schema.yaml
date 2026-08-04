@@ -1,0 +1,13 @@
+fields:
+  - key: totalAmount
+    label: Total amount
+    type: number
+    bag: inputs
+    required: true
+    requiredFromStage: collect_request
+
+  - key: managerApprovalCode
+    label: Manager approval code
+    type: string
+    bag: inputs
+    requiredFromStage: await_approval

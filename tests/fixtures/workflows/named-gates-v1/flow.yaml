@@ -1,0 +1,25 @@
+initialStage: collect_request
+stages:
+  - id: collect_request
+    label: Collect request
+    kind: collect
+    hitlSlug: named-gates-request-form
+    doneWhen: [totalAmount]
+    transitions:
+      - target: await_approval
+        when:
+          gate: requires_manager_approval
+    next: submit
+
+  - id: await_approval
+    label: Await manager approval (only reached via the composed gate)
+    kind: collect
+    hitlSlug: named-gates-approval-form
+    doneWhen: [managerApprovalCode]
+    next: submit
+
+  - id: submit
+    label: Submitted
+    kind: terminal
+    terminal: true
+    doneWhen: terminal

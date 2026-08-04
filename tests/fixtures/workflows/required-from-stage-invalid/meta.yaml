@@ -1,0 +1,6 @@
+id: ""
+name: Required From Stage Invalid Fixture
+slug: required-from-stage-invalid-v1
+workflowType: required_from_stage_invalid
+version: 1
+description: Semantic reject — requiredFromStage references a nonexistent stage id.

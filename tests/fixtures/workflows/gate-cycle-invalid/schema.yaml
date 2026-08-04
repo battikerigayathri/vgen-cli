@@ -1,0 +1,7 @@
+fields:
+  - key: totalAmount
+    label: Total amount
+    type: number
+    bag: inputs
+    required: true
+    requiredFromStage: collect

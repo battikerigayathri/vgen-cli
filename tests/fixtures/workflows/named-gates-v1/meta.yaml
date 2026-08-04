@@ -1,0 +1,6 @@
+id: ""
+name: Named Gates Fixture
+slug: named-gates-v1
+workflowType: named_gates
+version: 1
+description: Split-directory fixture with gates.yaml exercising composed named gates end-to-end (Phase 4).

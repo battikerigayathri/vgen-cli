@@ -1,0 +1,16 @@
+# Mirrors the is_high_value / requires_manager_approval example from
+# docs/dag-workflow-implementation-plan.md §2.2.3.
+- id: is_high_value
+  name: High Value Requisition
+  when:
+    eq:
+      field: inputs.totalAmount
+      value: 10000
+
+- id: requires_manager_approval
+  name: Requires Manager Approval
+  when:
+    all:
+      - gate: is_high_value
+      - not:
+          present: inputs.managerApprovalCode

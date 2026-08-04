@@ -1,0 +1,14 @@
+initialStage: collect
+stages:
+  - id: collect
+    label: Collect
+    kind: collect
+    hitlSlug: required-from-stage-form
+    doneWhen: [flag]
+    next: done
+
+  - id: done
+    label: Done
+    kind: terminal
+    terminal: true
+    doneWhen: terminal

@@ -1,0 +1,29 @@
+fields:
+  - key: vendorId
+    label: Vendor ID
+    type: string
+    bag: inputs
+    requiredFromStage: collect_vendor
+
+  - key: vip
+    label: VIP fast-track flag
+    type: boolean
+    bag: inputs
+
+  - key: expressReason
+    label: Express review reason
+    type: string
+    bag: inputs
+    requiredFromStage: express_review
+
+  - key: lineItems
+    label: Line items
+    type: array
+    bag: inputs
+    requiredFromStage: collect_line_items
+
+  - key: reviewConfirmed
+    label: Review confirmed
+    type: boolean
+    bag: inputs
+    requiredFromStage: review_summary

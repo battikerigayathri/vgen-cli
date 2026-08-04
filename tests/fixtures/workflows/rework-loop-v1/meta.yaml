@@ -1,0 +1,6 @@
+id: ""
+name: Rework Loop Fixture
+slug: rework-loop-v1
+workflowType: rework_loop
+version: 1
+description: Valid rework loop — review_summary reject routes back with reset.

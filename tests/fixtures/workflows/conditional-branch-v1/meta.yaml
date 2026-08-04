@@ -1,0 +1,6 @@
+id: ""
+name: Conditional Branch Fixture
+slug: conditional-branch-v1
+workflowType: conditional_branch
+version: 1
+description: Valid Phase 1 conditional transitions fixture (VIP fast-track with next fallback).

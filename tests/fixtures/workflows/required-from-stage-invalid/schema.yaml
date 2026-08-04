@@ -1,0 +1,11 @@
+fields:
+  - key: flag
+    label: Branch flag
+    type: boolean
+    bag: inputs
+
+  - key: orphanField
+    label: Orphan field
+    type: string
+    bag: inputs
+    requiredFromStage: ghost_stage

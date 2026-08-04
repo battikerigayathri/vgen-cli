@@ -1,0 +1,19 @@
+initialStage: collect
+stages:
+  - id: collect
+    label: Collect
+    kind: collect
+    hitlSlug: dead-end-form
+    doneWhen: [flag]
+    transitions:
+      - target: done
+        when:
+          eq:
+            field: inputs.flag
+            value: true
+
+  - id: done
+    label: Done
+    kind: terminal
+    terminal: true
+    doneWhen: terminal

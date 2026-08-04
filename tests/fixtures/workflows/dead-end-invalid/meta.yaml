@@ -1,0 +1,6 @@
+id: ""
+name: Dead End Invalid Fixture
+slug: dead-end-invalid-v1
+workflowType: dead_end_invalid
+version: 1
+description: Semantic reject — transitions with no exhaustive fallback and no next.

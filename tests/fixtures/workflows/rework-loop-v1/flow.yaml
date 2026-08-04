@@ -1,0 +1,35 @@
+initialStage: collect_line_items
+stages:
+  - id: collect_line_items
+    label: Collect line items
+    kind: collect
+    hitlSlug: rework-lines-form
+    doneWhen: [lineItems]
+    next: review_summary
+
+  - id: review_summary
+    label: Review summary
+    kind: review
+    hitlSlug: rework-review-form
+    doneWhen: [reviewConfirmed]
+    transitions:
+      - target: submit
+        when:
+          eq:
+            field: reviewConfirmed
+            value: true
+      - target: collect_line_items
+        when:
+          eq:
+            field: reviewConfirmed
+            value: false
+        reset:
+          - reviewConfirmed
+          - lineItems
+    next: submit
+
+  - id: submit
+    label: Submitted
+    kind: terminal
+    terminal: true
+    doneWhen: terminal

@@ -1,0 +1,4 @@
+- id: requires_manager_approval
+  name: Requires Manager Approval
+  when:
+    gate: does_not_exist

@@ -1,0 +1,6 @@
+id: ""
+name: Reset Field Invalid Fixture
+slug: reset-field-invalid
+workflowType: rework_loop
+version: 1
+description: Invalid Phase 3 fixture — transition reset references unknown schema field.

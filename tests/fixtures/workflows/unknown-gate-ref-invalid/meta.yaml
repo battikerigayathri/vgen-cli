@@ -1,0 +1,6 @@
+id: ""
+name: Unknown Gate Ref Invalid Fixture
+slug: unknown-gate-ref-invalid-v1
+workflowType: unknown_gate_ref_invalid
+version: 1
+description: Semantic reject — gate when references undefined gate id (nested in gates.yaml).

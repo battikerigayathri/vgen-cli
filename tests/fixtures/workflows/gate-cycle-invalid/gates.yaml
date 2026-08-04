@@ -1,0 +1,9 @@
+- id: gate_a
+  name: Gate A
+  when:
+    gate: gate_b
+
+- id: gate_b
+  name: Gate B
+  when:
+    gate: gate_a

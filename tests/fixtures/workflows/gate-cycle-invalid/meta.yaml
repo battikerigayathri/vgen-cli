@@ -1,0 +1,6 @@
+id: ""
+name: Gate Cycle Invalid Fixture
+slug: gate-cycle-invalid-v1
+workflowType: gate_cycle_invalid
+version: 1
+description: Semantic reject — gate_a and gate_b reference each other (cycle).

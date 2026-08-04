@@ -1,0 +1,9 @@
+fields:
+  - key: lineItems
+    label: Line items
+    type: array
+    bag: inputs
+  - key: reviewConfirmed
+    label: Review confirmed
+    type: boolean
+    bag: inputs

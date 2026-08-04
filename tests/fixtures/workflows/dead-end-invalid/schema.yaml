@@ -1,0 +1,5 @@
+fields:
+  - key: flag
+    label: Branch flag
+    type: boolean
+    bag: inputs

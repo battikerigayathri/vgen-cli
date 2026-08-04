@@ -1,0 +1,18 @@
+initialStage: collect
+stages:
+  - id: collect
+    label: Collect
+    kind: collect
+    hitlSlug: gate-cycle-form
+    doneWhen: [totalAmount]
+    transitions:
+      - target: done
+        when:
+          gate: gate_a
+    next: done
+
+  - id: done
+    label: Done
+    kind: terminal
+    terminal: true
+    doneWhen: terminal

@@ -1,0 +1,18 @@
+initialStage: collect
+stages:
+  - id: collect
+    label: Collect
+    kind: collect
+    hitlSlug: unknown-gate-ref-form
+    doneWhen: [totalAmount]
+    transitions:
+      - target: done
+        when:
+          gate: requires_manager_approval
+    next: done
+
+  - id: done
+    label: Done
+    kind: terminal
+    terminal: true
+    doneWhen: terminal
