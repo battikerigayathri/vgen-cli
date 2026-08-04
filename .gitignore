@@ -1,3 +1,21 @@
+# Rust build output
 target/
+dist/
 
+# Local credentials (never commit)
 .env
+
+# `cargo install` / local copy of the CLI binary
+resmate
+resmate.exe
+
+# Lockfile committed for reproducible local builds and smoke tests
+
+# macOS Finder metadata
+.DS_Store
+
+# Editor / IDE local settings (optional per-developer)
+.idea/
+.vscode/
+*.swp
+*~
