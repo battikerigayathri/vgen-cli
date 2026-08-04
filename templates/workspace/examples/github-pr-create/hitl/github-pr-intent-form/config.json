@@ -34,12 +34,16 @@
     {
       "type": "Action.Submit",
       "title": "Continue",
-      "data": { "action": "submit" }
+      "data": {
+        "action": "submit"
+      }
     },
     {
       "type": "Action.Submit",
       "title": "Cancel",
-      "data": { "action": "cancel" }
+      "data": {
+        "action": "cancel"
+      }
     }
   ]
 }
