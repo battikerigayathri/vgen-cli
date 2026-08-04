@@ -17,15 +17,28 @@ fn extract_id_from_response(body: &Value) -> Option<String> {
         })
 }
 
+/// Find HITL config by slug via list-records. Returns record data object.
+pub async fn find_hitl_by_slug(
+    slug: &str,
+) -> Result<Value, Box<dyn std::error::Error + Send + Sync>> {
+    let query = json!({ "slug": slug });
+    let res = super::record::list_records("hitlConfig", query).await?;
+    let records = res
+        .get("data")
+        .and_then(|d| d.as_array())
+        .ok_or_else(|| format!("No HITL records found for slug '{}'", slug))?;
+    let first = records
+        .first()
+        .ok_or_else(|| format!("No HITL records found for slug '{}'", slug))?;
+    Ok(json!({ "data": first }))
+}
+
 /// POST /create-record with collectionName: hitlConfig, payload. Returns the created HITL record id.
 pub async fn create_hitl(
     payload: &Value,
 ) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
     let cfg = config::load_config().map_err(|e| e.to_string())?;
-    let api_key = cfg
-        .api_key
-        .as_deref()
-        .ok_or("vgen_API_KEY is not set")?;
+    let api_key = cfg.api_key.as_deref().ok_or("RESMATE_API_KEY is not set")?;
     let base = cfg.base_url.trim_end_matches('/');
     let url = format!("{}/create-record", base);
 
@@ -63,10 +76,7 @@ pub async fn update_hitl(
     document: &Value,
 ) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
     let cfg = config::load_config().map_err(|e| e.to_string())?;
-    let api_key = cfg
-        .api_key
-        .as_deref()
-        .ok_or("vgen_API_KEY is not set")?;
+    let api_key = cfg.api_key.as_deref().ok_or("RESMATE_API_KEY is not set")?;
     let base = cfg.base_url.trim_end_matches('/');
     let url = format!("{}/update-record", base);
 
@@ -77,7 +87,10 @@ pub async fn update_hitl(
     });
 
     let client = http_client::build_client();
-    let req = client.post(&url).json(&body).header("Content-Type", "application/json");
+    let req = client
+        .post(&url)
+        .json(&body)
+        .header("Content-Type", "application/json");
     let req = http_client::add_auth_headers(req, api_key)?;
     let res = req.send().await?;
 

@@ -3,6 +3,7 @@ use crate::http_client;
 use serde_json::{json, Value};
 
 fn extract_id_from_response(body: &Value) -> Option<String> {
+    // Prefer data._id.$oid (Mongo-style response, same as tool/agent)
     body.get("data")
         .and_then(|d| d.get("_id"))
         .and_then(|id| id.get("$oid"))
@@ -17,71 +18,53 @@ fn extract_id_from_response(body: &Value) -> Option<String> {
         })
 }
 
-/// Creates a record in the "chat" collection and returns the generated id.
+/// POST /create-record with collectionName: chat, payload. Adds roc-session header if in config. Returns the created assistant id.
 pub async fn create_assistant(
     payload: &Value,
 ) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
     let cfg = config::load_config().map_err(|e| e.to_string())?;
-    
-    eprintln!("DEBUG: Loaded config - base_url: {}", cfg.base_url);
-
-    let api_key = cfg
-        .api_key
-        .as_deref()
-        .ok_or("VGEN_API_KEY is not set")?;
-
+    let api_key = cfg.api_key.as_deref().ok_or("RESMATE_API_KEY is not set")?;
     let base = cfg.base_url.trim_end_matches('/');
-    let url = format!("{}/assistant/create", base);
+    let url = format!("{}/create-record", base);
 
-let body = payload.clone();
+    let body = json!({
+        "collectionName": "chat",
+        "payload": payload
+    });
 
-    // let body = payload.clone();
     let client = http_client::build_client();
     let mut req = client
         .post(&url)
         .json(&body)
         .header("Content-Type", "application/json");
-
     req = http_client::add_auth_headers(req, api_key)?;
-
-    if let Some(session) = &cfg.roc_session {
-        req = req.header("session", session.as_str());
+    if let Some(roc) = &cfg.roc_session {
+        req = req.header("roc-session", roc.as_str());
     }
-
-    eprintln!("DEBUG: Sending POST to {}", url);
-    eprintln!("DEBUG: Body = {}", serde_json::to_string_pretty(&body).unwrap());
-    eprintln!("DEBUG: About to send request...");
-
     let res = req.send().await?;
-    eprintln!("DEBUG: Response received");
+
     let status = res.status();
     let res_body: Value = res.json().await?;
 
     if !status.is_success() {
         return Err(format!(
-            "create-record failed: {} {}",
+            "create-record (assistant) failed: {} {}",
             status,
             res_body.to_string()
         )
         .into());
     }
 
-    extract_id_from_response(&res_body)
-        .ok_or_else(|| "Response did not contain id".into())
+    extract_id_from_response(&res_body).ok_or_else(|| "Response did not contain id".into())
 }
 
-/// Updates a record in the "chat" collection and returns the id.
+/// POST /update-record with collectionName: chat, recordId, document. Returns the assistant id.
 pub async fn update_assistant(
     record_id: &str,
     document: &Value,
 ) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
     let cfg = config::load_config().map_err(|e| e.to_string())?;
-
-    let api_key = cfg
-        .api_key
-        .as_deref()
-        .ok_or("VGEN_API_KEY is not set")?;
-
+    let api_key = cfg.api_key.as_deref().ok_or("RESMATE_API_KEY is not set")?;
     let base = cfg.base_url.trim_end_matches('/');
     let url = format!("{}/update-record", base);
 
@@ -96,7 +79,6 @@ pub async fn update_assistant(
         .post(&url)
         .json(&body)
         .header("Content-Type", "application/json");
-
     let req = http_client::add_auth_headers(req, api_key)?;
     let res = req.send().await?;
 
@@ -105,47 +87,41 @@ pub async fn update_assistant(
 
     if !status.is_success() {
         return Err(format!(
-            "update-record failed: {} {}",
+            "update-record (assistant) failed: {} {}",
             status,
             res_body.to_string()
         )
         .into());
     }
 
-    Ok(extract_id_from_response(&res_body)
-        .unwrap_or_else(|| record_id.to_string()))
+    Ok(extract_id_from_response(&res_body).unwrap_or_else(|| record_id.to_string()))
 }
 
-/// Creates a new session for an assistant
+/// POST /create-record with collectionName: session to start a new assistant conversation.
+/// Returns the new session id.
 pub async fn create_assistant_session(
     chat_id: &str,
 ) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
     let cfg = config::load_config().map_err(|e| e.to_string())?;
-
-    let api_key = cfg
-        .api_key
-        .as_deref()
-        .ok_or("VGEN_API_KEY is not set")?;
-
+    let api_key = cfg.api_key.as_deref().ok_or("RESMATE_API_KEY is not set")?;
     let base = cfg.base_url.trim_end_matches('/');
     let url = format!("{}/create-record", base);
 
-    // Using generic test user details
-    let body = json!({
-      "collectionName": "session",
-      "payload": {
-        "chatId": chat_id,
-        "user": {
-          "name": "Test User",
-          "email": "testuser@example.com"
-        },
-        "status": "active",
-        "sessionMetadata": {
-          "device": "cli",
-          "location": "Local",
-          "ipAddress": "127.0.0.1"
+    let body = serde_json::json!({
+        "collectionName": "session",
+        "payload": {
+            "chatId": chat_id,
+            "user": {
+                "name": "Test User",
+                "email": "testuser@example.com"
+            },
+            "status": "active",
+            "sessionMetadata": {
+                "device": "cli",
+                "location": "Local",
+                "ipAddress": "127.0.0.1"
+            }
         }
-      }
     });
 
     let client = http_client::build_client();
@@ -153,12 +129,11 @@ pub async fn create_assistant_session(
         .post(&url)
         .json(&body)
         .header("Content-Type", "application/json");
-
     let req = http_client::add_auth_headers(req, api_key)?;
     let res = req.send().await?;
 
     let status = res.status();
-    let res_body: Value = res.json().await?;
+    let res_body: serde_json::Value = res.json().await?;
 
     if !status.is_success() {
         return Err(format!(
@@ -169,23 +144,18 @@ pub async fn create_assistant_session(
         .into());
     }
 
-    extract_id_from_response(&res_body)
-        .ok_or_else(|| "Response did not contain session id".into())
+    extract_id_from_response(&res_body).ok_or_else(|| "Response did not contain session id".into())
 }
 
-/// Sends a prompt to an assistant
+/// POST /chat/{chatId}/session/{sessionId}/ask with the prompt payload.
+/// Sends the roc-session header when configured. Returns the full response body.
 pub async fn ask_assistant(
     chat_id: &str,
     session_id: &str,
-    payload: &Value,
-) -> Result<Value, Box<dyn std::error::Error + Send + Sync>> {
+    payload: &serde_json::Value,
+) -> Result<serde_json::Value, Box<dyn std::error::Error + Send + Sync>> {
     let cfg = config::load_config().map_err(|e| e.to_string())?;
-
-    let api_key = cfg
-        .api_key
-        .as_deref()
-        .ok_or("VGEN_API_KEY is not set")?;
-
+    let api_key = cfg.api_key.as_deref().ok_or("RESMATE_API_KEY is not set")?;
     let base = cfg.base_url.trim_end_matches('/');
     let url = format!("{}/chat/{}/session/{}/ask", base, chat_id, session_id);
 
@@ -194,25 +164,17 @@ pub async fn ask_assistant(
         .post(&url)
         .json(payload)
         .header("Content-Type", "application/json");
-
     req = http_client::add_auth_headers(req, api_key)?;
-
-    if let Some(roc_session) = &cfg.roc_session {
-        req = req.header("roc-session", roc_session.as_str());
+    if let Some(roc) = &cfg.roc_session {
+        req = req.header("roc-session", roc.as_str());
     }
-
     let res = req.send().await?;
 
     let status = res.status();
-    let res_body: Value = res.json().await?;
+    let res_body: serde_json::Value = res.json().await?;
 
     if !status.is_success() {
-        return Err(format!(
-            "ask assistant failed: {} {}",
-            status,
-            res_body.to_string()
-        )
-        .into());
+        return Err(format!("ask assistant failed: {} {}", status, res_body.to_string()).into());
     }
 
     Ok(res_body)
