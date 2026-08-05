@@ -1,0 +1,6 @@
+id: ""
+name: Purchase Requisition
+slug: purchase-requisition-v1
+workflowType: purchase_requisition
+version: 1
+description: Minimal purchase requisition fixture for Phase 9.1 tests (synced from cli-context gold sample).

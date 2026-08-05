@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://resmed.ai/schemas/workflow-definition/v1",
+  "title": "WorkflowDefinitionBundle",
+  "type": "object",
+  "required": ["meta", "schema", "flow"],
+  "additionalProperties": false,
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["slug", "workflowType", "version", "name"],
+      "additionalProperties": true,
+      "properties": {
+        "id": { "type": "string" },
+        "slug": { "type": "string", "minLength": 1 },
+        "workflowType": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "version": { "type": "integer", "minimum": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" }
+      }
+    },
+    "schema": {
+      "type": "object",
+      "required": ["fields"],
+      "additionalProperties": false,
+      "properties": {
+        "fields": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/field" }
+        }
+      }
+    },
+    "flow": {
+      "type": "object",
+      "required": ["initialStage", "stages"],
+      "additionalProperties": false,
+      "properties": {
+        "initialStage": { "type": "string", "minLength": 1 },
+        "stages": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/stage" }
+        }
+      }
+    },
+    "gates": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/gate" }
+    }
+  },
+  "$defs": {
+    "field": {
+      "type": "object",
+      "required": ["key", "label", "type", "bag"],
+      "additionalProperties": true,
+      "properties": {
+        "key": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 },
+        "type": {
+          "type": "string",
+          "enum": ["string", "number", "boolean", "array", "object"]
+        },
+        "bag": {
+          "type": "string",
+          "enum": ["inputs", "artifacts"]
+        },
+        "required": { "type": "boolean" },
+        "requiredFromStage": { "type": "string" },
+        "validation": { "type": "object" },
+        "hitlFieldId": { "type": "string" },
+        "phi": { "type": "boolean" },
+        "redactInPrompt": { "type": "boolean" }
+      }
+    },
+    "stage": {
+      "type": "object",
+      "required": ["id", "label", "kind", "doneWhen"],
+      "additionalProperties": true,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 },
+        "kind": {
+          "type": "string",
+          "enum": ["collect", "agent_task", "review", "terminal"]
+        },
+        "doneWhen": {
+          "oneOf": [
+            {
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "string", "minLength": 1 }
+            },
+            {
+              "type": "string",
+              "enum": ["validator_pass", "terminal"]
+            }
+          ]
+        },
+        "hitlSlug": { "type": "string" },
+        "agentSlug": { "type": "string" },
+        "expectedOutcome": { "type": "string" },
+        "next": { "type": "string" },
+        "back_to": { "type": "string" },
+        "backTo": { "type": "string" },
+        "terminal": { "type": "boolean" }
+      }
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "type": "string" }
+      }
+    }
+  }
+}

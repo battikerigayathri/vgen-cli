@@ -1,0 +1,31 @@
+initialStage: collect_vendor
+stages:
+  - id: collect_vendor
+    label: Collect vendor
+    kind: collect
+    hitlSlug: purchase-req-vendor-form
+    agentSlug: purchase-req-agent
+    doneWhen: [vendorId]
+    next: collect_line_items
+
+  - id: collect_line_items
+    label: Collect line items
+    kind: collect
+    hitlSlug: purchase-req-lines-form
+    agentSlug: purchase-req-agent
+    doneWhen: [lineItems]
+    next: review_summary
+
+  - id: review_summary
+    label: Review summary
+    kind: review
+    hitlSlug: purchase-req-review
+    agentSlug: purchase-req-agent
+    doneWhen: [reviewConfirmed]
+    next: submit
+
+  - id: submit
+    label: Submitted
+    kind: terminal
+    terminal: true
+    doneWhen: terminal

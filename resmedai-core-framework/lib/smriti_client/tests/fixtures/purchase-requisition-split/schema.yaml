@@ -1,0 +1,29 @@
+fields:
+  - key: vendorId
+    label: Vendor ID
+    type: string
+    bag: inputs
+    required: true
+    requiredFromStage: collect_vendor
+    hitlFieldId: vendorId
+
+  - key: lineItems
+    label: Line items
+    type: array
+    bag: inputs
+    required: true
+    requiredFromStage: collect_line_items
+
+  - key: reviewConfirmed
+    label: Review confirmed
+    type: boolean
+    bag: inputs
+    required: true
+    requiredFromStage: review_summary
+    hitlFieldId: reviewConfirmed
+
+  - key: prUrl
+    label: Pull request URL
+    type: string
+    bag: artifacts
+    requiredFromStage: submit

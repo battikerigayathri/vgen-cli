@@ -20,9 +20,8 @@ rustyline = "18.0.0"
 tokio-tungstenite = { version = "0.29", features = ["connect"] }
 chrono = "0.4"
 futures-util = "0.3"
-smriti_client = { path = "../resmedai-core-framework/lib/smriti_client" }
-workflow_types = { path = "../resmedai-core-framework/lib/workflow_types" }
-
+smriti_client = { path = "resmedai-core-framework/lib/smriti_client" }
+workflow_types = { path = "resmedai-core-framework/lib/workflow_types" }
 
 [[bin]]
 name = "resmate"

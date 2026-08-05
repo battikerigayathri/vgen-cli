@@ -1,0 +1,67 @@
+{
+  "meta": {
+    "name": "GitHub PR Create",
+    "slug": "github-pr-create-v1",
+    "workflowType": "github_pr_create",
+    "version": 1,
+    "description": "Collect intent, generate branch, open PR."
+  },
+  "schema": {
+    "fields": [
+      {
+        "key": "repoName",
+        "label": "Repository",
+        "type": "string",
+        "bag": "inputs",
+        "required": true,
+        "requiredFromStage": "collect_intent"
+      },
+      {
+        "key": "featureDescription",
+        "label": "Feature description",
+        "type": "string",
+        "bag": "inputs",
+        "required": true,
+        "requiredFromStage": "collect_intent"
+      },
+      {
+        "key": "prUrl",
+        "label": "PR URL",
+        "type": "string",
+        "bag": "artifacts",
+        "requiredFromStage": "generate_and_open_pr"
+      }
+    ]
+  },
+  "flow": {
+    "initialStage": "collect_intent",
+    "stages": [
+      {
+        "id": "collect_intent",
+        "label": "Collect intent",
+        "kind": "collect",
+        "hitlSlug": "github-pr-intent-form",
+        "agentSlug": "github-pr-agent",
+        "doneWhen": ["repoName", "featureDescription"],
+        "next": "generate_and_open_pr"
+      },
+      {
+        "id": "generate_and_open_pr",
+        "label": "Generate and open PR",
+        "kind": "agent_task",
+        "agentSlug": "github-pr-agent",
+        "expectedOutcome": "PR opened with URL on workflow artifacts",
+        "doneWhen": "validator_pass",
+        "next": "submitted"
+      },
+      {
+        "id": "submitted",
+        "label": "Submitted",
+        "kind": "terminal",
+        "terminal": true,
+        "doneWhen": "terminal"
+      }
+    ]
+  },
+  "gates": []
+}

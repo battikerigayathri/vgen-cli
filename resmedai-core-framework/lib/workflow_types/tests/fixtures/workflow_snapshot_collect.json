@@ -1,0 +1,19 @@
+{
+  "workflowId": "wf-8f3a2b1c",
+  "workflowType": "purchase_requisition",
+  "stage": "collect_line_items",
+  "stageLabel": "Collect line items",
+  "stageKind": "collect",
+  "status": "in_progress",
+  "inputsSummary": {
+    "vendorId": "V-123",
+    "lineItems": "[2 items]"
+  },
+  "artifactsSummary": {},
+  "missingRequired": ["lineItems", "costCenter"],
+  "validationErrors": [],
+  "completenessPct": 40,
+  "nextHitlSlug": "purchase-req-lines-form",
+  "expectedOutcome": "User entered all required line items",
+  "allowedActions": ["patch_inputs"]
+}
