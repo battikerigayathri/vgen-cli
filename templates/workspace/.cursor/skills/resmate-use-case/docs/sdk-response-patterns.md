@@ -195,7 +195,7 @@ These patterns will break at runtime inside the V8 isolate, even though they loo
 
 | Don't | Why it breaks | Do instead |
 | :--- | :--- | :--- |
-| `require('resmate-polyfills')` or any `require(...)` / `import ...` | The V8 isolate has no module loader; polyfills (`queryRecords`, `getSecret`, etc.) are injected as **globals**, not importable modules. | Call the globals directly: `queryRecords(...)`, `getSecret(...)`. |
+| `require('vgen-polyfills')` or any `require(...)` / `import ...` | The V8 isolate has no module loader; polyfills (`queryRecords`, `getSecret`, etc.) are injected as **globals**, not importable modules. | Call the globals directly: `queryRecords(...)`, `getSecret(...)`. |
 | `module.exports = async function(context) { ... }` or `export default ...` | The script is executed as **top-level code**, not as a module — there is no `module` object and no wrapper function is invoked. | Write a top-level `try { ... } catch (err) { ... }` script that reads `context.input` directly. |
 | `const records = result.data[0]` used as if it were a single record | Yields an **array** of records (see §1.3), not a record — silent `undefined` field access downstream. | Use the dual-unwrap pattern: `result?.data?.[0]?.[0] ?? result?.[0]?.[0]`. |
 | Omitting the top-level `try/catch` | An uncaught exception surfaces as an opaque platform-level failure instead of a clean `{ success: false, error }` payload the agent can react to. | Always wrap the entire script body in `try { ... } catch (err) { return JSON.stringify({ success: false, error: err?.message || String(err) }); }`. |

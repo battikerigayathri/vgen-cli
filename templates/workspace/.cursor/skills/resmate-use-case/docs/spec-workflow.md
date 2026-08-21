@@ -392,12 +392,12 @@ A **dead end** occurs when a non-terminal stage has `transitions` defined but, a
 
 | Pitfall | Symptom | Fix |
 | :--- | :--- | :--- |
-| Missing fallback | `resmate workflow validate` rejects with `WORKFLOW_SEMANTIC_INVALID`; runtime logs `no_matching_transition` | Add a legacy `next` field **or** a final transition with `when: { all: [] }` |
+| Missing fallback | `vgen workflow validate` rejects with `WORKFLOW_SEMANTIC_INVALID`; runtime logs `no_matching_transition` | Add a legacy `next` field **or** a final transition with `when: { all: [] }` |
 | Dangling target | Validation error: transition target stage does not exist | Ensure every `target` references a stage `id` in the same workflow |
 | Over-specific rules | Instance stuck on stage despite "complete" inputs | Reorder rules (specific first) or add a catch-all branch |
 | Stale state on back-edges | Stage immediately bounces forward after rework | Use `reset` on back-edge transitions to clear gating fields (see §2.4.3) |
 
-**Static validation:** `resmate workflow validate` checks that any non-terminal stage with `transitions` has an exhaustive fallback — either a legacy `next` field or a transition whose `when` is trivially always-true (`all: []`).
+**Static validation:** `vgen workflow validate` checks that any non-terminal stage with `transitions` has an exhaustive fallback — either a legacy `next` field or a transition whose `when` is trivially always-true (`all: []`).
 
 **Runtime behavior (`no_matching_transition`):** If validation was bypassed or instance state diverges from what authors expected, the engine **does not** throw. It halts auto-advance, writes a `no_matching_transition` audit entry, and leaves the instance on the current stage so the user or agent can correct inputs and retry.
 
@@ -426,7 +426,7 @@ At runtime, a separate safety net prevents infinite loops inside a single auto-a
 
 **Validation**
 
-Every key in a `reset` list must exist in `schema.fields`. `resmate workflow validate` rejects unknown keys with `WORKFLOW_SEMANTIC_INVALID` and a path like:
+Every key in a `reset` list must exist in `schema.fields`. `vgen workflow validate` rejects unknown keys with `WORKFLOW_SEMANTIC_INVALID` and a path like:
 
 ```text
 flow.stages[review_summary].transitions[1].reset[0]
@@ -503,7 +503,7 @@ Reference a gate from any `transitions[].when` (or from another gate's `when` to
 
 ##### Semantic Validation
 
-`resmate workflow validate` rejects gate authoring errors at load/push time with actionable paths:
+`vgen workflow validate` rejects gate authoring errors at load/push time with actionable paths:
 
 | Error | Cause | Typical error path |
 | :--- | :--- | :--- |
@@ -539,7 +539,7 @@ Rules:
 
 - Prefer **`requiredFromStage`** over blanket **`required: true`** for fields owned by skippable stages.
 - **Never set both** on the same field. If both are present, **`required: true` wins** and `requiredFromStage` is ignored.
-- `requiredFromStage` must reference an existing stage `id` in `flow.yaml` (validated by `resmate workflow validate`).
+- `requiredFromStage` must reference an existing stage `id` in `flow.yaml` (validated by `vgen workflow validate`).
 
 **Skip-branch example** — VIP fast-track bypasses `collect_line_items`; `expressReason` is required only on the express path:
 
@@ -1210,15 +1210,15 @@ Because workflow compilation applies structural validation against human forms, 
 
 - **Local Validation Only**:
   ```bash
-  resmate workflow validate purchase-requisition
+  vgen workflow validate purchase-requisition
   ```
 - **Push Workflow Definition (Smriti Append)**:
   ```bash
-  resmate workflow push purchase-requisition
+  vgen workflow push purchase-requisition
   ```
 - **Pull Workflow Definition**:
   ```bash
-  resmate workflow pull purchase-requisition
+  vgen workflow pull purchase-requisition
   ```
 
 ---
@@ -1233,7 +1233,7 @@ Before deploying or checking in a new workflow definition, ensure all verificati
 - [ ] **Validator Pass Rules**: Any stage with `doneWhen: validator_pass` has a corresponding matching validation hook or assistant rules.
 - [ ] **Save Tool Isolation**: Save tools only return `workflowPatch` payloads and **never** attempt to issue `advanceStage` parameters or mutate stage indices.
 - [ ] **Security & PHI**: All sensitive medical, personal, or financial parameters are tagged with `phi: true` or `redactInPrompt: true`.
-- [ ] **Local CLI Mock Validation**: Run `resmate doctor` and `resmate workflow validate <name>` with zero validation errors.
+- [ ] **Local CLI Mock Validation**: Run `vgen doctor` and `vgen workflow validate <name>` with zero validation errors.
 - [ ] **Transition Exhaustiveness**: Every non-terminal stage with `transitions` has either a legacy `next` fallback or a catch-all rule (`when: { all: [] }`).
 - [ ] **Transition Targets**: Every `transitions[].target` references an existing stage `id`; no dangling targets.
 - [ ] **Condition Field Paths**: `present`, `absent`, and `eq.field` paths resolve to keys declared in `schema.yaml` (use `inputs.<key>` or `artifacts.<key>` for clarity).

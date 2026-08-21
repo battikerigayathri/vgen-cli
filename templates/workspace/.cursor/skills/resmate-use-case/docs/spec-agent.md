@@ -12,7 +12,7 @@ Every ResMate agent is defined in a single YAML file named `agents/<agent-slug>.
 
 | Field | Type | Required | Description |
 | :--- | :--- | :--- | :--- |
-| `id` | `string` | After first push | Stable MongoDB identifier for the agent. Leave empty or omit during initial creation; the platform populates this on the first `resmate agent push`. |
+| `id` | `string` | After first push | Stable MongoDB identifier for the agent. Leave empty or omit during initial creation; the platform populates this on the first `vgen agent push`. |
 | `name` | `string` | Yes | Display name of the agent. Used by the orchestrator v4 enum to identify and route to the agent. |
 | `slug` | `string` | Yes | Stable, unique slug identifier. Used in composite `tool_id` generation at runtime. |
 | `description` | `string` | Yes | Short description of the agent's domain and responsibilities, exposed to the assistant planner. |
@@ -107,7 +107,7 @@ A common anti-pattern is duplicating the assistant's routing table inside the ag
 To push an agent definition to the platform, run the following command from the workspace root:
 
 ```bash
-resmate agent push <agent-folder-name>
+vgen agent push <agent-folder-name>
 ```
 
 *Note: Tool IDs referenced in the `skills` array must exist on the platform before pushing the agent.*

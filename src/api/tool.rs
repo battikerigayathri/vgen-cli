@@ -21,7 +21,7 @@ fn extract_id_from_response(body: &Value) -> Option<String> {
 /// POST /tool/create with JSON body. Returns the created tool id from the response.
 pub async fn create_tool(body: &Value) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
     let cfg = config::load_config().map_err(|e| e.to_string())?;
-    let api_key = cfg.api_key.as_deref().ok_or("RESMATE_API_KEY is not set")?;
+    let api_key = cfg.api_key.as_deref().ok_or("VGEN_API_KEY is not set")?;
     let base = cfg.base_url.trim_end_matches('/');
     let url = format!("{}/tool/create", base);
 
@@ -57,7 +57,7 @@ pub async fn update_tool(body: &Value) -> Result<String, Box<dyn std::error::Err
         });
 
     let cfg = config::load_config().map_err(|e| e.to_string())?;
-    let api_key = cfg.api_key.as_deref().ok_or("RESMATE_API_KEY is not set")?;
+    let api_key = cfg.api_key.as_deref().ok_or("VGEN_API_KEY is not set")?;
     let base = cfg.base_url.trim_end_matches('/');
     let url = format!("{}/tool/update", base);
 
@@ -86,7 +86,7 @@ pub async fn test_faas_tool(
     payload: &Value,
 ) -> Result<Value, Box<dyn std::error::Error + Send + Sync>> {
     let cfg = config::load_config().map_err(|e| e.to_string())?;
-    let api_key = cfg.api_key.as_deref().ok_or("RESMATE_API_KEY is not set")?;
+    let api_key = cfg.api_key.as_deref().ok_or("VGEN_API_KEY is not set")?;
     let base = cfg.base_url.trim_end_matches('/');
     let url = format!("{}/execute-function", base);
 
@@ -135,7 +135,7 @@ pub async fn test_js_tool(
     session_id: Option<String>,
 ) -> Result<Value, Box<dyn std::error::Error + Send + Sync>> {
     let cfg = config::load_config().map_err(|e| e.to_string())?;
-    let api_key = cfg.api_key.as_deref().ok_or("RESMATE_API_KEY is not set")?;
+    let api_key = cfg.api_key.as_deref().ok_or("VGEN_API_KEY is not set")?;
     let base = cfg.base_url.trim_end_matches('/');
     let url = format!("{}/debug/execute-javascript", base);
 
@@ -176,7 +176,7 @@ pub async fn test_faas_tool_local(
     session_id: Option<String>,
 ) -> Result<Value, Box<dyn std::error::Error + Send + Sync>> {
     let cfg = config::load_config().map_err(|e| e.to_string())?;
-    let api_key = cfg.api_key.as_deref().ok_or("RESMATE_API_KEY is not set")?;
+    let api_key = cfg.api_key.as_deref().ok_or("VGEN_API_KEY is not set")?;
     let base = cfg.base_url.trim_end_matches('/');
     let url = format!("{}/debug/execute-faas", base);
 
@@ -212,7 +212,7 @@ pub async fn test_tool_execute_skill_override(
     session_id: Option<String>,
 ) -> Result<Value, Box<dyn std::error::Error + Send + Sync>> {
     let cfg = config::load_config().map_err(|e| e.to_string())?;
-    let api_key = cfg.api_key.as_deref().ok_or("RESMATE_API_KEY is not set")?;
+    let api_key = cfg.api_key.as_deref().ok_or("VGEN_API_KEY is not set")?;
     let base = cfg.base_url.trim_end_matches('/');
     let url = format!("{}/debug/execute-skill", base);
 

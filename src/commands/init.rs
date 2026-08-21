@@ -127,13 +127,13 @@ pub fn kit_error_message(err: KitError) -> String {
 ///
 /// Used by both the CLI and the MCP `init_workspace` tool so wording stays
 /// identical. Lists offenders and explains the `--force` escape hatch plus the
-/// `resmate kit update` path for refreshing existing use-case repos.
+/// `vgen kit update` path for refreshing existing use-case repos.
 pub fn init_refused_message(offenders: &[String]) -> String {
     format!(
         "Directory is not init-safe: it must be empty or contain only allowlisted entries ({}). \
          Offending top-level entries: {}. \
          Pass --force to bootstrap-overwrite kit/seed files (never deletes live artifacts). \
-         To refresh an existing use-case repo, prefer `resmate kit update`.",
+         To refresh an existing use-case repo, prefer `vgen kit update`.",
         INIT_SAFE_TOP_LEVEL.join(", "),
         offenders.join(", ")
     )

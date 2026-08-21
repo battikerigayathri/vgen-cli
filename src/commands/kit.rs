@@ -28,7 +28,7 @@ pub fn run_kit_update(ctx: &CliContext, examples: bool, dry_run: bool) -> ExitCo
             ctx,
             "NOT_A_WORKSPACE",
             format!(
-                "{} not found in {}. Run `resmate init` first to bootstrap a workspace.",
+                "{} not found in {}. Run `vgen init` first to bootstrap a workspace.",
                 MANIFEST_FILE,
                 root.display()
             ),

@@ -1,4 +1,4 @@
-use resmate::output::{Envelope, ErrorBody, WarningBody};
+use vgen::output::{Envelope, ErrorBody, WarningBody};
 
 #[test]
 fn envelope_success_round_trip() {
@@ -38,7 +38,7 @@ fn envelope_error_round_trip() {
         }),
         warnings: vec![WarningBody {
             code: "JWT_SECRET_MISSING".to_string(),
-            message: "RESMATE_SECRET not set".to_string(),
+            message: "VGEN_SECRET not set".to_string(),
         }],
     };
 

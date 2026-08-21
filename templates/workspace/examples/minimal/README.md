@@ -25,8 +25,8 @@ For HITL + FAAS see [jira/walkthrough.md](../jira/walkthrough.md).
 2. Push from **workspace root**:
 
 ```bash
-resmate config validate
-resmate tool push greet
+vgen config validate
+vgen tool push greet
 # add tool id to agent skills, then agent push, etc.
 ```
 
@@ -36,7 +36,7 @@ See [cli/setup.md](../../cli/setup.md) and [cli/authoring-checklist.md](../../cl
 
 ```bash
 cd examples/minimal
-resmate config validate
+vgen config validate
 ```
 
 ## Related

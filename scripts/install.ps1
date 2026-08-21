@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-  Install resmate and resmate-mcp from an extracted release archive (Windows).
+  Install vgen and vgen-mcp from an extracted release archive (Windows).
 
 .PARAMETER Scope
   User (default) or Machine. Machine requires an elevated PowerShell session.
@@ -24,12 +24,12 @@ param(
 $ErrorActionPreference = 'Stop'
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$ResmateExe = Join-Path $ScriptDir 'bin\resmate.exe'
-$McpExe = Join-Path $ScriptDir 'bin\resmate-mcp.exe'
-$SourceTemplates = Join-Path $ScriptDir 'share\resmate\templates'
+$ResmateExe = Join-Path $ScriptDir 'bin\vgen.exe'
+$McpExe = Join-Path $ScriptDir 'bin\vgen-mcp.exe'
+$SourceTemplates = Join-Path $ScriptDir 'share\vgen\templates'
 
 if (-not (Test-Path $ResmateExe)) {
-    Write-Error "Run install.ps1 from the extracted release root (expected .\bin\resmate.exe)."
+    Write-Error "Run install.ps1 from the extracted release root (expected .\bin\vgen.exe)."
 }
 
 if ([string]::IsNullOrWhiteSpace($InstallDir)) {
@@ -79,13 +79,13 @@ Invoke-InstallStep {
     Copy-Item -Path $ResmateExe, $McpExe -Destination $BinDir -Force
 } 'copy binaries'
 
-$InstalledResmate = Join-Path $BinDir 'resmate.exe'
-$InstalledMcp = Join-Path $BinDir 'resmate-mcp.exe'
+$InstalledResmate = Join-Path $BinDir 'vgen.exe'
+$InstalledMcp = Join-Path $BinDir 'vgen-mcp.exe'
 Unblock-ReleaseFile $InstalledResmate
 Unblock-ReleaseFile $InstalledMcp
 
 if (-not (Test-Path $SourceTemplates)) {
-    Write-Error "Release bundle missing share\resmate\templates\"
+    Write-Error "Release bundle missing share\vgen\templates\"
 }
 
 Invoke-InstallStep {
@@ -95,7 +95,7 @@ Invoke-InstallStep {
 $checks = @(
     (Join-Path $TemplateDir 'workspace'),
     (Join-Path $TemplateDir 'recipes'),
-    (Join-Path $TemplateDir 'seed\resmate.yaml.tmpl')
+    (Join-Path $TemplateDir 'seed\vgen.yaml.tmpl')
 )
 foreach ($path in $checks) {
     if (-not (Test-Path $path)) {
@@ -104,8 +104,8 @@ foreach ($path in $checks) {
 }
 
 Invoke-InstallStep {
-    [Environment]::SetEnvironmentVariable('RESMATE_TEMPLATES_DIR', $TemplateDir, $Scope)
-} "set RESMATE_TEMPLATES_DIR ($Scope)"
+    [Environment]::SetEnvironmentVariable('VGEN_TEMPLATES_DIR', $TemplateDir, $Scope)
+} "set VGEN_TEMPLATES_DIR ($Scope)"
 
 Invoke-InstallStep {
     $pathName = [Environment]::GetEnvironmentVariable('Path', $Scope)
@@ -123,12 +123,12 @@ ResMate installed successfully.
 
 Next steps:
   1. Open a NEW terminal (PATH / env vars refresh)
-  2. Verify:  resmate --help
+  2. Verify:  vgen --help
   3. Bootstrap:
        mkdir $HOME\my-use-case; cd $HOME\my-use-case
-       resmate init --name my-use-case
+       vgen init --name my-use-case
 
-MCP binary: $(Join-Path $BinDir 'resmate-mcp.exe')
+MCP binary: $(Join-Path $BinDir 'vgen-mcp.exe')
 See docs\QUICKSTART.md and docs\mcp-setup-snippet.json in this archive.
 
 "@

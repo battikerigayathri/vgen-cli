@@ -1,12 +1,12 @@
 # ResMate Use Case Workspace
 
-Welcome to your ResMate Use Case Workspace! This workspace has been initialized using `resmate init`.
+Welcome to your ResMate Use Case Workspace! This workspace has been initialized using `vgen init`.
 
 ## 🚀 Getting Started
 
 The developer and agent knowledge base for this workspace is fully consolidated under the Cursor Agent Skill directory to keep the workspace root clean and prevent context window exhaustion.
 
-### ➡️ [Open the Master Router & Index (.cursor/skills/resmate-use-case/SKILL.md)](.cursor/skills/resmate-use-case/SKILL.md)
+### ➡️ [Open the Master Router & Index (.cursor/skills/vgen-use-case/SKILL.md)](.cursor/skills/vgen-use-case/SKILL.md)
 
 Please open the main skill file above, which serves as the entry point and decision guide for both human developers and AI coding agents.
 
@@ -25,9 +25,9 @@ Please open the main skill file above, which serves as the entry point and decis
 Run all commands from this workspace root:
 
 ```bash
-resmate doctor                    # Diagnose environment and API connectivity
-resmate graph                     # Visualize assistant and agent routing topology
-resmate validate                  # Validate all local YAML and handler schemas
-resmate push-all --dry-run        # Show local vs. remote field delta before pushing
-resmate push-all --yes            # Batch push all resources to the platform
+vgen doctor                    # Diagnose environment and API connectivity
+vgen graph                     # Visualize assistant and agent routing topology
+vgen validate                  # Validate all local YAML and handler schemas
+vgen push-all --dry-run        # Show local vs. remote field delta before pushing
+vgen push-all --yes            # Batch push all resources to the platform
 ```

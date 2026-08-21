@@ -3,10 +3,10 @@ use std::collections::HashMap;
 use std::env;
 use std::path::PathBuf;
 
-const ENV_IDS_FILE: &str = "RESMATE_IDS_FILE";
+const ENV_IDS_FILE: &str = "VGEN_IDS_FILE";
 
 fn default_ids_path() -> Option<PathBuf> {
-    dirs::home_dir().map(|h| h.join(".resmate").join("ids.yaml"))
+    dirs::home_dir().map(|h| h.join(".vgen").join("ids.yaml"))
 }
 
 pub fn ids_file_path() -> Option<PathBuf> {

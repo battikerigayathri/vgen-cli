@@ -1,10 +1,10 @@
-# resmate.yaml manifest
+# vgen.yaml manifest
 
 Optional workspace manifest at the repository root.
 
 ## Precedence
 
-**Environment variables (`RESMATE_*_DIR`) override manifest paths.** Manifest overrides default directory names.
+**Environment variables (`VGEN_*_DIR`) override manifest paths.** Manifest overrides default directory names.
 
 ## Schema (version 1)
 
@@ -43,14 +43,14 @@ platform:
 
 ## Discovery
 
-`workspace info` reports `manifest.present` and `manifest.name` when `resmate.yaml` exists. A directory with only `resmate.yaml` (no artifacts yet) is treated as a workspace root after `resmate init`.
+`workspace info` reports `manifest.present` and `manifest.name` when `vgen.yaml` exists. A directory with only `vgen.yaml` (no artifacts yet) is treated as a workspace root after `vgen init`.
 
 ## Commands
 
 ```bash
-resmate init --name my-project --description "My use case"
-resmate scaffold oracle-pr --name oracle-pr
-resmate --json workspace info | jq '.data.manifest'
+vgen init --name my-project --description "My use case"
+vgen scaffold oracle-pr --name oracle-pr
+vgen --json workspace info | jq '.data.manifest'
 ```
 
 `init` targets an **empty or allowlisted** directory (allowlist: `.git`, `.gitignore`, `README.md`, `.DS_Store`); use `--force` to bootstrap-overwrite kit/seed files in a non-init-safe directory (never deletes live artifacts).

@@ -1,6 +1,6 @@
 //! Integration tests for workspace detection against a real use-case tree.
 
-use resmate::workspace::Workspace;
+use vgen::workspace::Workspace;
 use std::path::PathBuf;
 use std::sync::{Mutex, OnceLock};
 
@@ -58,7 +58,7 @@ fn detect_pr_agent_v2_from_subdirectory() {
 }
 
 #[test]
-fn honors_resmate_tools_dir_override_for_pr_agent_v2() {
+fn honors_vgen_tools_dir_override_for_pr_agent_v2() {
     let _guard = env_test_lock();
     let root = pr_agent_v2_root();
     if !root.is_dir() {
@@ -67,7 +67,7 @@ fn honors_resmate_tools_dir_override_for_pr_agent_v2() {
     }
 
     let custom_tools = root.join("tools");
-    std::env::set_var("RESMATE_TOOLS_DIR", &custom_tools);
+    std::env::set_var("VGEN_TOOLS_DIR", &custom_tools);
 
     let ws = Workspace::detect(&root).expect("detect with tools override");
     assert_eq!(ws.tools_dir, custom_tools);
@@ -76,5 +76,5 @@ fn honors_resmate_tools_dir_override_for_pr_agent_v2() {
     assert!(info.env.tools_dir.set);
     assert!(info.counts.tools >= 3);
 
-    std::env::remove_var("RESMATE_TOOLS_DIR");
+    std::env::remove_var("VGEN_TOOLS_DIR");
 }

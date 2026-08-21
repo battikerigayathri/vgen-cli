@@ -1,8 +1,8 @@
 //! Integration tests for push plan against pr-agent-v2 and minimal fixtures.
 
-use resmate::push_plan::{build_push_plan, PushAction, ResourceType};
-use resmate::validate::{run_workspace_validation, ValidateOptions};
-use resmate::workspace::Workspace;
+use vgen::push_plan::{build_push_plan, PushAction, ResourceType};
+use vgen::validate::{run_workspace_validation, ValidateOptions};
+use vgen::workspace::Workspace;
 use std::path::PathBuf;
 
 fn pr_agent_v2_root() -> PathBuf {
@@ -86,7 +86,7 @@ fn pr_agent_v2_assistant_filter_matches_full_plan() {
 
 #[test]
 fn minimal_workspace_push_plan_orders_phases_alphabetically() {
-    let base = std::env::temp_dir().join(format!("resmate-push-plan-{}", uuid::Uuid::new_v4()));
+    let base = std::env::temp_dir().join(format!("vgen-push-plan-{}", uuid::Uuid::new_v4()));
     let _ = std::fs::remove_dir_all(&base);
     write_minimal_push_workspace(&base);
 

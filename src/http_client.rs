@@ -60,14 +60,14 @@ pub async fn validate_connection_result() -> Result<ValidateConnectionData, Vali
 
     let api_key = cfg.api_key.as_deref().ok_or_else(|| ValidateConnectionError {
         code: "CONFIG_MISSING_API_KEY",
-        message: "RESMATE_API_KEY is not set. Set it in the environment or in ~/.resmate/config.yaml (or path in RESMATE_CONFIG).".to_string(),
+        message: "VGEN_API_KEY is not set. Set it in the environment or in ~/.vgen/config.yaml (or path in VGEN_CONFIG).".to_string(),
         details: None,
     })?;
 
     if api_key.is_empty() {
         return Err(ValidateConnectionError {
             code: "CONFIG_MISSING_API_KEY",
-            message: "RESMATE_API_KEY is empty.".to_string(),
+            message: "VGEN_API_KEY is empty.".to_string(),
             details: None,
         });
     }
@@ -99,7 +99,7 @@ pub async fn validate_connection_result() -> Result<ValidateConnectionData, Vali
     if status.as_u16() == 401 {
         return Err(ValidateConnectionError {
             code: "CONNECTIVITY_FAILED",
-            message: "Invalid API key, JWT, or unauthorized (401). Check RESMATE_API_KEY and RESMATE_SECRET.".to_string(),
+            message: "Invalid API key, JWT, or unauthorized (401). Check VGEN_API_KEY and VGEN_SECRET.".to_string(),
             details: Some(serde_json::json!({ "url": url, "status": 401 })),
         });
     }

@@ -1,17 +1,17 @@
 # ResMate CLI `init` / Authoring-Kit Gaps — Developer Plan
 
 **Status:** Plan (investigation complete; implementation not started)  
-**Primary repo (only):** `resmed_resmate-cli` — `src/`, `templates/`, `docs/`, tests  
+**Primary repo (only):** `resmed_vgen-cli` — `src/`, `templates/`, `docs/`, tests  
 **Out of scope:** Changes in `teemo`, `pr-agent-v2`, `resmedai-core-framework`  
 **Audience:** CLI + authoring-kit implementers
 
-Existing use-case workspaces can refresh later via the new **`resmate kit update`** command (see Gap #8 / Phase 1); this plan does **not** list per-repo edits for those workspaces.
+Existing use-case workspaces can refresh later via the new **`vgen kit update`** command (see Gap #8 / Phase 1); this plan does **not** list per-repo edits for those workspaces.
 
 ---
 
 ## Summary / Why this matters
 
-Developers (and Cursor agents) bootstrap a use-case workspace with `resmate init`. That command is the on-ramp for skill, rules, examples, and seed manifest. Seven content/UX gaps share one root cause: init ships a **slim skill-centric kit**, while agents still need full ID lifecycle, SDK response contracts, and HITL resume semantics that are missing from the shipped skill docs.
+Developers (and Cursor agents) bootstrap a use-case workspace with `vgen init`. That command is the on-ramp for skill, rules, examples, and seed manifest. Seven content/UX gaps share one root cause: init ships a **slim skill-centric kit**, while agents still need full ID lifecycle, SDK response contracts, and HITL resume semantics that are missing from the shipped skill docs.
 
 An eighth gap: once a workspace already has live artifacts, authors need a **safe way to refresh kit files** (skill, rules, AGENTS.md, examples) without a destructive re-init.
 
@@ -24,7 +24,7 @@ Until these are fixed:
 - Init emptiness messaging diverges from actual gate behavior.
 - Scaffolded repos cannot pick up kit improvements without risky `init --force` (or manual copy).
 
-This plan phases fixes entirely inside **`resmed_resmate-cli`**: quick CLI polish → kit-update command → thicken skill docs (P0 content) → SDK/HITL cookbooks → optional fuller-kit packaging decision.
+This plan phases fixes entirely inside **`resmed_vgen-cli`**: quick CLI polish → kit-update command → thicken skill docs (P0 content) → SDK/HITL cookbooks → optional fuller-kit packaging decision.
 
 ---
 
@@ -34,11 +34,11 @@ This plan phases fixes entirely inside **`resmed_resmate-cli`**: quick CLI polis
 
 | Source | What it says / does |
 |--------|---------------------|
-| **`templates/workspace/` (actual ship)** | Slim: `AGENTS.md`, `README.md`, `.cursor/skills/resmate-use-case/` (SKILL.md + 8 `docs/*.md`), `.cursor/rules/`, `examples/`. **No** top-level `platform/`, `cli/`, `tools/` KB trees. |
+| **`templates/workspace/` (actual ship)** | Slim: `AGENTS.md`, `README.md`, `.cursor/skills/vgen-use-case/` (SKILL.md + 8 `docs/*.md`), `.cursor/rules/`, `examples/`. **No** top-level `platform/`, `cli/`, `tools/` KB trees. |
 | **`docs/AUTHORING-KIT-ARCHITECTURE.md`** | Describes a **fuller** kit (`platform/`, `cli/`, layer KB folders) copied wholesale on init — **stale vs current templates**. |
-| **`docs/documentation-restructuring-plan.md`** | Intentional move to **skill-as-router** + `docs/` under `.cursor/skills/resmate-use-case/` (matches what ships today). |
+| **`docs/documentation-restructuring-plan.md`** | Intentional move to **skill-as-router** + `docs/` under `.cursor/skills/vgen-use-case/` (matches what ships today). |
 | **`scripts/sync-authoring-kit.sh`** | Maintainer rsync from core `cli-context/` → `templates/workspace/` (legacy fuller-tree sync). **Not** the day-to-day author path; do not treat as required for Phases 0–3. |
-| **`docs/QUICKSTART.md`** | Mentions future `resmate kit refresh` — aligns with Gap #8. |
+| **`docs/QUICKSTART.md`** | Mentions future `vgen kit refresh` — aligns with Gap #8. |
 
 ```mermaid
 flowchart TB
@@ -53,7 +53,7 @@ flowchart TB
     F[cli/]
     G[layer KB folders]
   end
-  ships -->|resmate init / kit update| WS[Use-case workspace]
+  ships -->|vgen init / kit update| WS[Use-case workspace]
   notShipped -.->|Phase 4 option only| ships
 ```
 
@@ -62,7 +62,7 @@ flowchart TB
 **Primary approach: thicken the shipped skill** under:
 
 ```text
-templates/workspace/.cursor/skills/resmate-use-case/
+templates/workspace/.cursor/skills/vgen-use-case/
 ├── SKILL.md                          # expand router index
 └── docs/
     ├── …existing 8 docs…
@@ -72,7 +72,7 @@ templates/workspace/.cursor/skills/resmate-use-case/
     └── hitl-resume-and-message-format.md  # NEW (Gap #7)
 ```
 
-Also update: `.cursor/rules/resmate-use-cases.mdc` (retarget broken `platform/` links → skill docs), `AGENTS.md` / `README.md` stubs if needed, and `examples/**` teaching samples.
+Also update: `.cursor/rules/vgen-use-cases.mdc` (retarget broken `platform/` links → skill docs), `AGENTS.md` / `README.md` stubs if needed, and `examples/**` teaching samples.
 
 | Decision | Phases 0–3 | Phase 4 |
 |----------|------------|---------|
@@ -96,15 +96,15 @@ Record the choice in Open product decisions before implementing Phase 4. Phases 
 
 ## Root cause (init kit slimdown)
 
-`resmate init` copies `templates/workspace/` into the target directory. Architecture docs still describe a fuller kit; the live template is skill-centric and missing the P0 cookbooks agents need. Agents fill gaps by inventing IDs and guessing SDK shapes.
+`vgen init` copies `templates/workspace/` into the target directory. Architecture docs still describe a fuller kit; the live template is skill-centric and missing the P0 cookbooks agents need. Agents fill gaps by inventing IDs and guessing SDK shapes.
 
 ```mermaid
 flowchart LR
-  subgraph init["resmate init"]
+  subgraph init["vgen init"]
     A[templates/workspace] --> B[AGENTS.md + thin SKILL]
     A --> C[8 spec docs]
     A --> D[examples/]
-    A --> E[seed resmate.yaml]
+    A --> E[seed vgen.yaml]
   end
   subgraph missing["Missing from skill docs"]
     G[id-lifecycle / push-pull-wire]
@@ -129,14 +129,14 @@ flowchart LR
 | 5 | Push/pull order + ID wiring | Skill mentions order; under-documents push→write-back→wire→re-push; `push-all` does not auto-wire | Canonical **HITL → Workflow → Tool → Agent → Assistant** in skill `push-pull-wire.md` | **P0** |
 | 6 | Skill missing FaaS/JS/SDK response formats | Examples/gold samples often use `result.data[0]`; secrets paths inconsistent | Ship `sdk-response-patterns.md`; fix examples + `spec-tool.md` gold templates | **P0** |
 | 7 | HITL resume as chat message | Not documented in init skill; agents invent APIs | Document frontend resume message contract in skill `hitl-resume-and-message-format.md` | High |
-| 8 | Refresh kit in an existing use-case repo | No dedicated command; `init --force` can refresh kit but will conflict with a stricter emptiness gate; manual copy is brittle | Dedicated **`resmate kit update`** that refreshes kit files only, never touches live artifacts | **P0** (UX) |
+| 8 | Refresh kit in an existing use-case repo | No dedicated command; `init --force` can refresh kit but will conflict with a stricter emptiness gate; manual copy is brittle | Dedicated **`vgen kit update`** that refreshes kit files only, never touches live artifacts | **P0** (UX) |
 
 ---
 
 ## Phase 0 — Quick CLI fixes
 
 **Goal:** Align init UX with docs; fix timestamp; clarify description.  
-**Repo:** `resmed_resmate-cli` only.
+**Repo:** `resmed_vgen-cli` only.
 
 ### 0.1 Emptiness policy (product decision required — see Open decisions)
 
@@ -155,7 +155,7 @@ flowchart LR
 3. Wire into `run_init` + `tool_init` with identical semantics.
 4. Redefine messaging:
    - Default refuse → clear error listing offending paths.
-   - `--force` on **init** → still means “overwrite kit/seed in this init path,” but prefer directing existing workspaces to **`resmate kit update`** (Phase 1) once that exists.
+   - `--force` on **init** → still means “overwrite kit/seed in this init path,” but prefer directing existing workspaces to **`vgen kit update`** (Phase 1) once that exists.
 5. Update docs that claim “empty workspace” (CLI help, `docs/agent-authoring-guide.md`, skill `cli-commands.md`).
 
 **Tests:** extend `tests/init_authoring_kit_test.rs` for allowlist / refuse / force cases.
@@ -165,7 +165,7 @@ flowchart LR
 | File | Change |
 |------|--------|
 | `src/kit/copy.rs` | Replace `iso8601_now()` unix-seconds with `chrono::Utc::now().to_rfc3339()` (or equivalent) |
-| `templates/seed/resmate.yaml.tmpl` | No structural change; value becomes real ISO-8601 |
+| `templates/seed/vgen.yaml.tmpl` | No structural change; value becomes real ISO-8601 |
 | Tests | Assert `initialized_at` matches RFC3339 regex |
 
 `chrono = "0.4"` is already a dependency — no new crates.
@@ -175,20 +175,20 @@ flowchart LR
 | Work | Detail |
 |------|--------|
 | Docs | State that default description is `ResMate use case workspace`; not required at init |
-| Optional enhancement | CLI `--description <text>`; seed var `{{description}}` in `templates/seed/resmate.yaml.tmpl`; plumb through `InitOptions` + MCP `tool_init` |
+| Optional enhancement | CLI `--description <text>`; seed var `{{description}}` in `templates/seed/vgen.yaml.tmpl`; plumb through `InitOptions` + MCP `tool_init` |
 
 Ship docs first; flag is nice-to-have in the same PR if cheap.
 
 ### Phase 0 exit criteria
 
 - [ ] Init gate matches documented emptiness policy (CLI + MCP identical).
-- [ ] `resmate.yaml` `initialized_at` is RFC3339.
+- [ ] `vgen.yaml` `initialized_at` is RFC3339.
 - [ ] Description default documented; optional flag either implemented or explicitly deferred.
 - [ ] Unit/integration tests green for init gate + timestamp.
 
 ---
 
-## Phase 1 — `resmate kit update` (refresh kit in existing repos)
+## Phase 1 — `vgen kit update` (refresh kit in existing repos)
 
 **Goal:** Authors with an already-scaffolded use case can refresh template kit files from the current CLI without re-running a destructive full init, and without touching live artifacts.
 
@@ -196,10 +196,10 @@ Ship docs first; flag is nice-to-have in the same PR if cheap.
 
 | Choice | Name | Rationale |
 |--------|------|-----------|
-| **Primary** | `resmate kit update` | Dedicated surface; does **not** share init’s emptiness gate; clear UX for “my repo already exists.” Matches QUICKSTART’s planned `kit refresh` naming (prefer `update` as the verb). |
-| **Not primary** | `resmate init --refresh-kit` | Would still sit under init’s emptiness / “new workspace” mental model; easy to confuse with seed rewrite. |
+| **Primary** | `vgen kit update` | Dedicated surface; does **not** share init’s emptiness gate; clear UX for “my repo already exists.” Matches QUICKSTART’s planned `kit refresh` naming (prefer `update` as the verb). |
+| **Not primary** | `vgen init --refresh-kit` | Would still sit under init’s emptiness / “new workspace” mental model; easy to confuse with seed rewrite. |
 
-Optional alias: `resmate kit refresh` → same as `update` (document one as canonical).
+Optional alias: `vgen kit refresh` → same as `update` (document one as canonical).
 
 ### Behavior
 
@@ -220,19 +220,19 @@ Optional alias: `resmate kit refresh` → same as `update` (document one as cano
 - **`--examples`:** overwrite `examples/` only when flag set (examples are teaching samples; some authors customize them — opt-in reduces surprise).
 - **`--dry-run`:** list paths that would be written (highly recommended).
 - **Do not** require an interactive diff/prompt by default (agents need non-interactive); optional later `--prompt` if product wants it.
-- Update `resmate.yaml` `kit_version` when present (or document if left unchanged).
+- Update `vgen.yaml` `kit_version` when present (or document if left unchanged).
 
-### Relationship to `resmate init --force`
+### Relationship to `vgen init --force`
 
-| | `resmate init` / `--force` | `resmate kit update` |
+| | `vgen init` / `--force` | `vgen kit update` |
 |--|---------------------------|----------------------|
 | Intended for | New (or nearly empty) workspace bootstrap | Existing use-case repo |
-| Emptiness / live-artifact gate | Yes (Phase 0 policy) | **No** emptiness gate; may refuse only if not a ResMate workspace (e.g. missing `resmate.yaml` — product choice) |
-| Seed (`resmate.yaml`, `.gitignore`) | Writes/overwrites seed on init | **Do not** rewrite seed by default (optional `--seed` later if needed) |
+| Emptiness / live-artifact gate | Yes (Phase 0 policy) | **No** emptiness gate; may refuse only if not a ResMate workspace (e.g. missing `vgen.yaml` — product choice) |
+| Seed (`vgen.yaml`, `.gitignore`) | Writes/overwrites seed on init | **Do not** rewrite seed by default (optional `--seed` later if needed) |
 | Live artifacts | Never deleted | Never deleted / overwritten |
 | MCP | `tool_init` | Add `tool_kit_update` (or equivalent) with same semantics |
 
-After Phase 0+1: docs should say **prefer `resmate kit update`** for refreshing kit in existing repos; keep `init --force` for bootstrap edge cases only.
+After Phase 0+1: docs should say **prefer `vgen kit update`** for refreshing kit in existing repos; keep `init --force` for bootstrap edge cases only.
 
 ### Concrete edits (CLI repo)
 
@@ -248,7 +248,7 @@ After Phase 0+1: docs should say **prefer `resmate kit update`** for refreshing 
 
 ### Phase 1 exit criteria
 
-- [ ] `resmate kit update` refreshes skill/rules/AGENTS from templates without modifying live artifact dirs.
+- [ ] `vgen kit update` refreshes skill/rules/AGENTS from templates without modifying live artifact dirs.
 - [ ] Default overwrite of kit files; `--examples` opt-in; `--dry-run` works.
 - [ ] MCP parity for kit update.
 - [ ] Docs distinguish init vs kit update; QUICKSTART no longer says “Future: kit refresh” only.
@@ -258,8 +258,8 @@ After Phase 0+1: docs should say **prefer `resmate kit update`** for refreshing 
 
 ## Phase 2 — Agent P0 context (ID lifecycle + push/wire)
 
-**Goal:** After `resmate init` (or `kit update`), an agent’s first read of SKILL.md makes inventing Mongo IDs impossible to miss; push order and wiring are explicit.  
-**Landing:** skill docs under `templates/workspace/.cursor/skills/resmate-use-case/` only.
+**Goal:** After `vgen init` (or `kit update`), an agent’s first read of SKILL.md makes inventing Mongo IDs impossible to miss; push order and wiring are explicit.  
+**Landing:** skill docs under `templates/workspace/.cursor/skills/vgen-use-case/` only.
 
 ### Correct policy (canonical)
 
@@ -281,12 +281,12 @@ HITL → Workflow → Tool → Agent → Assistant
 | Tool → Agent (`skills[]`) | **Mongo id** from tool YAML after push |
 | Agent → Assistant (`agents[]`) | **Mongo id** from agent YAML after push |
 
-`resmate push-all` orders by phase but **does not** auto-wire IDs into dependents. Authors (or agents) must wire after write-back.
+`vgen push-all` orders by phase but **does not** auto-wire IDs into dependents. Authors (or agents) must wire after write-back.
 
 ```mermaid
 sequenceDiagram
   participant Dev
-  participant CLI as resmate CLI
+  participant CLI as vgen CLI
   participant Cloud
   Dev->>CLI: hitl push (no id)
   CLI->>Cloud: create
@@ -302,15 +302,15 @@ sequenceDiagram
   Dev->>CLI: assistant push
 ```
 
-### Concrete edits (all under `resmed_resmate-cli`)
+### Concrete edits (all under `resmed_vgen-cli`)
 
 | Path | Change |
 |------|--------|
-| `templates/workspace/.cursor/skills/resmate-use-case/SKILL.md` | New router rows + short **ID lifecycle (never invent)** + **Push → write-back → wire → re-push** |
+| `templates/workspace/.cursor/skills/vgen-use-case/SKILL.md` | New router rows + short **ID lifecycle (never invent)** + **Push → write-back → wire → re-push** |
 | `…/docs/id-lifecycle.md` | **NEW** — omit → push → write-back → never invent; anti-patterns |
 | `…/docs/push-pull-wire.md` | **NEW** — phase_order, binding rules (slug vs Mongo id), `push-all` does not auto-wire |
 | `…/docs/cli-commands.md` | Expand push/pull with write-back + wiring; link to above |
-| `templates/workspace/.cursor/rules/resmate-use-cases.mdc` | Retarget broken `platform/` links → skill docs (do **not** restore `platform/` in Phases 0–3) |
+| `templates/workspace/.cursor/rules/vgen-use-cases.mdc` | Retarget broken `platform/` links → skill docs (do **not** restore `platform/` in Phases 0–3) |
 | `templates/workspace/AGENTS.md` | Keep stub; ensure push order / ID line points at skill |
 | `templates/workspace/examples/**` | Strip invented/hardcoded Mongo IDs from YAML used as copy-paste templates (or clearly mark as “pulled snapshot — do not copy ids”) |
 
@@ -321,7 +321,7 @@ Content may be **adapted from** known-good narratives elsewhere (e.g. historical
 - [ ] Fresh init workspace: SKILL.md + `id-lifecycle.md` / `push-pull-wire.md` state omit→push→wire→re-push and never invent.
 - [ ] Rule file has no dangling `platform/` / `cli/` links (retargeted to skill docs).
 - [ ] Spot-check: agent following skill alone would not invent an ObjectId.
-- [ ] `resmate kit update` would deliver these docs to an existing scaffolded repo.
+- [ ] `vgen kit update` would deliver these docs to an existing scaffolded repo.
 
 ---
 
@@ -362,7 +362,7 @@ sequenceDiagram
 
 | Path | Change |
 |------|--------|
-| `templates/workspace/.cursor/skills/resmate-use-case/docs/sdk-response-patterns.md` | **NEW** — queryRecords / HITL config, JS vs FaaS secrets, error shapes, anti-patterns |
+| `templates/workspace/.cursor/skills/vgen-use-case/docs/sdk-response-patterns.md` | **NEW** — queryRecords / HITL config, JS vs FaaS secrets, error shapes, anti-patterns |
 | `…/docs/hitl-resume-and-message-format.md` | **NEW** — resume as chat message; parse rules; anti-pattern “call resume API” |
 | `…/docs/spec-tool.md` | Fix gold handler snippets to match cookbook |
 | `…/SKILL.md` | Index rows → both new docs |
@@ -423,7 +423,7 @@ Do **not** block Phases 0–4 on these.
 ### Phase 5 exit criteria
 
 - [ ] Explicit product go/no-go for any CLI-side hardening.
-- [ ] If go: implement only inside `resmed_resmate-cli` (or explicitly defer cross-repo work outside this plan).
+- [ ] If go: implement only inside `resmed_vgen-cli` (or explicitly defer cross-repo work outside this plan).
 
 ---
 
@@ -432,7 +432,7 @@ Do **not** block Phases 0–4 on these.
 | Phase | Done when |
 |-------|-----------|
 | **0** | Emptiness policy + RFC3339 timestamp (+ description docs/flag); CLI/MCP parity; tests pass |
-| **1** | `resmate kit update` (+ MCP) refreshes kit safely; docs distinguish from init `--force` |
+| **1** | `vgen kit update` (+ MCP) refreshes kit safely; docs distinguish from init `--force` |
 | **2** | ID lifecycle + push/wire in skill docs; no invent-ID teaching; rule links retargeted |
 | **3** | SDK + HITL resume cookbooks shipped; examples + `spec-tool.md` gold paths correct |
 | **4** | Slim vs pack-fuller decision recorded; CLI docs match shipped kit |
@@ -440,13 +440,13 @@ Do **not** block Phases 0–4 on these.
 
 ---
 
-## File change checklist (`resmed_resmate-cli` only)
+## File change checklist (`resmed_vgen-cli` only)
 
 ### CLI code
 
 - [ ] `src/kit/copy.rs` — emptiness helper; RFC3339 `initialized_at`; shared kit-copy helpers for init + kit update
 - [ ] `src/commands/init.rs` — new gate; optional `--description`; messaging points existing repos to kit update
-- [ ] `src/commands/kit.rs` (or `kit_update.rs`) — **`resmate kit update`**
+- [ ] `src/commands/kit.rs` (or `kit_update.rs`) — **`vgen kit update`**
 - [ ] `src/mcp/dispatch.rs` — `tool_init` parity + `tool_kit_update` (or equivalent)
 - [ ] `src/cli/mod.rs` — `kit update` subcommand; help for init emptiness / `--force` / description
 - [ ] `tests/init_authoring_kit_test.rs` — gate + timestamp (+ description)
@@ -454,15 +454,15 @@ Do **not** block Phases 0–4 on these.
 
 ### Seed / templates (where content lands)
 
-- [ ] `templates/seed/resmate.yaml.tmpl` — `{{description}}` if flag added
-- [ ] `templates/workspace/.cursor/skills/resmate-use-case/SKILL.md` — router + P0 pointers
-- [ ] `templates/workspace/.cursor/skills/resmate-use-case/docs/cli-commands.md` — push/wire + kit update
-- [ ] `templates/workspace/.cursor/skills/resmate-use-case/docs/spec-tool.md` — gold SDK paths
+- [ ] `templates/seed/vgen.yaml.tmpl` — `{{description}}` if flag added
+- [ ] `templates/workspace/.cursor/skills/vgen-use-case/SKILL.md` — router + P0 pointers
+- [ ] `templates/workspace/.cursor/skills/vgen-use-case/docs/cli-commands.md` — push/wire + kit update
+- [ ] `templates/workspace/.cursor/skills/vgen-use-case/docs/spec-tool.md` — gold SDK paths
 - [ ] **NEW** `…/docs/id-lifecycle.md`
 - [ ] **NEW** `…/docs/push-pull-wire.md`
 - [ ] **NEW** `…/docs/sdk-response-patterns.md`
 - [ ] **NEW** `…/docs/hitl-resume-and-message-format.md`
-- [ ] `templates/workspace/.cursor/rules/resmate-use-cases.mdc` — retarget links to skill docs
+- [ ] `templates/workspace/.cursor/rules/vgen-use-cases.mdc` — retarget links to skill docs
 - [ ] `templates/workspace/AGENTS.md` / `README.md` — stubs consistent with skill-centric kit
 - [ ] `templates/workspace/examples/**` — IDs + handler response paths + HITL resume samples
 
@@ -473,7 +473,7 @@ Do **not** block Phases 0–4 on these.
 - [ ] `docs/AUTHORING-KIT-ARCHITECTURE.md` — align with skill-centric reality (or Phase 4 Option B if chosen)
 - [ ] This plan’s Open decisions — check off when decided
 
-**Note:** Other workspaces (`teemo`, `pr-agent-v2`, …) are **not** checklist items. Authors refresh via `resmate kit update` after a CLI release that includes the thickened templates.
+**Note:** Other workspaces (`teemo`, `pr-agent-v2`, …) are **not** checklist items. Authors refresh via `vgen kit update` after a CLI release that includes the thickened templates.
 
 ---
 
@@ -517,10 +517,10 @@ Record decisions here before coding Phase 0 / 1 / 4.
 
 ## Implementation notes for agents
 
-1. Prefer editing **shipped** paths under `resmed_resmate-cli/templates/workspace/` — that is what `resmate init` and `resmate kit update` copy.
-2. Land P0 content in **skill docs** (`…/resmate-use-case/docs/…`), not by restoring full `platform/`/`cli/` unless Phase 4 Option B is chosen.
+1. Prefer editing **shipped** paths under `resmed_vgen-cli/templates/workspace/` — that is what `vgen init` and `vgen kit update` copy.
+2. Land P0 content in **skill docs** (`…/vgen-use-case/docs/…`), not by restoring full `platform/`/`cli/` unless Phase 4 Option B is chosen.
 3. Do not develop new use cases under `examples/`; when fixing examples, treat them as **teaching samples**, not live artifacts.
 4. Push order in any shipped AGENTS.md / skill must match `phase_order` in `src/push_plan.rs`.
 5. After kit template changes, bump or document `kit_version` if the repo’s release process requires it (`kit_version()` in kit load module).
-6. **Do not** open PRs against `teemo` / `pr-agent-v2` / `resmedai-core-framework` as part of this plan; kit consumers refresh via `resmate kit update`.
+6. **Do not** open PRs against `teemo` / `pr-agent-v2` / `resmedai-core-framework` as part of this plan; kit consumers refresh via `vgen kit update`.
 7. Do not commit from this plan doc alone — implement in follow-up PRs phased as above.

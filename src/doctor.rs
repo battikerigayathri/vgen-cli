@@ -68,7 +68,7 @@ pub async fn run_checks(start: &Path, offline: bool) -> DoctorReport {
                     format!("{} is set", ENV_API_KEY)
                 } else {
                     format!(
-                        "{} is not set. Set it in the environment or in ~/.resmate/config.yaml.",
+                        "{} is not set. Set it in the environment or in ~/.vgen/config.yaml.",
                         ENV_API_KEY
                     )
                 },
@@ -88,16 +88,16 @@ pub async fn run_checks(start: &Path, offline: bool) -> DoctorReport {
         }
     }
 
-    let jwt_ok = std::env::var("RESMATE_SECRET")
+    let jwt_ok = std::env::var("VGEN_SECRET")
         .map(|s| !s.is_empty())
         .unwrap_or(false);
     checks.push(CheckResult {
         id: "jwt_secret".to_string(),
         status: if jwt_ok { "pass" } else { "warn" }.to_string(),
         message: if jwt_ok {
-            "RESMATE_SECRET is set".to_string()
+            "VGEN_SECRET is set".to_string()
         } else {
-            "RESMATE_SECRET is not set; JWT auth may fail.".to_string()
+            "VGEN_SECRET is not set; JWT auth may fail.".to_string()
         },
     });
 

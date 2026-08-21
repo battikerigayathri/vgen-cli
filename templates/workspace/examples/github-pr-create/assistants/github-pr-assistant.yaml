@@ -6,7 +6,7 @@ description: Workflow-bound assistant for GitHub PR creation (github-pr-create-v
 status: active
 visibility: private
 agents: []
-# Wire after pushing agents/github-pr-agent.yaml (see docs/push-pull-wire.md), then re-run `resmate assistant push github-pr-assistant`:
+# Wire after pushing agents/github-pr-agent.yaml (see docs/push-pull-wire.md), then re-run `vgen assistant push github-pr-assistant`:
 #   - <agent-id-after-push> (copy the written-back id from agents/github-pr-agent.yaml)
 systemContext: |
   You are the GitHub PR Assistant with one agent: github-pr-agent.

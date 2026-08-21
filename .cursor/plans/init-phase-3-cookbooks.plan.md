@@ -3,25 +3,25 @@ name: Init Phase 3 — SDK / FaaS / HITL Cookbooks
 overview: Thicken the authoring kit with authoritative cookbooks and reference examples for SDK response patterns, secrets access, and HITL resume message contracts, ensuring developers and Cursor agents implement robust, bug-free runtime handlers.
 todos:
   - id: sdk-response-patterns-doc
-    content: "resmed_resmate-cli — Create templates/workspace/.cursor/skills/resmate-use-case/docs/sdk-response-patterns.md documenting queryRecords / HITL config, JS vs FaaS secrets, error shapes, anti-patterns, and the dual-unwrap pattern"
+    content: "resmed_vgen-cli — Create templates/workspace/.cursor/skills/vgen-use-case/docs/sdk-response-patterns.md documenting queryRecords / HITL config, JS vs FaaS secrets, error shapes, anti-patterns, and the dual-unwrap pattern"
     status: pending
   - id: hitl-resume-message-doc
-    content: "resmed_resmate-cli — Create templates/workspace/.cursor/skills/resmate-use-case/docs/hitl-resume-and-message-format.md documenting resume-as-chat-message, preamble text, key-value lines, context.input vs user_message, guardrails, and workflow save after submit"
+    content: "resmed_vgen-cli — Create templates/workspace/.cursor/skills/vgen-use-case/docs/hitl-resume-and-message-format.md documenting resume-as-chat-message, preamble text, key-value lines, context.input vs user_message, guardrails, and workflow save after submit"
     status: pending
   - id: spec-tool-doc-update
-    content: "resmed_resmate-cli — Fix gold handler snippets in templates/workspace/.cursor/skills/resmate-use-case/docs/spec-tool.md to match the cookbook"
+    content: "resmed_vgen-cli — Fix gold handler snippets in templates/workspace/.cursor/skills/vgen-use-case/docs/spec-tool.md to match the cookbook"
     status: pending
   - id: spec-workflow-doc-update
-    content: "resmed_resmate-cli — Fix fake queryRecords / hitlConfigs samples in templates/workspace/.cursor/skills/resmate-use-case/docs/spec-workflow.md"
+    content: "resmed_vgen-cli — Fix fake queryRecords / hitlConfigs samples in templates/workspace/.cursor/skills/vgen-use-case/docs/spec-workflow.md"
     status: pending
   - id: skill-index-update
-    content: "resmed_resmate-cli — Update templates/workspace/.cursor/skills/resmate-use-case/SKILL.md to index both new docs"
+    content: "resmed_vgen-cli — Update templates/workspace/.cursor/skills/vgen-use-case/SKILL.md to index both new docs"
     status: pending
   - id: examples-handler-fix
-    content: "resmed_resmate-cli — Fix HITL config + secrets access paths in templates/workspace/examples/**/handler.js to use correct nested patterns"
+    content: "resmed_vgen-cli — Fix HITL config + secrets access paths in templates/workspace/examples/**/handler.js to use correct nested patterns"
     status: pending
   - id: examples-walkthrough-update
-    content: "resmed_resmate-cli — Update walkthroughs under templates/workspace/examples/** to include sample resume messages and agent instructions"
+    content: "resmed_vgen-cli — Update walkthroughs under templates/workspace/examples/** to include sample resume messages and agent instructions"
     status: pending
 isProject: false
 ---
@@ -29,7 +29,7 @@ isProject: false
 # Phase 3 — SDK / FaaS / HITL Cookbooks
 
 **Status:** planned  
-**Repo (only):** `resmed_resmate-cli`  
+**Repo (only):** `resmed_vgen-cli`  
 **Parent plan:** `docs/INIT-AUTHORING-KIT-GAPS-PLAN.md` — Phase 3 / Gaps #6 & #7  
 **Do not implement:** Phase 4+ (fuller kit packaging, CLI binary changes, other repos)
 
@@ -45,11 +45,11 @@ Provide authoritative, high-fidelity cookbooks and reference examples within the
 
 | In scope (under `templates/workspace/`) | Out of scope |
 |-----------------------------------------|--------------|
-| `templates/workspace/.cursor/skills/resmate-use-case/docs/sdk-response-patterns.md` (NEW) | Changes in `teemo`, `pr-agent-v2`, `resmedai-core-framework` |
-| `templates/workspace/.cursor/skills/resmate-use-case/docs/hitl-resume-and-message-format.md` (NEW) | CLI binary or Rust code changes |
-| `templates/workspace/.cursor/skills/resmate-use-case/docs/spec-tool.md` (update snippets) | Phase 4+ (fuller kit packaging, Option B) |
-| `templates/workspace/.cursor/skills/resmate-use-case/docs/spec-workflow.md` (update snippets) | Phase 5 (CLI-side push-validation warnings) |
-| `templates/workspace/.cursor/skills/resmate-use-case/SKILL.md` (index updates) | |
+| `templates/workspace/.cursor/skills/vgen-use-case/docs/sdk-response-patterns.md` (NEW) | Changes in `teemo`, `pr-agent-v2`, `resmedai-core-framework` |
+| `templates/workspace/.cursor/skills/vgen-use-case/docs/hitl-resume-and-message-format.md` (NEW) | CLI binary or Rust code changes |
+| `templates/workspace/.cursor/skills/vgen-use-case/docs/spec-tool.md` (update snippets) | Phase 4+ (fuller kit packaging, Option B) |
+| `templates/workspace/.cursor/skills/vgen-use-case/docs/spec-workflow.md` (update snippets) | Phase 5 (CLI-side push-validation warnings) |
+| `templates/workspace/.cursor/skills/vgen-use-case/SKILL.md` (index updates) | |
 | `templates/workspace/examples/**/handler.js` (bug fixes) | |
 | `templates/workspace/examples/**/walkthrough.md` (walkthrough updates) | |
 
@@ -74,7 +74,7 @@ Do not re-open these unless implementation reveals a hard conflict.
 - `SKILL.md` does not list or index any SDK response pattern or HITL resume cookbooks.
 - No dedicated `sdk-response-patterns.md` or `hitl-resume-and-message-format.md` documents exist in the kit.
 - `spec-tool.md` contains outdated or inconsistent snippets regarding secrets and database queries.
-- `spec-workflow.md` contains fake, non-functional snippets using `require('resmate-polyfills')` and `module.exports = async function(context)` which violate the JS sandbox top-level execution model.
+- `spec-workflow.md` contains fake, non-functional snippets using `require('vgen-polyfills')` and `module.exports = async function(context)` which violate the JS sandbox top-level execution model.
 - Example handlers (e.g. `jira-read-issue-hitlconfig/handler.js`) contain bugs where they attempt to access `result.data` as a flat array of records rather than a nested 2D array, causing runtime failures.
 - Example walkthroughs (e.g. Jira and Purchase Requisition) describe the multi-turn flow but omit the exact format of the resume chat message and how the agent should handle it.
 
@@ -82,7 +82,7 @@ Do not re-open these unless implementation reveals a hard conflict.
 
 ## Implementation steps
 
-### 1. Create SDK Response Patterns Cookbook — `templates/workspace/.cursor/skills/resmate-use-case/docs/sdk-response-patterns.md` (NEW)
+### 1. Create SDK Response Patterns Cookbook — `templates/workspace/.cursor/skills/vgen-use-case/docs/sdk-response-patterns.md` (NEW)
 
 Create a comprehensive guide detailing:
 - **Database Queries (`queryRecords`)**:
@@ -133,7 +133,7 @@ Create a comprehensive guide detailing:
   - Do not wrap JS sandbox scripts in `module.exports` or `export default`.
   - Always wrap the entire JS sandbox script in a `try/catch` block.
 
-### 2. Create HITL Resume Cookbook — `templates/workspace/.cursor/skills/resmate-use-case/docs/hitl-resume-and-message-format.md` (NEW)
+### 2. Create HITL Resume Cookbook — `templates/workspace/.cursor/skills/vgen-use-case/docs/hitl-resume-and-message-format.md` (NEW)
 
 Create a detailed guide explaining the resume contract:
 - **The Halt-and-Resume Flow**:
@@ -171,7 +171,7 @@ Create a detailed guide explaining the resume contract:
     ```
   - The platform saves these inputs and automatically advances the workflow stage if the stage's `doneWhen` criteria are met.
 
-### 3. Update Tool Spec — `templates/workspace/.cursor/skills/resmate-use-case/docs/spec-tool.md`
+### 3. Update Tool Spec — `templates/workspace/.cursor/skills/vgen-use-case/docs/spec-tool.md`
 
 - Update Section 3.4 (HITLConfig Pattern) to use the dual-unwrap pattern:
   ```javascript
@@ -181,15 +181,15 @@ Create a detailed guide explaining the resume contract:
 - Update Section 3.5 (JS Anti-Patterns) to include the `result.data[0]` flat-array access as a high-severity anti-pattern.
 - Ensure all gold snippets in `spec-tool.md` match the secrets and error shapes documented in the new cookbooks.
 
-### 4. Update Workflow Spec — `templates/workspace/.cursor/skills/resmate-use-case/docs/spec-workflow.md`
+### 4. Update Workflow Spec — `templates/workspace/.cursor/skills/vgen-use-case/docs/spec-workflow.md`
 
 - Locate and replace all fake/non-functional snippets (such as those around lines 918 and 1115):
-  - Remove `require('resmate-polyfills')` and `module.exports` wrappers.
+  - Remove `require('vgen-polyfills')` and `module.exports` wrappers.
   - Rewrite them as standard, top-level JS sandbox scripts returning stringified JSON.
   - Correct the `queryRecords` calls to use the array-of-objects query signature and the singular `"hitlConfig"` collection name.
   - Apply the dual-unwrap pattern to retrieve the records safely.
 
-### 5. Update Skill Router — `templates/workspace/.cursor/skills/resmate-use-case/SKILL.md`
+### 5. Update Skill Router — `templates/workspace/.cursor/skills/vgen-use-case/SKILL.md`
 
 - Add two new rows to the Quick-Routing Index table:
   - `docs/sdk-response-patterns.md`: "SDK Response Patterns" — Safe queryRecords unwrapping, JS vs FaaS secrets, and error shapes.
@@ -224,25 +224,25 @@ Update the walkthrough files for `jira`, `purchase-requisition`, and `github-pr-
 - [ ] All gold snippets in `spec-tool.md` and `spec-workflow.md` are corrected and match the cookbook contracts.
 - [ ] Every example `handler.js` under `examples/` is bug-free, using the dual-unwrap pattern for `queryRecords` and the correct secrets paths.
 - [ ] Walkthrough files contain sample resume chat messages and clear agent parsing instructions.
-- [ ] Running `resmate kit update` on an existing workspace successfully delivers all of these updated and new files.
+- [ ] Running `vgen kit update` on an existing workspace successfully delivers all of these updated and new files.
 
 ---
 
 ## Test plan
 
 1. **Verify Template Generation**:
-   - Run `resmate init` in a temporary directory.
+   - Run `vgen init` in a temporary directory.
    - Verify that all new and modified files are generated correctly.
    - Check that `sdk-response-patterns.md` and `hitl-resume-and-message-format.md` exist and contain the correct content.
 2. **Verify Snippet Integrity**:
    - Open the temporary workspace in Cursor.
    - Verify that all relative links in `SKILL.md` resolve correctly to the new files.
-   - Verify that no snippets in `spec-tool.md` or `spec-workflow.md` contain `require('resmate-polyfills')` or flat-array `result.data[0]` accesses.
+   - Verify that no snippets in `spec-tool.md` or `spec-workflow.md` contain `require('vgen-polyfills')` or flat-array `result.data[0]` accesses.
 3. **Verify Example Handlers**:
    - Inspect the generated `examples/` directory.
    - Ensure all `handler.js` files use the dual-unwrap pattern: `result?.data?.[0]?.[0] ?? result?.[0]?.[0]`.
    - Ensure FaaS handlers use `secretData?.data?.value` and JS sandbox handlers use `getSecret(key).value`.
 4. **Verify Kit Update Delivery**:
    - Create a mock ResMate workspace with an older kit version.
-   - Run `resmate kit update`.
+   - Run `vgen kit update`.
    - Verify that the new cookbooks and updated examples are successfully written to the workspace.

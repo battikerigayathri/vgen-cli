@@ -184,7 +184,7 @@ pub async fn run_assistant_chat(
             return emit_error(
                 ctx,
                 "CONFIG_MISSING_API_KEY",
-                "RESMATE_API_KEY is not set.",
+                "VGEN_API_KEY is not set.",
                 None,
                 CliExitCode::RuntimeError,
             );
@@ -259,16 +259,16 @@ pub async fn run_assistant_chat(
 
     // Load history
     let home_dir = dirs::home_dir().unwrap_or_else(|| PathBuf::from("."));
-    let resmate_dir = home_dir.join(".resmate");
-    std::fs::create_dir_all(&resmate_dir).ok();
-    let history_path = resmate_dir.join("repl_history.txt");
+    let vgen_dir = home_dir.join(".vgen");
+    std::fs::create_dir_all(&vgen_dir).ok();
+    let history_path = vgen_dir.join("repl_history.txt");
     rl.load_history(&history_path).ok();
 
     let long_client = http_client::build_long_timeout_client(Duration::from_secs(600));
     let mut turn_index = 1;
 
     loop {
-        let readline = rl.readline("resmate> ");
+        let readline = rl.readline("vgen> ");
         match readline {
             Ok(line) => {
                 let trimmed = line.trim();
@@ -786,7 +786,7 @@ fn log_session_turn(
     assistant_slug: &str,
     turn: SessionTurn,
 ) {
-    let log_dir = ws_root.join(".resmate/debug/sessions");
+    let log_dir = ws_root.join(".vgen/debug/sessions");
     std::fs::create_dir_all(&log_dir).ok();
     let log_path = log_dir.join(format!("{}.json", session_id));
 

@@ -1,5 +1,5 @@
 ---
-name: resmate-use-case
+name: vgen-use-case
 description: Develop or modify ResMate use cases — create tools, agents, assistants, HITL; design for v4 assistant planner and agent planner ReAct loop; wire by ID; push/pull with CLI.
 ---
 
@@ -25,7 +25,7 @@ Use this index to quickly locate the specific reference document matching your c
 | "I'm calling `queryRecords`, fetching secrets, or shaping tool errors" | [docs/sdk-response-patterns.md](docs/sdk-response-patterns.md) | Safe `queryRecords` unwrapping (dual-unwrap pattern), JS vs FaaS secrets access, and JS vs FaaS error shapes. |
 | "I need to understand how a HITL form submission reaches my agent" | [docs/hitl-resume-and-message-format.md](docs/hitl-resume-and-message-format.md) | HITL Resume & Message Format — resume-as-chat-message contract, preamble/key-value parsing, and workflow patching after submit. |
 | "I need to run, test, validate, or push my use case" | [docs/cli-commands.md](docs/cli-commands.md) | Complete reference for all CLI commands, including `tool test`, `assistant chat`, and `env push`. |
-| "I need to manage environment variables or secrets" | [docs/env-secrets.md](docs/env-secrets.md) | `.env` file usage, `resmate.yaml` mapping, and write-only secrets push policy. |
+| "I need to manage environment variables or secrets" | [docs/env-secrets.md](docs/env-secrets.md) | `.env` file usage, `vgen.yaml` mapping, and write-only secrets push policy. |
 | "I want to explore reference examples" | [docs/examples-guide.md](docs/examples-guide.md) | Mapping of available examples and how they demonstrate specific architectural choices. |
 | "I'm not sure how IDs get assigned, or my push failed with 404/403" | [docs/id-lifecycle.md](docs/id-lifecycle.md) | ID Lifecycle (Never Invent) — omit -> push -> write-back lifecycle and anti-patterns. |
 | "I need to know what order to push in or how to wire IDs between layers" | [docs/push-pull-wire.md](docs/push-pull-wire.md) | Push Order & ID Wiring — chronological push order, binding rules (slug vs Mongo id), and `push-all` limits. |
@@ -54,10 +54,10 @@ Before writing any code, you must align on three core architectural decisions. F
 
 To ensure successful compilation and deployment, follow these strict development conventions:
 
-1.  **Workspace Root Execution**: Always run all `resmate` CLI commands from the workspace root.
+1.  **Workspace Root Execution**: Always run all `vgen` CLI commands from the workspace root.
 2.  **Chronological Push Order**: When deploying resources, you must push them in dependency order:
     $$\text{HITL Form} \rightarrow \text{Workflow} \rightarrow \text{Tool} \rightarrow \text{Agent} \rightarrow \text{Assistant}$$
-3.  **Strict Validation**: Always run `resmate validate` and resolve all errors and warnings before pushing.
+3.  **Strict Validation**: Always run `vgen validate` and resolve all errors and warnings before pushing.
 4.  **No Placeholders**: Never use placeholder values or draft schemas. All YAML and handler files must be fully specified.
 
 ---
@@ -69,7 +69,7 @@ To prevent deployment failures and broken platform references, you must strictly
 1. **Never Invent MongoDB ObjectIds**: Never write or guess a 24-character hex ID locally.
 2. **Omit -> Push -> Write-Back**:
    - Leave the `id` field empty or omitted in your local YAML.
-   - Push the resource to the platform (`resmate <type> push <name>`).
+   - Push the resource to the platform (`vgen <type> push <name>`).
    - The platform generates the ID and the CLI writes it back to your local YAML.
 3. **Chronological Push & Wire Checklist**:
    - Push **HITL Forms** and **Workflows** first (bound via slugs).

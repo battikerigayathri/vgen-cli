@@ -12,7 +12,7 @@ Every ResMate tool is defined in a directory under `tools/<tool-folder>/` contai
 
 | Field | Type | Required | Description |
 | :--- | :--- | :--- | :--- |
-| `id` | `string` | After first push | Stable MongoDB identifier for the tool. Leave empty or omit during initial creation; the platform populates this on the first `resmate tool push`. |
+| `id` | `string` | After first push | Stable MongoDB identifier for the tool. Leave empty or omit during initial creation; the platform populates this on the first `vgen tool push`. |
 | `name` | `string` | Yes | Display name of the tool. Becomes the stable **`skill_key`** at runtime. For HITL card configuration tools, this **must** end with the suffix **`HITLConfig`**. |
 | `description` | `string` | Yes | A clear, concise description of what the tool does, exposed to the agent planner's tool catalog. |
 | `type` | `string` | Yes | The execution runtime environment. Must be either `JS` (V8 Isolate) or `FAAS` (Node/Lambda). |
@@ -22,7 +22,7 @@ Every ResMate tool is defined in a directory under `tools/<tool-folder>/` contai
 | `arguments` | `object` | Yes | Schema defining the parameters the agent planner must resolve before invoking the tool. Supports flat legacy and canonical JSON Schema. |
 | `output` | `object` | No | Optional JSON Schema defining the structure of the tool's return payload. Can include `x-feeds` hints. |
 | `feeds` | `object` | No | Layer 2 field selection mapping. Defines which fields from the tool result are exposed to specific prompt consumers. |
-| `functionId` | `string` | FAAS only | UUID of the deployed FaaS function. Required for local testing via `resmate tool test`. |
+| `functionId` | `string` | FAAS only | UUID of the deployed FaaS function. Required for local testing via `vgen tool test`. |
 | `version` | `string` | Recommended | Version identifier (e.g., `'1.0'`). Required by the API for publishing. |
 | `createdBy` | `string` | No | Author identifier or email. |
 | `managedBy` | `array` | No | List of managing entities or teams. |
@@ -207,7 +207,7 @@ tools/<tool>/
 ├── tool.yaml
 ├── handler.js
 ├── package.json       # required: "type": "module"
-└── payload.json       # optional; for resmate tool test
+└── payload.json       # optional; for vgen tool test
 ```
 
 ### 4.3 package.json Structure
@@ -307,7 +307,7 @@ FaaS functions run in a sandbox where specialized platform SDKs are mounted at `
 ### 4.7 FaaS Testing
 Local testing is supported via the CLI:
 ```bash
-resmate tool test <tool-folder>
+vgen tool test <tool-folder>
 ```
 This command uses `payload.json` to simulate realistic `event.context` inputs.
 
@@ -371,7 +371,7 @@ output:
 ```
 
 ### 5.4 Validation Rules & Lints
-The `resmate validate` command runs strict lints against the `feeds` and `x-feeds` blocks:
+The `vgen validate` command runs strict lints against the `feeds` and `x-feeds` blocks:
 1. **`TOOL_FEEDS_INVALID` (Error)**: Raised if the `feeds` block contains invalid consumer keys, empty field lists, or duplicate entries. Field names must be alphanumeric and can only contain underscores or dot paths.
 2. **`TOOL_FEEDS_MISSING` (Warning)**: Raised if a tool defines an `output` schema but lacks both `feeds` and `x-feeds` blocks. In this case, the platform falls back to injecting the entire tool payload, which increases token costs and risks context dilution.
 3. **Verbatim Consistency**: Any field listed in `compose_verbatim` should usually also be declared in `compose`.

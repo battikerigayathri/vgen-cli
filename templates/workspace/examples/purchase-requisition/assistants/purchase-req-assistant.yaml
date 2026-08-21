@@ -6,7 +6,7 @@ description: Workflow-bound assistant for purchase requisition form wizard (purc
 status: active
 visibility: private
 agents: []
-# Wire after pushing agents/purchase-req-agent.yaml (see docs/push-pull-wire.md), then re-run `resmate assistant push purchase-req-assistant`:
+# Wire after pushing agents/purchase-req-agent.yaml (see docs/push-pull-wire.md), then re-run `vgen assistant push purchase-req-assistant`:
 #   - <agent-id-after-push> (copy the written-back id from agents/purchase-req-agent.yaml)
 systemContext: |
   You are the Purchase Requisition Assistant with one agent: purchase-req-agent.

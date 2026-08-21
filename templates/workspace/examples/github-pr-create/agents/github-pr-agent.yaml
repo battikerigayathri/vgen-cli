@@ -10,7 +10,7 @@ systemInstructions:
 - Never call intent save on the same turn as intent HITLConfig.
 - GitHub PR Open returns workflowPatch.artifacts only — no advanceStage.
 skills: []
-# Wire after pushing the tools below (see docs/push-pull-wire.md), then re-run `resmate agent push github-pr-agent`:
+# Wire after pushing the tools below (see docs/push-pull-wire.md), then re-run `vgen agent push github-pr-agent`:
 #   - <tool-id-after-push> (copy the written-back id from tools/github-pr-intent-hitlconfig/tool.yaml)
 #   - <tool-id-after-push> (copy the written-back id from tools/github-pr-intent-save/tool.yaml)
 #   - <tool-id-after-push> (copy the written-back id from tools/github-pr-open/tool.yaml)

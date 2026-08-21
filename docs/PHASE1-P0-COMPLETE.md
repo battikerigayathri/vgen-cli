@@ -1,6 +1,6 @@
 # Phase 1 P0 — complete
 
-Phase 1 P0 ResMate CLI implementation is complete in `resmed_resmate-cli`. All six PRs merged locally.
+Phase 1 P0 ResMate CLI implementation is complete in `resmed_vgen-cli`. All six PRs merged locally.
 
 **Jira epic:** [CGA-1094](https://resmedglobal.atlassian.net/browse/CGA-1094)
 
@@ -11,37 +11,37 @@ Phase 1 P0 ResMate CLI implementation is complete in `resmed_resmate-cli`. All s
 | PR | Command(s) |
 |----|------------|
 | 1 | Global `--json` envelope + stable exit codes |
-| 2 | `resmate workspace info`, `resmate doctor` |
-| 3 | `resmate graph` |
-| 4 | `resmate workflow validate <folder>` |
-| 5 | `resmate validate` |
-| 6 | `resmate push-all --dry-run` |
+| 2 | `vgen workspace info`, `vgen doctor` |
+| 3 | `vgen graph` |
+| 4 | `vgen workflow validate <folder>` |
+| 5 | `vgen validate` |
+| 6 | `vgen push-all --dry-run` |
 
 ## Smoke test
 
-Run from a use-case workspace root (e.g. `pr-agent-v2`) with `resmate` on `PATH`:
+Run from a use-case workspace root (e.g. `pr-agent-v2`) with `vgen` on `PATH`:
 
 ```bash
 # PR1 — envelope + exit codes
-resmate --json config show | jq '.ok == true'
-resmate --json config validate          # exit 0 if API reachable
+vgen --json config show | jq '.ok == true'
+vgen --json config validate          # exit 0 if API reachable
 
 # PR2 — workspace
-resmate --json workspace info | jq '.data.artifact_dirs.tools.count >= 3'
-resmate --json doctor | jq '.data.checks | length >= 3'
+vgen --json workspace info | jq '.data.artifact_dirs.tools.count >= 3'
+vgen --json doctor | jq '.data.checks | length >= 3'
 
 # PR3 — graph
-resmate --json graph | jq '.data.nodes | map(.kind) | unique'
-resmate --json graph | jq '[.data.edges[] | select(.kind=="broken_ref")] | length'  # expect 0
+vgen --json graph | jq '.data.nodes | map(.kind) | unique'
+vgen --json graph | jq '[.data.edges[] | select(.kind=="broken_ref")] | length'  # expect 0
 
 # PR4 — workflow validate
-resmate --json workflow validate oracle-purchase-requisition | jq '.ok == true'
+vgen --json workflow validate oracle-purchase-requisition | jq '.ok == true'
 
 # PR5 — full validate
-resmate --json validate | jq '.data.summary.error_count == 0'
+vgen --json validate | jq '.data.summary.error_count == 0'
 
 # PR6 — push plan
-resmate --json push-all --dry-run | jq '.data.steps | map(.resource_type)'
+vgen --json push-all --dry-run | jq '.data.steps | map(.resource_type)'
 # expect: hitl → workflow → tool → agent → assistant
 ```
 

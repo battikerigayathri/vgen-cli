@@ -34,7 +34,7 @@ Turn 4: User confirms review → resume chat message
 
 ### Resume chat messages (exact format)
 
-Every HITL submit in this flow arrives as a normal chat message — **not** a special resume API call — and `context.input` is **not** auto-filled from the card. See [hitl-resume-and-message-format.md](../../.cursor/skills/resmate-use-case/docs/hitl-resume-and-message-format.md) for the full contract. `purchase-req-agent` must parse the `key: value` lines out of the message text and route them to the matching Save Tool (never re-invoke the HITLConfig tool for the same field).
+Every HITL submit in this flow arrives as a normal chat message — **not** a special resume API call — and `context.input` is **not** auto-filled from the card. See [hitl-resume-and-message-format.md](../../.cursor/skills/vgen-use-case/docs/hitl-resume-and-message-format.md) for the full contract. `purchase-req-agent` must parse the `key: value` lines out of the message text and route them to the matching Save Tool (never re-invoke the HITLConfig tool for the same field).
 
 **Turn 2 — vendor form submit:**
 
@@ -61,7 +61,7 @@ Each Save Tool (`purchase-req-vendor-save`, `purchase-req-lines-save`, `purchase
 
 ## ID linking
 
-All `id` fields below are left empty (`id: ""`) in this sample on purpose — never hand-author or copy-paste a MongoDB ObjectId. Push each layer to get a real, platform-assigned ID, then wire it into the dependent per [push-pull-wire.md](../../.cursor/skills/resmate-use-case/docs/push-pull-wire.md).
+All `id` fields below are left empty (`id: ""`) in this sample on purpose — never hand-author or copy-paste a MongoDB ObjectId. Push each layer to get a real, platform-assigned ID, then wire it into the dependent per [push-pull-wire.md](../../.cursor/skills/vgen-use-case/docs/push-pull-wire.md).
 
 | Artifact | ID / slug | Links to |
 |----------|-----------|----------|
@@ -121,7 +121,7 @@ cargo run -p smriti_client --bin push_workflow_definition -- \
   --validate-only
 ```
 
-**ResMate CLI (when available):** `resmate workflow push purchase-requisition`
+**ResMate CLI (when available):** `vgen workflow push purchase-requisition`
 
 ---
 
@@ -130,9 +130,9 @@ cargo run -p smriti_client --bin push_workflow_definition -- \
 Push first:
 
 ```bash
-resmate hitl push purchase-req-vendor-form
-resmate hitl push purchase-req-lines-form
-resmate hitl push purchase-req-review
+vgen hitl push purchase-req-vendor-form
+vgen hitl push purchase-req-lines-form
+vgen hitl push purchase-req-review
 ```
 
 Each folder: `meta.yaml` (slug) + `config.json` (Adaptive Card). Form field `id` values become HITL submit payload keys for save tools.
@@ -155,7 +155,7 @@ Each folder: `meta.yaml` (slug) + `config.json` (Adaptive Card). Form field `id`
 Push all tools after workflow:
 
 ```bash
-resmate tool push purchase-req-vendor-hitlconfig
+vgen tool push purchase-req-vendor-hitlconfig
 # ... (each tool)
 ```
 
@@ -169,7 +169,7 @@ resmate tool push purchase-req-vendor-hitlconfig
 | `skills` | Six tool IDs — HITLConfig + save per collect/review stage |
 | `systemInstructions` | Stage-aware; never-rules for same-turn HITLConfig + save |
 
-Push after tools: `resmate agent push purchase-req-agent`
+Push after tools: `vgen agent push purchase-req-agent`
 
 ---
 
@@ -180,7 +180,7 @@ Push after tools: `resmate agent push purchase-req-agent`
 | `agents` | Single ID — purchase-req-agent |
 | `systemContext` | `## Orchestration Contract` block with `workflow_definition_slug: purchase-requisition-v1` |
 
-Push last: `resmate assistant push purchase-req-assistant`
+Push last: `vgen assistant push purchase-req-assistant`
 
 ---
 

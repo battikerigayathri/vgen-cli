@@ -30,7 +30,7 @@ Turn 4: Macro validator requirement_met
 
 ### The resume chat message (exact format)
 
-There is **no special resume API** — the frontend posts the submitted form data back as a normal chat message, and `context.input` is **not** auto-filled from the card (see [hitl-resume-and-message-format.md](../../.cursor/skills/resmate-use-case/docs/hitl-resume-and-message-format.md)). Submitting the intent card produces:
+There is **no special resume API** — the frontend posts the submitted form data back as a normal chat message, and `context.input` is **not** auto-filled from the card (see [hitl-resume-and-message-format.md](../../.cursor/skills/vgen-use-case/docs/hitl-resume-and-message-format.md)). Submitting the intent card produces:
 
 ```text
 This is my data, please process further
@@ -42,7 +42,7 @@ featureDescription: Add dark mode toggle to settings
 
 ## ID linking
 
-All `id` fields below are left empty (`id: ""`) in this sample on purpose — never hand-author or copy-paste a MongoDB ObjectId. Push each layer to get a real, platform-assigned ID, then wire it into the dependent per [push-pull-wire.md](../../.cursor/skills/resmate-use-case/docs/push-pull-wire.md).
+All `id` fields below are left empty (`id: ""`) in this sample on purpose — never hand-author or copy-paste a MongoDB ObjectId. Push each layer to get a real, platform-assigned ID, then wire it into the dependent per [push-pull-wire.md](../../.cursor/skills/vgen-use-case/docs/push-pull-wire.md).
 
 | Artifact | ID / slug | Links to |
 |----------|-----------|----------|
@@ -81,7 +81,7 @@ cargo run -p smriti_client --bin push_workflow_definition -- \
   --validate-only
 ```
 
-**ResMate CLI (when available):** `resmate workflow push github-pr-create`
+**ResMate CLI (when available):** `vgen workflow push github-pr-create`
 
 ---
 
@@ -127,7 +127,7 @@ Returns:
 
 ## Author checklist (verify)
 
-- [ ] Bundle JSON passes `push_workflow_definition --validate-only` (or pushes via `resmate workflow push`)
+- [ ] Bundle JSON passes `push_workflow_definition --validate-only` (or pushes via `vgen workflow push`)
 - [ ] `agent_task` has `expectedOutcome`
 - [ ] Collect tool returns `workflowPatch.inputs` only
 - [ ] PR open returns `workflowPatch.artifacts` only

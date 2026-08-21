@@ -7,14 +7,14 @@
 #   - macOS Windows cross: brew install mingw-w64, rustup target add x86_64-pc-windows-gnu
 #
 # Environment:
-#   RESMATE_CORE_FRAMEWORK  Path to core-framework repo (default: ../resmedai-core-framework)
-#   RESMATE_CORE_REF        Git ref to clone if core repo missing (default: main)
-#   RESMATE_TARGETS         Space-separated platform slugs to build (default: host + feasible cross)
+#   VGEN_CORE_FRAMEWORK  Path to core-framework repo (default: ../resmedai-core-framework)
+#   VGEN_CORE_REF        Git ref to clone if core repo missing (default: main)
+#   VGEN_TARGETS         Space-separated platform slugs to build (default: host + feasible cross)
 #                           Values: darwin-arm64 darwin-x64 linux-x64 windows-x64
 #
 # Usage:
 #   ./scripts/package-release.sh
-#   RESMATE_TARGETS="darwin-arm64" ./scripts/package-release.sh
+#   VGEN_TARGETS="darwin-arm64" ./scripts/package-release.sh
 
 set -euo pipefail
 
@@ -23,8 +23,8 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # when an outer environment (e.g. CI/sandbox) overrides CARGO_TARGET_DIR.
 export CARGO_TARGET_DIR="$ROOT/target"
 VERSION="$(grep '^version' "$ROOT/Cargo.toml" | head -1 | sed 's/.*"\(.*\)".*/\1/')"
-CORE_REPO="${RESMATE_CORE_FRAMEWORK:-$ROOT/../resmedai-core-framework}"
-CORE_REF="${RESMATE_CORE_REF:-main}"
+CORE_REPO="${VGEN_CORE_FRAMEWORK:-$ROOT/../resmedai-core-framework}"
+CORE_REF="${VGEN_CORE_REF:-main}"
 DIST="$ROOT/dist"
 
 rust_target_for_slug() {
@@ -47,14 +47,14 @@ ensure_core_framework() {
     return 0
   fi
   echo "Core framework not found at $CORE_REPO"
-  if [[ -n "${RESMATE_SKIP_CLONE:-}" ]]; then
-    echo "Error: RESMATE_SKIP_CLONE set and smriti_client missing." >&2
+  if [[ -n "${VGEN_SKIP_CLONE:-}" ]]; then
+    echo "Error: VGEN_SKIP_CLONE set and smriti_client missing." >&2
     exit 1
   fi
   echo "Cloning resmedai-core-framework (ref: $CORE_REF)..."
   git clone --depth 1 --branch "$CORE_REF" \
     "https://github.com/ResMed/resmedai-core-framework.git" "$CORE_REPO" || {
-    echo "Error: clone failed. Set RESMATE_CORE_FRAMEWORK to an existing checkout." >&2
+    echo "Error: clone failed. Set VGEN_CORE_FRAMEWORK to an existing checkout." >&2
     exit 1
   }
 }
@@ -130,7 +130,7 @@ build_slug() {
   if is_windows_slug "$slug"; then
     "$ROOT/scripts/build-windows.sh" --arch x64
   else
-    cargo build --release --target "$rust" --bin resmate --bin resmate-mcp
+    cargo build --release --target "$rust" --bin vgen --bin vgen-mcp
   fi
 }
 
@@ -149,27 +149,27 @@ stage_archive() {
   local slug="$1"
   local rust
   rust="$(rust_target_for_slug "$slug")"
-  local bundle="resmate-${VERSION}-${slug}"
+  local bundle="vgen-${VERSION}-${slug}"
   local stage="$DIST/.staging-${slug}"
   local bundle_dir="$stage/$bundle"
   local target_dir
   target_dir="$(release_dir_for_rust_target "$rust")"
 
   rm -rf "$stage"
-  mkdir -p "$bundle_dir/bin" "$bundle_dir/share/resmate/templates" "$bundle_dir/docs"
+  mkdir -p "$bundle_dir/bin" "$bundle_dir/share/vgen/templates" "$bundle_dir/docs"
 
   if is_windows_slug "$slug"; then
-    cp "$target_dir/resmate.exe" "$target_dir/resmate-mcp.exe" "$bundle_dir/bin/"
+    cp "$target_dir/vgen.exe" "$target_dir/vgen-mcp.exe" "$bundle_dir/bin/"
   else
-    if [[ ! -f "$target_dir/resmate" ]]; then
-      echo "Error: missing $target_dir/resmate after build" >&2
+    if [[ ! -f "$target_dir/vgen" ]]; then
+      echo "Error: missing $target_dir/vgen after build" >&2
       return 1
     fi
-    cp "$target_dir/resmate" "$target_dir/resmate-mcp" "$bundle_dir/bin/"
-    chmod 755 "$bundle_dir/bin/resmate" "$bundle_dir/bin/resmate-mcp"
+    cp "$target_dir/vgen" "$target_dir/vgen-mcp" "$bundle_dir/bin/"
+    chmod 755 "$bundle_dir/bin/vgen" "$bundle_dir/bin/vgen-mcp"
   fi
 
-  cp -a "$ROOT/templates/." "$bundle_dir/share/resmate/templates/"
+  cp -a "$ROOT/templates/." "$bundle_dir/share/vgen/templates/"
   echo "$VERSION" > "$bundle_dir/VERSION"
   cp "$ROOT/scripts/install.sh" "$bundle_dir/install.sh"
   if is_windows_slug "$slug"; then
@@ -206,8 +206,8 @@ HOST="$(detect_host_slug)"
 echo "ResMate packaging v$VERSION (host: $HOST)"
 echo "Core framework ref: $CORE_REF"
 
-if [[ -n "${RESMATE_TARGETS:-}" ]]; then
-  read -r -a TARGET_SLUGS <<< "$RESMATE_TARGETS"
+if [[ -n "${VGEN_TARGETS:-}" ]]; then
+  read -r -a TARGET_SLUGS <<< "$VGEN_TARGETS"
 else
   TARGET_SLUGS=()
   while IFS= read -r slug; do

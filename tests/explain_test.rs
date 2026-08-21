@@ -1,4 +1,4 @@
-use resmate::errors_registry::{list_all, lookup};
+use vgen::errors_registry::{list_all, lookup};
 
 #[test]
 fn all_readme_codes_resolvable() {

@@ -1,7 +1,7 @@
 # Authoring kit architecture — CLI repo, init bootstrap, use-case workspace
 
 **Status:** Approved architecture (P2 planning)  
-**Repos:** [`resmed_resmate-cli`](../.) · [`resmedai-core-framework`](../../resmedai-core-framework) · use-case workspaces (e.g. [`pr-agent-v2`](../../pr-agent-v2))
+**Repos:** [`resmed_vgen-cli`](../.) · [`resmedai-core-framework`](../../resmedai-core-framework) · use-case workspaces (e.g. [`pr-agent-v2`](../../pr-agent-v2))
 
 ---
 
@@ -11,9 +11,9 @@ Today, ResMate use-case authors must **manually copy** `cli-context/` from `resm
 
 - Authors install the CLI via `cargo install` with **no sibling monorepo checkout**
 - Docs drift between core `cli-context/`, CLI repo, and live workspaces like `pr-agent-v2`
-- `resmate init` (P1) only creates empty dirs + `resmate.yaml` — **no agent KB** (AGENTS.md, skills, platform docs)
+- `vgen init` (P1) only creates empty dirs + `vgen.yaml` — **no agent KB** (AGENTS.md, skills, platform docs)
 
-P2 moves the **authoring kit** into the CLI repo and makes `resmate init` the canonical bootstrap path.
+P2 moves the **authoring kit** into the CLI repo and makes `vgen init` the canonical bootstrap path.
 
 ---
 
@@ -25,23 +25,23 @@ P2 moves the **authoring kit** into the CLI repo and makes `resmate init` the ca
 | B — git submodule / sparse checkout of cli-context | Rejected | Requires network + sibling repo; poor `cargo install` UX |
 | C — download kit tarball on first `init` | Rejected | Extra infra; offline failure modes |
 
-**Binary size:** The full kit is ~100 markdown/JSON files (~1–1.5 MB uncompressed). Acceptable to embed with `rust-embed` or `include_dir!` for release builds. Dev builds may read from `templates/` on disk via `RESMATE_TEMPLATES_DIR` to avoid rebuild churn.
+**Binary size:** The full kit is ~100 markdown/JSON files (~1–1.5 MB uncompressed). Acceptable to embed with `rust-embed` or `include_dir!` for release builds. Dev builds may read from `templates/` on disk via `VGEN_TEMPLATES_DIR` to avoid rebuild churn.
 
 ---
 
 ## 3. Folder layout in CLI repo
 
 ```
-resmed_resmate-cli/
+resmed_vgen-cli/
 ├── templates/
-│   ├── workspace/                 # Authoring kit — copied wholesale on `resmate init`
+│   ├── workspace/                 # Authoring kit — copied wholesale on `vgen init`
 │   │   ├── AGENTS.md              # Agent entry point (Cursor / Copilot)
 │   │   ├── README.md              # Workspace orientation
-│   │   ├── STANDALONE.md          # Updated: `resmate init` replaces manual copy
+│   │   ├── STANDALONE.md          # Updated: `vgen init` replaces manual copy
 │   │   ├── links.md               # Cross-refs; monorepo paths → CLI/docs URLs
 │   │   ├── .cursor/
-│   │   │   ├── skills/resmate-use-case/SKILL.md
-│   │   │   └── rules/resmate-use-cases.mdc
+│   │   │   ├── skills/vgen-use-case/SKILL.md
+│   │   │   └── rules/vgen-use-cases.mdc
 │   │   ├── platform/              # Execution model, state, ReAct, guardrails
 │   │   ├── cli/                   # setup, commands-reference, checklist, push/pull
 │   │   ├── tools/                 # KB only (*.md) — live tools added by author/scaffold
@@ -57,7 +57,7 @@ resmed_resmate-cli/
 │   │   └── oracle-pr/
 │   │
 │   └── seed/                    # Init-only files (not overwritten from workspace kit)
-│       ├── resmate.yaml.tmpl
+│       ├── vgen.yaml.tmpl
 │       └── gitignore
 │
 ├── docs/                        # CLI operator docs (json-output, mcp-setup, errors/)
@@ -76,7 +76,7 @@ resmed_resmate-cli/
 
 | Source (core `cli-context/`) | Destination | Notes |
 |------------------------------|-------------|-------|
-| `AGENTS.md`, `README.md`, `STANDALONE.md`, `links.md` | `templates/workspace/` | Update copy/rename → `resmate init` |
+| `AGENTS.md`, `README.md`, `STANDALONE.md`, `links.md` | `templates/workspace/` | Update copy/rename → `vgen init` |
 | `.cursor/**` | `templates/workspace/.cursor/` | Skill + rule globs unchanged |
 | `platform/**` | `templates/workspace/platform/` | Full tree |
 | `cli/**` | `templates/workspace/cli/` | commands-reference updated in P2 PRs |
@@ -100,9 +100,9 @@ flowchart TB
     smriti[lib/smriti_client]
   end
 
-  subgraph cli [resmed_resmate-cli]
+  subgraph cli [resmed_vgen-cli]
     templates[templates/workspace/ authoring kit SoT]
-    resmate[resmate binary]
+    vgen[vgen binary]
     cliDocs[docs/ operator + agent-authoring-guide]
   end
 
@@ -110,12 +110,12 @@ flowchart TB
     agentsMd[AGENTS.md + .cursor/]
     kbDocs[platform/ cli/ workflows/]
     live[tools/ agents/ assistants/ hitl/ workflows/ live artifacts]
-    manifest[resmate.yaml]
+    manifest[vgen.yaml]
   end
 
-  templates -->|resmate init copies| ws
-  resmate -->|validate push diff| live
-  resmate -->|workflow validate| smriti
+  templates -->|vgen init copies| ws
+  vgen -->|validate push diff| live
+  vgen -->|workflow validate| smriti
   cliCtxLegacy -.->|redirect| templates
   contextKB -->|architecture refs| kbDocs
   agentsMd -->|Cursor agents read| live
@@ -125,30 +125,30 @@ flowchart TB
 |-------|------|------------------------|
 | **Platform runtime** | Executes assistants, agents, tools | `resmedai-core-framework` |
 | **Platform architecture KB** | Service contracts, revamp, ADRs | `resmedai-core-framework/context/` |
-| **Authoring kit** | How to build use cases; agent instructions | `resmed_resmate-cli/templates/workspace/` |
-| **CLI operator docs** | JSON envelope, MCP, error codes | `resmed_resmate-cli/docs/` |
-| **Use-case workspace** | Live artifacts + copied kit | Author's project dir after `resmate init` |
+| **Authoring kit** | How to build use cases; agent instructions | `resmed_vgen-cli/templates/workspace/` |
+| **CLI operator docs** | JSON envelope, MCP, error codes | `resmed_vgen-cli/docs/` |
+| **Use-case workspace** | Live artifacts + copied kit | Author's project dir after `vgen init` |
 
 ---
 
-## 5. `resmate init` bootstrap flow
+## 5. `vgen init` bootstrap flow
 
 ```mermaid
 sequenceDiagram
   participant Author
-  participant CLI as resmate init
+  participant CLI as vgen init
   participant Kit as templates/workspace
   participant Seed as templates/seed
   participant WS as workspace root
 
-  Author->>CLI: resmate init [--name my-pr] [--description <text>] [--no-examples]
+  Author->>CLI: vgen init [--name my-pr] [--description <text>] [--no-examples]
   CLI->>WS: refuse (INIT_REFUSED) unless dir is empty or only allowlisted entries (unless --force)
-  CLI->>Kit: enumerate kit files (embed or RESMATE_TEMPLATES_DIR)
+  CLI->>Kit: enumerate kit files (embed or VGEN_TEMPLATES_DIR)
   loop each kit file
     CLI->>WS: copy preserving relative path
   end
-  CLI->>Seed: render resmate.yaml from tmpl (name, description)
-  CLI->>WS: write resmate.yaml, .gitignore
+  CLI->>Seed: render vgen.yaml from tmpl (name, description)
+  CLI->>WS: write vgen.yaml, .gitignore
   CLI->>WS: ensure empty live dirs tools/ agents/ assistants/ hitl/ workflows/
   opt --no-examples
     CLI->>WS: skip templates/workspace/examples/
@@ -161,7 +161,7 @@ sequenceDiagram
 | Category | Paths | Overwrite on `--force` |
 |----------|-------|------------------------|
 | **Kit copy** | `AGENTS.md`, `README.md`, `STANDALONE.md`, `links.md`, `.cursor/**`, `platform/**`, `cli/**`, `tools/*.md`, `agents/*.md`, `assistants/*.md`, `hitl/*.md`, `workflows/*.md`, `examples/**` (default) | Kit files yes; live artifacts never deleted |
-| **Seed** | `resmate.yaml`, `.gitignore` | Yes |
+| **Seed** | `vgen.yaml`, `.gitignore` | Yes |
 | **Empty dirs** | `tools/`, `agents/`, `assistants/`, `hitl/`, `workflows/` | Created if missing |
 
 ### Files **not** written by `init`
@@ -172,24 +172,24 @@ sequenceDiagram
 
 ### Init-safe directory gate
 
-`init` refuses (`INIT_REFUSED`) unless the target directory is **empty** or contains only **allowlisted** top-level entries: `.git`, `.gitignore`, `README.md`, `.DS_Store` (case-sensitive exact names). Any other file or directory — including empty live-artifact dirs like `tools/` — is reported as an offender and blocks init until `--force` is passed. `--force` bootstrap-overwrites kit/seed files but never deletes live artifacts; for refreshing an existing use-case repo, prefer `resmate kit update` (see [agent-authoring-guide.md](./agent-authoring-guide.md#resmate-kit-update-refresh-an-existing-workspace)). The CLI and the MCP `init_workspace` tool share this gate and messaging.
+`init` refuses (`INIT_REFUSED`) unless the target directory is **empty** or contains only **allowlisted** top-level entries: `.git`, `.gitignore`, `README.md`, `.DS_Store` (case-sensitive exact names). Any other file or directory — including empty live-artifact dirs like `tools/` — is reported as an offender and blocks init until `--force` is passed. `--force` bootstrap-overwrites kit/seed files but never deletes live artifacts; for refreshing an existing use-case repo, prefer `vgen kit update` (see [agent-authoring-guide.md](./agent-authoring-guide.md#vgen-kit-update-refresh-an-existing-workspace)). The CLI and the MCP `init_workspace` tool share this gate and messaging.
 
 ### CLI flags
 
 ```bash
-resmate init [--name <project>] [--description <text>] [--force] [--no-examples]
+vgen init [--name <project>] [--description <text>] [--force] [--no-examples]
 ```
 
 | Flag | Behavior |
 |------|----------|
-| `--name` | `resmate.yaml` `name` field; default = cwd basename |
-| `--description` | `resmate.yaml` `description` field; default `ResMate use case workspace` |
+| `--name` | `vgen.yaml` `name` field; default = cwd basename |
+| `--description` | `vgen.yaml` `description` field; default `ResMate use case workspace` |
 | `--force` | Bootstrap-overwrite kit/seed in a non-init-safe dir; still refuses to delete author artifacts |
 | `--no-examples` | Skip `examples/` tree (~40% of kit file count) |
 
-### `resmate.yaml` generation
+### `vgen.yaml` generation
 
-Rendered from `templates/seed/resmate.yaml.tmpl`:
+Rendered from `templates/seed/vgen.yaml.tmpl`:
 
 ```yaml
 version: 1
@@ -203,9 +203,9 @@ Recipe-specific fields (`recipe`, `default_assistant`) are added by `scaffold`, 
 
 ---
 
-## 6. `resmate scaffold` vs `resmate init`
+## 6. `vgen scaffold` vs `vgen init`
 
-| | `resmate init` | `resmate scaffold <recipe>` |
+| | `vgen init` | `vgen scaffold <recipe>` |
 |--|----------------|------------------------------|
 | **Purpose** | Bootstrap **authoring environment** (docs + Cursor + empty dirs) | Add **starter live artifacts** for a recipe |
 | **Requires** | Empty or allowlisted directory (or `--force` to bootstrap-overwrite) | Init kit present **or** `--with-kit` to run init first |
@@ -217,9 +217,9 @@ Recipe-specific fields (`recipe`, `default_assistant`) are added by `scaffold`, 
 
 ```bash
 mkdir my-pr-agent && cd my-pr-agent
-resmate init --name my-pr-agent
-resmate scaffold oracle-pr --name my-pr-agent
-# edit tools/, push with resmate validate → push-all
+vgen init --name my-pr-agent
+vgen scaffold oracle-pr --name my-pr-agent
+# edit tools/, push with vgen validate → push-all
 ```
 
 **MCP / JSON:** `init` and `scaffold` responses include `kit_version`, `files_written`, `recipe` (scaffold only).
@@ -237,14 +237,14 @@ Cursor (and similar IDEs) discover instructions from the **workspace root**:
 | Priority | File | Purpose |
 |----------|------|---------|
 | 1 | `AGENTS.md` | Read order, conventions, push order, validate gates |
-| 2 | `.cursor/skills/resmate-use-case/SKILL.md` | Skill: develop tools, agents, HITL, workflows |
-| 3 | `.cursor/rules/resmate-use-cases.mdc` | Globs on `tools/`, `agents/`, etc. |
+| 2 | `.cursor/skills/vgen-use-case/SKILL.md` | Skill: develop tools, agents, HITL, workflows |
+| 3 | `.cursor/rules/vgen-use-cases.mdc` | Globs on `tools/`, `agents/`, etc. |
 | 4 | `workflows/README.md` | Pick a recipe shape |
 | 5 | `platform/execution-model.md` + `state-and-workflows.md` | Runtime semantics |
 | 6 | `cli/commands-reference.md` + `cli/authoring-checklist.md` | CLI surface + P0/P1/P2 gates |
 | 7 | `examples/` | Copy patterns only |
 
-**Update in kit:** `STANDALONE.md`, `cli/setup.md`, and skill step 1 must say **`resmate init`** instead of "copy cli-context from monorepo".
+**Update in kit:** `STANDALONE.md`, `cli/setup.md`, and skill step 1 must say **`vgen init`** instead of "copy cli-context from monorepo".
 
 ---
 
@@ -253,8 +253,8 @@ Cursor (and similar IDEs) discover instructions from the **workspace root**:
 | Build / install | Kit resolution |
 |-----------------|----------------|
 | `cargo run` / dev checkout | `CARGO_MANIFEST_DIR/templates/` (filesystem) |
-| `cargo install resmate` | `rust-embed` of `templates/` compiled into binary |
-| Override | `RESMATE_TEMPLATES_DIR=/path/to/templates` |
+| `cargo install vgen` | `rust-embed` of `templates/` compiled into binary |
+| Override | `VGEN_TEMPLATES_DIR=/path/to/templates` |
 
 **Size budget:** Target < 2 MB added to release binary. If `examples/` pushes over budget, split:
 
@@ -267,15 +267,15 @@ Cursor (and similar IDEs) discover instructions from the **workspace root**:
 
 ## 9. Migration: core `cli-context/`
 
-**Phase 1 (P2 PR12):** Copy content to `resmed_resmate-cli/templates/workspace/`; core `cli-context/` unchanged.
+**Phase 1 (P2 PR12):** Copy content to `resmed_vgen-cli/templates/workspace/`; core `cli-context/` unchanged.
 
 **Phase 2 (P2 PR19):** Replace core `cli-context/` with redirect stub:
 
 ```
 cli-context/
-├── README.md          # "Authoring kit moved to resmed_resmate-cli. Run: resmate init"
+├── README.md          # "Authoring kit moved to resmed_vgen-cli. Run: vgen init"
 ├── AGENTS.md          # Short pointer + link to CLI repo templates/workspace/AGENTS.md
-└── MIGRATION.md       # Manual copy → resmate init; pr-agent-v2 refresh steps
+└── MIGRATION.md       # Manual copy → vgen init; pr-agent-v2 refresh steps
 ```
 
 **Update references:**
@@ -284,9 +284,9 @@ cli-context/
 |----------|--------|
 | `resmedai-core-framework/AGENTS.md` | Link to CLI repo authoring kit |
 | `context/links.md` | Point cli-context rows to CLI repo paths |
-| `.cursor/rules/cli-use-case.mdc` | "Run `resmate init`" not "read cli-context/" |
+| `.cursor/rules/cli-use-case.mdc` | "Run `vgen init`" not "read cli-context/" |
 | `lib/smriti_client/tests/fixtures/README.md` | SSOT: `templates/workspace/examples/*/workflows/` |
-| `pr-agent-v2` | Refresh from `resmate init --force` or manual kit sync script |
+| `pr-agent-v2` | Refresh from `vgen init --force` or manual kit sync script |
 
 **No deletion** of core `cli-context/` in P2 — deprecate with redirect to avoid breaking open PRs.
 
@@ -294,9 +294,9 @@ cli-context/
 
 ## 10. Kit versioning and refresh
 
-- `resmate.yaml` `kit_version` records which kit was applied.
-- Future: `resmate kit refresh` (P3+) — merge updated `cli/`, `platform/` docs without touching live artifacts.
-- P2 scope: `resmate init --force` overwrites kit markdown only; skips paths where live `tool.yaml` / agent YAML exists (configurable ignore list).
+- `vgen.yaml` `kit_version` records which kit was applied.
+- Future: `vgen kit refresh` (P3+) — merge updated `cli/`, `platform/` docs without touching live artifacts.
+- P2 scope: `vgen init --force` overwrites kit markdown only; skips paths where live `tool.yaml` / agent YAML exists (configurable ignore list).
 
 ---
 

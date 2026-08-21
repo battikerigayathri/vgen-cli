@@ -1,7 +1,7 @@
 //! Integration tests for dependency graph against the pr-agent-v2 workspace.
 
-use resmate::graph::{build_graph, build_graph_filtered, EdgeKind, NodeKind};
-use resmate::workspace::Workspace;
+use vgen::graph::{build_graph, build_graph_filtered, EdgeKind, NodeKind};
+use vgen::workspace::Workspace;
 use std::collections::HashSet;
 use std::path::PathBuf;
 

@@ -1,10 +1,10 @@
 # Validation finding codes
 
-Finding codes appear in `resmate validate` reports. Top-level envelope uses `VALIDATION_FAILED` (exit 3) when any error-severity finding exists.
+Finding codes appear in `vgen validate` reports. Top-level envelope uses `VALIDATION_FAILED` (exit 3) when any error-severity finding exists.
 
 | Code | Exit | Severity | Description | Remediation |
 |------|------|----------|-------------|-------------|
-| `VALIDATION_FAILED` | 3 | error | One or more validation findings at error severity | Run `resmate validate --json` and fix each error finding |
+| `VALIDATION_FAILED` | 3 | error | One or more validation findings at error severity | Run `vgen validate --json` and fix each error finding |
 | `BROKEN_AGENT_REF` | — | error | Assistant references an agent id not found locally | Add the agent YAML or fix `agents[]` in the assistant file |
 | `BROKEN_TOOL_REF` | — | error | Agent references a tool id not found locally | Add the tool folder or fix `skills[]` in the agent file |
 | `ORPHAN_AGENT` | — | warning | Agent file not reachable from any assistant | Wire agent into an assistant or remove unused agent |
@@ -29,7 +29,7 @@ Finding codes appear in `resmate validate` reports. Top-level envelope uses `VAL
 | `TOOL_FEEDS_INVALID` | — | error | Tool feeds block contains invalid schema, keys, empty fields, or duplicate entries | Check `feeds` or `output.x-feeds` block in `tool.yaml` |
 | `ASSISTANT_TOOL_FEEDS_INVALID` | — | error | Assistant tool_feeds override block contains invalid consumer keys, empty fields, or duplicate entries | Check `tool_feeds` block in assistant YAML |
 | `TOOL_FEEDS_MISSING` | — | warning | Tool is missing both feeds and output.x-feeds | Add `feeds` or `output.x-feeds` to tool.yaml to document output boundary |
-| `REMOTE_ID_NOT_FOUND` | — | error | Local artifact id not found on platform (`validate --remote`) | Push artifact or fix stale id; run `resmate diff` |
-| `REMOTE_LOOKUP_FAILED` | — | warning | Remote ID check failed (auth/network) | Verify RESMATE_API_KEY; retry without `--offline` |
+| `REMOTE_ID_NOT_FOUND` | — | error | Local artifact id not found on platform (`validate --remote`) | Push artifact or fix stale id; run `vgen diff` |
+| `REMOTE_LOOKUP_FAILED` | — | warning | Remote ID check failed (auth/network) | Verify VGEN_API_KEY; retry without `--offline` |
 | `REMOTE_SKIPPED_OFFLINE` | — | info | `--remote` skipped because `--offline` was set | Remove `--offline` to run remote checks |
 

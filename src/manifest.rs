@@ -57,7 +57,7 @@ pub struct ManifestInfo {
 
 use serde::Serialize;
 
-pub const MANIFEST_FILE: &str = "resmate.yaml";
+pub const MANIFEST_FILE: &str = "vgen.yaml";
 
 pub fn manifest_path(root: &Path) -> PathBuf {
     root.join(MANIFEST_FILE)
@@ -126,7 +126,7 @@ mod tests {
     #[test]
     fn manifest_paths_override_defaults() {
         let _guard = lock_test_env();
-        let base = std::env::temp_dir().join(format!("resmate-manifest-{}", std::process::id()));
+        let base = std::env::temp_dir().join(format!("vgen-manifest-{}", std::process::id()));
         let _ = fs::remove_dir_all(&base);
         fs::create_dir_all(&base).unwrap();
         fs::write(
@@ -151,7 +151,7 @@ mod tests {
     fn env_beats_manifest_for_all_dirs() {
         let _guard = lock_test_env();
         let base =
-            std::env::temp_dir().join(format!("resmate-manifest-env-{}", std::process::id()));
+            std::env::temp_dir().join(format!("vgen-manifest-env-{}", std::process::id()));
         let _ = fs::remove_dir_all(&base);
         fs::create_dir_all(&base).unwrap();
         fs::write(
@@ -181,7 +181,7 @@ mod tests {
     fn test_parse_env_mappings() {
         let _guard = lock_test_env();
         let base = std::env::temp_dir().join(format!(
-            "resmate-manifest-env-mappings-{}",
+            "vgen-manifest-env-mappings-{}",
             std::process::id()
         ));
         let _ = fs::remove_dir_all(&base);

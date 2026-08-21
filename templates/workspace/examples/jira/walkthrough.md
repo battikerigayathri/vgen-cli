@@ -8,7 +8,7 @@ Production PM assistants may add KB routing, search, and write flows — this re
 
 ## What this demonstrates
 
-- **HITL two-step** — JS HITLConfig card tool, then FAAS action tool ([decision-matrix.md](../../.cursor/skills/resmate-use-case/docs/decision-matrix.md) Pattern 1)
+- **HITL two-step** — JS HITLConfig card tool, then FAAS action tool ([decision-matrix.md](../../.cursor/skills/vgen-use-case/docs/decision-matrix.md) Pattern 1)
 - **Adaptive card** — `${issueKey}` placeholder substituted in the HITLConfig handler
 - **JS + FAAS mix** — `queryRecords` polyfill vs Smriti secrets + axios
 - **Agent never-rules** — no FAAS before HITL submit, no same-turn HITL + action
@@ -27,7 +27,7 @@ Turn 2: User submits form (issueKey)
 
 ### The resume chat message (exact format)
 
-There is **no special resume API** — the frontend posts the submitted form data back as a normal chat message. See [hitl-resume-and-message-format.md](../../.cursor/skills/resmate-use-case/docs/hitl-resume-and-message-format.md) for the full contract. For this sample, submitting the card with `issueKey: CGA-909` produces:
+There is **no special resume API** — the frontend posts the submitted form data back as a normal chat message. See [hitl-resume-and-message-format.md](../../.cursor/skills/vgen-use-case/docs/hitl-resume-and-message-format.md) for the full contract. For this sample, submitting the card with `issueKey: CGA-909` produces:
 
 ```text
 This is my data, please process further
@@ -38,7 +38,7 @@ issueKey: CGA-909
 
 ## ID linking
 
-All `id` fields below are left empty (`id: ""`) in this sample on purpose — never hand-author or copy-paste a MongoDB ObjectId. Push each layer to get a real, platform-assigned ID, then wire it into the dependent per [push-pull-wire.md](../../.cursor/skills/resmate-use-case/docs/push-pull-wire.md).
+All `id` fields below are left empty (`id: ""`) in this sample on purpose — never hand-author or copy-paste a MongoDB ObjectId. Push each layer to get a real, platform-assigned ID, then wire it into the dependent per [push-pull-wire.md](../../.cursor/skills/vgen-use-case/docs/push-pull-wire.md).
 
 | Artifact | ID / key | Links to |
 |----------|----------|----------|
@@ -60,7 +60,7 @@ All `id` fields below are left empty (`id: ""`) in this sample on purpose — ne
 | `preMessage` | Enter issue key… | Shown before card |
 | `postMessage` | Issue key submitted… | Shown after submit |
 
-Push first: `resmate hitl push jira-read-issue-confirm`
+Push first: `vgen hitl push jira-read-issue-confirm`
 
 ### config.json
 
@@ -92,7 +92,7 @@ Form field `id` becomes the key in the next-turn `context.input` for `jira-read-
 
 See [js-handlers.md](../../tools/js-handlers.md) and [hitl/hitl-config-tools.md](../../hitl/hitl-config-tools.md).
 
-Push: `resmate tool push jira-read-issue-hitlconfig`
+Push: `vgen tool push jira-read-issue-hitlconfig`
 
 ---
 
@@ -117,11 +117,11 @@ Push: `resmate tool push jira-read-issue-hitlconfig`
 
 ### payload.json
 
-Realistic `event.context` for `resmate tool test` — session id, email, `assigned_agent`.
+Realistic `event.context` for `vgen tool test` — session id, email, `assigned_agent`.
 
-Push: `resmate tool push jira-read-issue`
+Push: `vgen tool push jira-read-issue`
 
-Test: `resmate tool test jira-read-issue`
+Test: `vgen tool test jira-read-issue`
 
 ---
 
@@ -133,7 +133,7 @@ Test: `resmate tool test jira-read-issue`
 | `systemInstructions` | Step 1 HITLConfig, step 2 FAAS; never-rules |
 | `slug` | `jira-agent` — used in secret key and FaaS context |
 
-Push after both tools: `resmate agent push jira-agent`
+Push after both tools: `vgen agent push jira-agent`
 
 ---
 
@@ -155,9 +155,9 @@ Optional test: create `assistants/jira-assistants/prompt.json`:
 }
 ```
 
-Then `resmate assistant test jira-assistants` — see [cli/test.md](../../cli/test.md).
+Then `vgen assistant test jira-assistants` — see [cli/test.md](../../cli/test.md).
 
-Push last: `resmate assistant push jira-assistants`
+Push last: `vgen assistant push jira-assistants`
 
 ---
 

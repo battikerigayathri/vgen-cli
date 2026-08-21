@@ -1,8 +1,8 @@
 [package]
-name = "resmate"
+name = "vgen"
 version = "1.1.0"
 edition = "2021"
-default-run = "resmate"
+default-run = "vgen"
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }
@@ -24,9 +24,9 @@ smriti_client = { path = "resmedai-core-framework/lib/smriti_client" }
 workflow_types = { path = "resmedai-core-framework/lib/workflow_types" }
 
 [[bin]]
-name = "resmate"
+name = "vgen"
 path = "src/main.rs"
 
 [[bin]]
-name = "resmate-mcp"
-path = "src/bin/resmate_mcp.rs"
+name = "vgen-mcp"
+path = "src/bin/vgen_mcp.rs"

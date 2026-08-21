@@ -5,10 +5,10 @@ use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 
-/// Default `description` written to `resmate.yaml` when none is provided.
+/// Default `description` written to `vgen.yaml` when none is provided.
 pub const DEFAULT_DESCRIPTION: &str = "ResMate use case workspace";
 
-/// Top-level entries that do not block `resmate init` (bootstrap is init-safe).
+/// Top-level entries that do not block `vgen init` (bootstrap is init-safe).
 ///
 /// Case-sensitive exact names. Anything else (including empty live dirs like
 /// `tools/`) makes the workspace not init-safe unless `--force` is passed.
@@ -190,13 +190,13 @@ pub fn copy_workspace_kit(
     Ok(written)
 }
 
-/// Update `kit_version` in `resmate.yaml` in place, preserving comments and formatting.
+/// Update `kit_version` in `vgen.yaml` in place, preserving comments and formatting.
 ///
 /// Line-based rewrite (no YAML parse/re-serialize) so unrelated formatting,
 /// comments, and key order in the manifest are untouched. Returns `Ok(false)`
 /// when there is no manifest or no `kit_version` key to update.
 pub fn update_kit_version_in_manifest(root: &Path, new_version: &str) -> Result<bool, String> {
-    let path = root.join("resmate.yaml");
+    let path = root.join("vgen.yaml");
     if !path.is_file() {
         return Ok(false);
     }
@@ -241,14 +241,14 @@ pub fn render_seed_files(name: &str, description: &str) -> Result<Vec<(String, S
     vars.insert("kit_version", kit_version().to_string());
     vars.insert("initialized_at", iso8601_now());
 
-    let manifest_tmpl = fs::read_to_string(seed.join("resmate.yaml.tmpl"))
+    let manifest_tmpl = fs::read_to_string(seed.join("vgen.yaml.tmpl"))
         .map_err(|e| KitError::Io(e.to_string()))?;
     let gitignore =
         fs::read_to_string(seed.join("gitignore")).map_err(|e| KitError::Io(e.to_string()))?;
 
     Ok(vec![
         (
-            "resmate.yaml".to_string(),
+            "vgen.yaml".to_string(),
             render_template(&manifest_tmpl, &vars),
         ),
         (".gitignore".to_string(), gitignore),
@@ -297,7 +297,7 @@ fn copy_recipe_tree(
                 let rendered = render_template(&raw, &vars);
                 let out_rel = rel.strip_suffix(".tmpl").unwrap_or(&rel).to_string();
                 let out_target = dst_root.join(&out_rel);
-                let always_overwrite = out_rel == "resmate.yaml";
+                let always_overwrite = out_rel == "vgen.yaml";
                 if out_target.exists() && !force && !always_overwrite {
                     return Err(KitError::Io(format!(
                         "Refusing to overwrite existing file: {} (use --force)",

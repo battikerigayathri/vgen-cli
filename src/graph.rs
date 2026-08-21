@@ -829,7 +829,7 @@ stages:
     #[test]
     fn broken_agent_ref_emits_broken_ref_edge() {
         let base =
-            std::env::temp_dir().join(format!("resmate-graph-broken-{}", uuid::Uuid::new_v4()));
+            std::env::temp_dir().join(format!("vgen-graph-broken-{}", uuid::Uuid::new_v4()));
         let _ = fs::remove_dir_all(&base);
         write_minimal_graph_workspace(&base);
         fs::write(
@@ -855,7 +855,7 @@ agents:
     #[test]
     fn empty_workflow_id_sets_missing_id_not_broken_ref() {
         let base =
-            std::env::temp_dir().join(format!("resmate-graph-wf-id-{}", uuid::Uuid::new_v4()));
+            std::env::temp_dir().join(format!("vgen-graph-wf-id-{}", uuid::Uuid::new_v4()));
         let _ = fs::remove_dir_all(&base);
         write_minimal_graph_workspace(&base);
 
@@ -877,7 +877,7 @@ agents:
     #[test]
     fn orphan_tools_listed() {
         let base =
-            std::env::temp_dir().join(format!("resmate-graph-orphan-{}", uuid::Uuid::new_v4()));
+            std::env::temp_dir().join(format!("vgen-graph-orphan-{}", uuid::Uuid::new_v4()));
         let _ = fs::remove_dir_all(&base);
         write_minimal_graph_workspace(&base);
 
@@ -1001,7 +1001,7 @@ stages:
     #[test]
     fn graph_conditional_branch_renders_transition_edges() {
         let base = std::env::temp_dir().join(format!(
-            "resmate-graph-conditional-{}",
+            "vgen-graph-conditional-{}",
             uuid::Uuid::new_v4()
         ));
         let _ = fs::remove_dir_all(&base);
@@ -1085,7 +1085,7 @@ stages:
     #[test]
     fn graph_linear_workflow_uses_stage_next_only() {
         let base =
-            std::env::temp_dir().join(format!("resmate-graph-linear-{}", uuid::Uuid::new_v4()));
+            std::env::temp_dir().join(format!("vgen-graph-linear-{}", uuid::Uuid::new_v4()));
         let _ = fs::remove_dir_all(&base);
         write_minimal_graph_workspace(&base);
 
@@ -1140,7 +1140,7 @@ systemContext: |
     #[test]
     fn graph_rework_loop_renders_back_edge_with_reset() {
         let base = std::env::temp_dir().join(format!(
-            "resmate-graph-rework-loop-{}",
+            "vgen-graph-rework-loop-{}",
             uuid::Uuid::new_v4()
         ));
         let _ = fs::remove_dir_all(&base);
@@ -1213,7 +1213,7 @@ systemContext: |
     #[test]
     fn graph_named_gates_renders_gate_nodes() {
         let base = std::env::temp_dir().join(format!(
-            "resmate-graph-named-gates-{}",
+            "vgen-graph-named-gates-{}",
             uuid::Uuid::new_v4()
         ));
         let _ = fs::remove_dir_all(&base);

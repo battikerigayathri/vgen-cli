@@ -1,32 +1,32 @@
 ---
 name: Init Phase 1 — ResMate Kit Update
-overview: Implement the `resmate kit update` CLI command and MCP `kit_update` tool to safely refresh authoring kit files (skills, rules, docs, AGENTS.md) in existing use-case workspaces without touching live artifacts, supporting dry-run, examples opt-in, and manifest kit_version update.
+overview: Implement the `vgen kit update` CLI command and MCP `kit_update` tool to safely refresh authoring kit files (skills, rules, docs, AGENTS.md) in existing use-case workspaces without touching live artifacts, supporting dry-run, examples opt-in, and manifest kit_version update.
 todos:
   - id: cli-subcommand
-    content: "resmed_resmate-cli — Add `kit update` subcommand to CLI with `--examples` and `--dry-run` flags, and `refresh` alias"
+    content: "resmed_vgen-cli — Add `kit update` subcommand to CLI with `--examples` and `--dry-run` flags, and `refresh` alias"
     status: pending
   - id: kit-update-logic
-    content: "resmed_resmate-cli — Implement run_kit_update command logic in src/commands/kit.rs, reusing/extending copy_workspace_kit with dry_run and force=true"
+    content: "resmed_vgen-cli — Implement run_kit_update command logic in src/commands/kit.rs, reusing/extending copy_workspace_kit with dry_run and force=true"
     status: pending
   - id: manifest-version-update
-    content: "resmed_resmate-cli — Implement update_kit_version_in_manifest helper to safely update kit_version in resmate.yaml preserving comments/formatting"
+    content: "resmed_vgen-cli — Implement update_kit_version_in_manifest helper to safely update kit_version in vgen.yaml preserving comments/formatting"
     status: pending
   - id: mcp-kit-update
-    content: "resmed_resmate-cli — Implement kit_update tool in MCP (dispatch + handler + tools schema + tests)"
+    content: "resmed_vgen-cli — Implement kit_update tool in MCP (dispatch + handler + tools schema + tests)"
     status: pending
   - id: tests-phase1
-    content: "resmed_resmate-cli — Add integration tests in tests/init_authoring_kit_test.rs for kit update (overwrite kit, skip live, examples opt-in, dry-run, version update)"
+    content: "resmed_vgen-cli — Add integration tests in tests/init_authoring_kit_test.rs for kit update (overwrite kit, skip live, examples opt-in, dry-run, version update)"
     status: pending
   - id: docs-phase1
-    content: "resmed_resmate-cli — Update agent-authoring-guide.md, QUICKSTART.md, and templates/workspace/.../docs/cli-commands.md to document `resmate kit update`"
+    content: "resmed_vgen-cli — Update agent-authoring-guide.md, QUICKSTART.md, and templates/workspace/.../docs/cli-commands.md to document `vgen kit update`"
     status: pending
 isProject: false
 ---
 
-# Phase 1 — ResMate Kit Update (`resmate kit update`)
+# Phase 1 — ResMate Kit Update (`vgen kit update`)
 
 **Status:** planned  
-**Repo (only):** `resmed_resmate-cli`  
+**Repo (only):** `resmed_vgen-cli`  
 **Parent plan:** `docs/INIT-AUTHORING-KIT-GAPS-PLAN.md` — Phase 1 / Gap #8  
 **Do not implement:** Phase 2+ (skill cookbooks, ID lifecycle, SDK/HITL docs, other repos)
 
@@ -47,7 +47,7 @@ Provide a safe, non-destructive command for authors (and Cursor agents) to refre
 | `src/kit/copy.rs` (extend `InitOptions` and `copy_tree` / `copy_workspace_kit`) | Restoring full `platform/` / `cli/` trees into the kit (Phase 4 option) |
 | `src/mcp/dispatch.rs`, `handler.rs`, `tools.rs` | Any CLI-side push validation / warning on invented IDs (Phase 5) |
 | `tests/init_authoring_kit_test.rs` (new integration tests) | |
-| Operator + shipped skill docs that describe `resmate kit update` | |
+| Operator + shipped skill docs that describe `vgen kit update` | |
 
 ---
 
@@ -57,12 +57,12 @@ Do not re-open these unless implementation reveals a hard conflict.
 
 | # | Decision | Choice for Phase 1 |
 |---|----------|--------------------|
-| 1 | Command Name | **`resmate kit update`** with subcommand alias `refresh` (e.g. `resmate kit refresh` works identically). |
+| 1 | Command Name | **`vgen kit update`** with subcommand alias `refresh` (e.g. `vgen kit refresh` works identically). |
 | 2 | Default Overwrite | **Overwrite kit-owned files by default** (skills, rules, AGENTS.md, kit README) because the user explicitly asked to update them. This means `force = true` is passed to the copy logic for kit files. |
 | 3 | Live Artifacts | **Never delete or overwrite** live artifact trees (`tools/`, `agents/`, `assistants/`, `hitl/`, `workflows/` authored files). This is already guaranteed by `is_live_artifact_path` in `copy.rs`. |
 | 4 | Examples Opt-In | **Skip `examples/` by default**; only refresh them if `--examples` flag is passed. This prevents overriding custom example modifications. |
 | 5 | Dry-Run | **Support `--dry-run`** to list what files would be written/updated without modifying the filesystem. |
-| 6 | Manifest Update | **Update `kit_version` in `resmate.yaml`** to match the current CLI version, preserving comments, formatting, and indentation. |
+| 6 | Manifest Update | **Update `kit_version` in `vgen.yaml`** to match the current CLI version, preserving comments, formatting, and indentation. |
 | 7 | MCP Parity | **Add `kit_update` tool** to MCP with identical semantics, requiring `confirm: true` as it is a mutating tool. |
 
 ---
@@ -73,7 +73,7 @@ Do not re-open these unless implementation reveals a hard conflict.
 - `copy_tree` directly executes `fs::copy` and `fs::create_dir_all` without dry-run capability.
 - `workspace_has_live_artifacts` exists but is only used for `init` refusal.
 - No `kit` command or subcommand exists in `src/cli/mod.rs` or `src/main.rs`.
-- `init_refused_message` in `src/commands/init.rs` says `resmate kit update` is "coming soon".
+- `init_refused_message` in `src/commands/init.rs` says `vgen kit update` is "coming soon".
 
 ---
 
@@ -119,10 +119,10 @@ fn copy_tree(
 
 ### 2. Manifest kit_version Updater — `src/kit/copy.rs` (or `src/manifest.rs`)
 
-Implement a helper to safely update `kit_version` in `resmate.yaml` without parsing/re-serializing (which strips comments and resets formatting):
+Implement a helper to safely update `kit_version` in `vgen.yaml` without parsing/re-serializing (which strips comments and resets formatting):
 ```rust
 pub fn update_kit_version_in_manifest(root: &Path, new_version: &str) -> Result<bool, String> {
-    let path = root.join("resmate.yaml");
+    let path = root.join("vgen.yaml");
     if !path.is_file() {
         return Ok(false);
     }
@@ -190,9 +190,9 @@ pub enum KitSubcommand {
 1. Declare `pub mod kit;` in `src/commands/mod.rs`.
 2. Create `src/commands/kit.rs` implementing `run_kit_update`:
    - Find current working directory (workspace root).
-   - Verify it is a ResMate workspace (must contain `resmate.yaml`). If not, return error `NOT_A_WORKSPACE`.
+   - Verify it is a ResMate workspace (must contain `vgen.yaml`). If not, return error `NOT_A_WORKSPACE`.
    - Build `InitOptions` with:
-     - `name`: dummy or parsed from existing `resmate.yaml`
+     - `name`: dummy or parsed from existing `vgen.yaml`
      - `force`: `true` (overwrite kit files)
      - `no_examples`: `!examples`
      - `dry_run`: `dry_run`
@@ -225,16 +225,16 @@ Add integration tests covering:
 - `kit_update_does_not_touch_live_artifacts`: running `init`, creating a file `tools/my-tool/tool.yaml`, running `kit update` does not delete or modify that file.
 - `kit_update_examples_opt_in`: running `init --no-examples`, then `kit update` does not write examples; running `kit update --examples` writes examples.
 - `kit_update_dry_run`: running `kit update --dry-run` lists files but does not actually write them.
-- `kit_update_updates_manifest_version`: running `kit update` updates the `kit_version` field in `resmate.yaml`.
+- `kit_update_updates_manifest_version`: running `kit update` updates the `kit_version` field in `vgen.yaml`.
 
 ---
 
 ## Acceptance / exit criteria
 
-- [ ] `resmate kit update` (and `refresh` alias) safely overwrites kit files while preserving live artifacts.
+- [ ] `vgen kit update` (and `refresh` alias) safely overwrites kit files while preserving live artifacts.
 - [ ] `--examples` flag correctly controls example tree refresh.
 - [ ] `--dry-run` lists actions without modifying files.
-- [ ] `resmate.yaml` `kit_version` is updated, preserving comments and formatting.
+- [ ] `vgen.yaml` `kit_version` is updated, preserving comments and formatting.
 - [ ] MCP `kit_update` tool works identically and requires `confirm: true`.
 - [ ] Integration tests cover all of the above and pass.
 - [ ] Operator and template docs are updated to remove "coming soon" and fully document the command.
@@ -246,9 +246,9 @@ Add integration tests covering:
 1. Run `cargo test --test init_authoring_kit_test` to verify all integration tests pass.
 2. Run full `cargo test` suite to ensure no regressions.
 3. Manual smoke test:
-   - Create a temp dir, run `resmate init`.
+   - Create a temp dir, run `vgen init`.
    - Modify `AGENTS.md` (add some custom text).
    - Create `tools/my-custom-tool/tool.yaml`.
-   - Run `resmate kit update --dry-run` -> verify it lists `AGENTS.md` but not `tools/my-custom-tool/tool.yaml`. Verify `AGENTS.md` is unchanged.
-   - Run `resmate kit update` -> verify `AGENTS.md` is restored to template state, `tools/my-custom-tool/tool.yaml` is untouched, and `kit_version` in `resmate.yaml` is updated.
-   - Run `resmate kit refresh` -> verify alias works.
+   - Run `vgen kit update --dry-run` -> verify it lists `AGENTS.md` but not `tools/my-custom-tool/tool.yaml`. Verify `AGENTS.md` is unchanged.
+   - Run `vgen kit update` -> verify `AGENTS.md` is restored to template state, `tools/my-custom-tool/tool.yaml` is untouched, and `kit_version` in `vgen.yaml` is updated.
+   - Run `vgen kit refresh` -> verify alias works.

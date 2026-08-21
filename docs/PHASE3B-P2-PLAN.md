@@ -1,7 +1,7 @@
 # Phase 3B (P2) — Validation hardening (deferred)
 
 **Status:** Planned (after Phase 3A)  
-**Target repo:** [`resmed_resmate-cli`](../.)  
+**Target repo:** [`resmed_vgen-cli`](../.)  
 **Jira epic:** [CGA-1094](https://resmedglobal.atlassian.net/browse/CGA-1094)  
 **Prerequisite:** [PHASE3A-P2-PLAN.md](./PHASE3A-P2-PLAN.md) PR12 merged
 
@@ -28,7 +28,7 @@ Close the **validation and push-confidence** gaps in CGA-1094 after the authorin
 | **PR14** | [CGA-1109](https://resmedglobal.atlassian.net/browse/CGA-1109) | Workflow push ↔ smriti loader alignment | 5 | P0 PR4 |
 | **PR15** | [CGA-1112](https://resmedglobal.atlassian.net/browse/CGA-1112) | Advanced handler static analysis | 5 | P0 PR5 |
 | **PR16** | [CGA-1107](https://resmedglobal.atlassian.net/browse/CGA-1107) | Remote ID existence checks | 5 | P0 PR5 |
-| **PR17** | [CGA-1108](https://resmedglobal.atlassian.net/browse/CGA-1108) | `resmate diff` before push | 5 | PR16, P0 PR6 |
+| **PR17** | [CGA-1108](https://resmedglobal.atlassian.net/browse/CGA-1108) | `vgen diff` before push | 5 | PR16, P0 PR6 |
 | **PR18** | [CGA-1111](https://resmedglobal.atlassian.net/browse/CGA-1111) | Local integration tests + smoke script (**no GHA**) | 5 | PR14+ |
 | **PR20 remainder** | CGA-1106 cont. | Kit doc sync (`validate --remote`, `diff`, MCP) | 2 | PR12–18 |
 
@@ -53,13 +53,13 @@ Close the **validation and push-confidence** gaps in CGA-1094 after the authorin
 
 ### PR16 — Remote validate (CGA-1107)
 
-- `resmate validate --remote` — ID existence via API
+- `vgen validate --remote` — ID existence via API
 - `src/remote_cache.rs`, `src/validate/remote_rules.rs`
 - `--offline` wins → `REMOTE_SKIPPED_OFFLINE`
 
 ### PR17 — Diff (CGA-1108)
 
-- `resmate diff [<type>] <name>` — field-level local vs remote
+- `vgen diff [<type>] <name>` — field-level local vs remote
 - Push dry-run `remote_drift` per step
 
 ### PR18 — Local smoke + testdata (CGA-1111)
@@ -88,10 +88,10 @@ Close the **validation and push-confidence** gaps in CGA-1094 after the authorin
 ## 5. Success criteria (smoke against `pr-agent-v2`)
 
 ```bash
-resmate --json workflow validate oracle-purchase-requisition | jq '.ok == true'
-resmate --json validate | jq '.data.summary.error_count == 0'
-resmate --json validate --remote | jq '.data.summary.error_count == 0'
-resmate --json diff tool roc-search-users | jq '.data.has_changes == false'
+vgen --json workflow validate oracle-purchase-requisition | jq '.ok == true'
+vgen --json validate | jq '.data.summary.error_count == 0'
+vgen --json validate --remote | jq '.data.summary.error_count == 0'
+vgen --json diff tool roc-search-users | jq '.data.has_changes == false'
 ./scripts/smoke-pr-agent.sh
 cargo test
 ```

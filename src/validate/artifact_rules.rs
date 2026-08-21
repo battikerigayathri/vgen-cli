@@ -331,7 +331,7 @@ mod tests {
             .unwrap()
             .as_nanos()
             .to_string();
-        let dir = std::env::temp_dir().join(format!("resmate-test-{}", uuid_str));
+        let dir = std::env::temp_dir().join(format!("vgen-test-{}", uuid_str));
         let tools_dir = dir.join("tools");
         let tool_dir = tools_dir.join("test-tool");
         std::fs::create_dir_all(&tool_dir).unwrap();
@@ -376,7 +376,7 @@ feeds:
             .unwrap()
             .as_nanos()
             .to_string();
-        let dir = std::env::temp_dir().join(format!("resmate-test-{}", uuid_str));
+        let dir = std::env::temp_dir().join(format!("vgen-test-{}", uuid_str));
         let assistants_dir = dir.join("assistants");
         std::fs::create_dir_all(&assistants_dir).unwrap();
 

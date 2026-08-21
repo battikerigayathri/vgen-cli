@@ -6,8 +6,8 @@ dist/
 .env
 
 # `cargo install` / local copy of the CLI binary
-resmate
-resmate.exe
+vgen
+vgen.exe
 
 # Lockfile committed for reproducible local builds and smoke tests
 

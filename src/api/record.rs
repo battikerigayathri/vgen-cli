@@ -8,7 +8,7 @@ pub async fn list_records(
     query: Value,
 ) -> Result<Value, Box<dyn std::error::Error + Send + Sync>> {
     let cfg = config::load_config().map_err(|e| e.to_string())?;
-    let api_key = cfg.api_key.as_deref().ok_or("RESMATE_API_KEY is not set")?;
+    let api_key = cfg.api_key.as_deref().ok_or("VGEN_API_KEY is not set")?;
     let base = cfg.base_url.trim_end_matches('/');
     let url = format!("{}/list-records", base);
 
@@ -43,7 +43,7 @@ pub async fn get_record(
     record_id: &str,
 ) -> Result<Value, Box<dyn std::error::Error + Send + Sync>> {
     let cfg = config::load_config().map_err(|e| e.to_string())?;
-    let api_key = cfg.api_key.as_deref().ok_or("RESMATE_API_KEY is not set")?;
+    let api_key = cfg.api_key.as_deref().ok_or("VGEN_API_KEY is not set")?;
     let base = cfg.base_url.trim_end_matches('/');
     let url = format!("{}/get-record", base);
 

@@ -40,7 +40,7 @@ To push the bundled Jira or minimal sample as-is:
 
 ```bash
 cd examples/jira    # from workspace root
-resmate config validate
+vgen config validate
 ```
 
 For day-to-day work, author under workspace-root `tools/`, `agents/`, etc.

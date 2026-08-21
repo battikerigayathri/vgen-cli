@@ -1,7 +1,7 @@
 # Phase 3A (P2) — Authoring kit & developer experience
 
 **Status:** In progress (PR12 core)  
-**Target repo:** [`resmed_resmate-cli`](../.)  
+**Target repo:** [`resmed_vgen-cli`](../.)  
 **Architecture:** [AUTHORING-KIT-ARCHITECTURE.md](./AUTHORING-KIT-ARCHITECTURE.md)  
 **Jira epic:** [CGA-1094](https://resmedglobal.atlassian.net/browse/CGA-1094)  
 **Prerequisite:** [PHASE2-P1-COMPLETE.md](./PHASE2-P1-COMPLETE.md) (CGA-1101–CGA-1106)
@@ -19,8 +19,8 @@ IDE agents can **bootstrap a full authoring workspace with one command** and sca
 | # | Capability | Command(s) / artifact | Jira |
 |---|------------|----------------------|------|
 | 1 | **Authoring kit in CLI** | `templates/workspace/` vendored from core `cli-context/` | CGA-1102 ext. |
-| 2 | **Init bootstrap** | `resmate init` copies kit + seed files | CGA-1102 ext. |
-| 3 | **Recipe scaffold** | `resmate scaffold <recipe>` from `templates/recipes/` | CGA-1102 ext. |
+| 2 | **Init bootstrap** | `vgen init` copies kit + seed files | CGA-1102 ext. |
+| 3 | **Recipe scaffold** | `vgen scaffold <recipe>` from `templates/recipes/` | CGA-1102 ext. |
 | 4 | **CLAD replacement** | `docs/agent-authoring-guide.md` | [CGA-1110](https://resmedglobal.atlassian.net/browse/CGA-1110) |
 | 5 | **Core redirect (partial)** | Core `cli-context/` README stub | CGA-1106 cont. |
 
@@ -28,11 +28,11 @@ IDE agents can **bootstrap a full authoring workspace with one command** and sca
 
 ```bash
 tmpdir=$(mktemp -d) && cd "$tmpdir"
-resmate init --name smoke-test --json | jq '.ok == true'
-test -f AGENTS.md && test -f .cursor/skills/resmate-use-case/SKILL.md
+vgen init --name smoke-test --json | jq '.ok == true'
+test -f AGENTS.md && test -f .cursor/skills/vgen-use-case/SKILL.md
 test -f platform/execution-model.md && test -f cli/authoring-checklist.md
-resmate init --no-examples --force  # skips examples/
-resmate scaffold oracle-pr --name smoke-test --json | jq '.ok == true'
+vgen init --no-examples --force  # skips examples/
+vgen scaffold oracle-pr --name smoke-test --json | jq '.ok == true'
 cargo test init_authoring_kit
 ```
 
@@ -57,9 +57,9 @@ cargo test init_authoring_kit
 ### Scope
 
 1. Vendored kit at `templates/workspace/` from `resmedai-core-framework/cli-context/`
-2. Kit loader (`src/kit/`) — filesystem via `CARGO_MANIFEST_DIR` / `RESMATE_TEMPLATES_DIR`
-3. `resmate init` — full kit copy, seed files, empty live dirs
-4. `resmate scaffold` — recipes from `templates/recipes/`; requires kit or `--with-kit`
+2. Kit loader (`src/kit/`) — filesystem via `CARGO_MANIFEST_DIR` / `VGEN_TEMPLATES_DIR`
+3. `vgen init` — full kit copy, seed files, empty live dirs
+4. `vgen scaffold` — recipes from `templates/recipes/`; requires kit or `--with-kit`
 5. Maintainer sync script `scripts/sync-authoring-kit.sh`
 
 ### Template layout
@@ -72,7 +72,7 @@ templates/
 │   ├── form-wizard/
 │   └── oracle-pr/
 └── seed/
-    ├── resmate.yaml.tmpl
+    ├── vgen.yaml.tmpl
     └── gitignore
 ```
 
@@ -81,16 +81,16 @@ templates/
 | Context | Resolution |
 |---------|------------|
 | Dev / `cargo test` | `CARGO_MANIFEST_DIR/templates/` |
-| Override | `RESMATE_TEMPLATES_DIR` |
-| `cargo install` | Set `RESMATE_TEMPLATES_DIR` **or** follow-up `rust-embed` PR |
+| Override | `VGEN_TEMPLATES_DIR` |
+| `cargo install` | Set `VGEN_TEMPLATES_DIR` **or** follow-up `rust-embed` PR |
 
 **Decision (PR12):** Filesystem-only for v1. `rust-embed` deferred — document in `src/kit/load.rs` and [AUTHORING-KIT-ARCHITECTURE.md](./AUTHORING-KIT-ARCHITECTURE.md) §8.
 
-### `resmate init` flags
+### `vgen init` flags
 
 | Flag | Behavior |
 |------|----------|
-| `--name` | `resmate.yaml` `name` field (default: cwd basename) |
+| `--name` | `vgen.yaml` `name` field (default: cwd basename) |
 | `--force` | Overwrite kit markdown; never delete live artifacts |
 | `--no-examples` | Skip `examples/` tree |
 | `--json` | JSON envelope (global) |
@@ -99,7 +99,7 @@ templates/
 
 - Recursive copy from `templates/workspace/` preserving paths
 - `--force` overwrites kit files only; skips live `tools/<name>/`, `agents/*.yaml`, etc.
-- Writes `resmate.yaml` with `kit_version`, `initialized_at`
+- Writes `vgen.yaml` with `kit_version`, `initialized_at`
 - Creates empty `tools/`, `agents/`, `assistants/`, `hitl/`, `workflows/`
 
 ### Files
@@ -117,12 +117,12 @@ templates/
 
 ### Acceptance criteria
 
-- [x] `resmate init` produces `AGENTS.md`, `.cursor/skills/`, `platform/`, `cli/`
-- [x] `resmate init --no-examples` skips `examples/`
-- [x] `resmate scaffold oracle-pr` after init writes recipe artifacts
+- [x] `vgen init` produces `AGENTS.md`, `.cursor/skills/`, `platform/`, `cli/`
+- [x] `vgen init --no-examples` skips `examples/`
+- [x] `vgen scaffold oracle-pr` after init writes recipe artifacts
 - [x] `scaffold` without kit fails with `KIT_NOT_PRESENT` (or `--with-kit`)
-- [x] `resmate.yaml` includes `kit_version`
-- [ ] Kit docs fully updated (`STANDALONE.md`, skill step 1 → `resmate init`) — partial in PR12
+- [x] `vgen.yaml` includes `kit_version`
+- [ ] Kit docs fully updated (`STANDALONE.md`, skill step 1 → `vgen init`) — partial in PR12
 - [x] `cargo test` passes
 
 ### Tests
@@ -143,8 +143,8 @@ templates/
 ### Scope
 
 - Add `docs/agent-authoring-guide.md` — canonical short guide in CLI repo
-- Stub `docs/CLAD-resmate-use-cases.md` with redirect
-- Update `README.md` — `resmate init` quick start
+- Stub `docs/CLAD-vgen-use-cases.md` with redirect
+- Update `README.md` — `vgen init` quick start
 - Link from `templates/workspace/README.md`
 
 ### Acceptance criteria
@@ -164,7 +164,7 @@ templates/
 
 | Repo | Action |
 |------|--------|
-| `resmedai-core-framework` | `cli-context/README.md` redirect to CLI `templates/workspace/` + `resmate init` |
+| `resmedai-core-framework` | `cli-context/README.md` redirect to CLI `templates/workspace/` + `vgen init` |
 | `resmedai-core-framework` | Add `cli-context/MIGRATION.md` |
 | `resmedai-core-framework` | Update `AGENTS.md`, `context/links.md` pointers |
 
@@ -202,6 +202,6 @@ templates/
 
 | Risk | Mitigation |
 |------|------------|
-| Kit embed / install UX | Document `RESMATE_TEMPLATES_DIR`; add `rust-embed` follow-up |
+| Kit embed / install UX | Document `VGEN_TEMPLATES_DIR`; add `rust-embed` follow-up |
 | Kit drift vs `pr-agent-v2` | `sync-authoring-kit.sh`; PR20 remainder |
 | `scaffold` without init | `KIT_NOT_PRESENT` + `--with-kit` |

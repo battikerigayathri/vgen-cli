@@ -25,9 +25,9 @@ pub fn list_hitl_dirs(base: &Path) -> Vec<PathBuf> {
         .collect()
 }
 
-/// Resolve HITL directory: env RESMATE_HITL_DIR or default "hitl" under cwd.
+/// Resolve HITL directory: env VGEN_HITL_DIR or default "hitl" under cwd.
 pub fn default_hitl_dir() -> PathBuf {
-    std::env::var("RESMATE_HITL_DIR")
+    std::env::var("VGEN_HITL_DIR")
         .map(PathBuf::from)
         .unwrap_or_else(|_| PathBuf::from("hitl"))
 }

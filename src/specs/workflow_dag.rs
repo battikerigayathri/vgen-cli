@@ -8,7 +8,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 /// Extracts the `transitions` array of a single stage `Value` as typed `TransitionRule`s,
-/// for CLI code (e.g. `resmate graph`, `resmate explain`) that wants structural access
+/// for CLI code (e.g. `vgen graph`, `vgen explain`) that wants structural access
 /// rather than raw JSON traversal. Returns an empty vec for legacy `next`-only stages.
 pub fn stage_transitions(stage: &Value) -> Vec<TransitionRule> {
     stage

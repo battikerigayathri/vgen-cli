@@ -9,7 +9,7 @@ systemInstructions:
 - 'Read — step 2: After read HITL submit, call jira-read-issue with issueKey from form.'
 - Never call jira-read-issue before HITL submit. Never call jira-read-issue on the same turn as HITLConfig.
 skills: []
-# Wire after pushing the tools below (see docs/push-pull-wire.md), then re-run `resmate agent push jira-agent`:
+# Wire after pushing the tools below (see docs/push-pull-wire.md), then re-run `vgen agent push jira-agent`:
 #   - <tool-id-after-push> (copy the written-back id from tools/jira-read-issue-hitlconfig/tool.yaml)
 #   - <tool-id-after-push> (copy the written-back id from tools/jira-read-issue/tool.yaml)
 is_public: false

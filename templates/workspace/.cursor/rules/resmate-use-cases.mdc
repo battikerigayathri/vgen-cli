@@ -8,7 +8,7 @@ alwaysApply: false
 
 Globs match **live artifacts at workspace root** — not `examples/` (reference only).
 
-Read [README.md](../../README.md) and the [Master Router & Index](../skills/resmate-use-case/SKILL.md) before editing. Architecture decisions (single/multi-agent, standard flow vs. workflow, JS vs. FaaS) and ReAct sequence flows live in [decision-matrix.md](../skills/resmate-use-case/docs/decision-matrix.md).
+Read [README.md](../../README.md) and the [Master Router & Index](../skills/vgen-use-case/SKILL.md) before editing. Architecture decisions (single/multi-agent, standard flow vs. workflow, JS vs. FaaS) and ReAct sequence flows live in [decision-matrix.md](../skills/vgen-use-case/docs/decision-matrix.md).
 
 ## Where to develop
 
@@ -21,24 +21,24 @@ Read [README.md](../../README.md) and the [Master Router & Index](../skills/resm
 
 - **Assistant** routes agents — `systemContext`
 - **Agent** picks tools — `systemInstructions` + `skills[]`
-- HITL two-step: [decision-matrix.md](../skills/resmate-use-case/docs/decision-matrix.md)
+- HITL two-step: [decision-matrix.md](../skills/vgen-use-case/docs/decision-matrix.md)
 
 ## YAML references
 
 | Layer | Doc |
 |-------|-----|
-| Tool | [spec-tool.md](../skills/resmate-use-case/docs/spec-tool.md) |
-| Agent | [spec-agent.md](../skills/resmate-use-case/docs/spec-agent.md) |
-| Assistant | [spec-assistant.md](../skills/resmate-use-case/docs/spec-assistant.md) |
-| HITL | [spec-tool.md](../skills/resmate-use-case/docs/spec-tool.md) |
-| Workflow / Recipes | [spec-workflow.md](../skills/resmate-use-case/docs/spec-workflow.md) |
+| Tool | [spec-tool.md](../skills/vgen-use-case/docs/spec-tool.md) |
+| Agent | [spec-agent.md](../skills/vgen-use-case/docs/spec-agent.md) |
+| Assistant | [spec-assistant.md](../skills/vgen-use-case/docs/spec-assistant.md) |
+| HITL | [spec-tool.md](../skills/vgen-use-case/docs/spec-tool.md) |
+| Workflow / Recipes | [spec-workflow.md](../skills/vgen-use-case/docs/spec-workflow.md) |
 
 ## Conventions
 
-- Push order: **hitl → workflow → tool → agent → assistant** — see [push-pull-wire.md](../skills/resmate-use-case/docs/push-pull-wire.md) for binding rules and the push-wire-re-push loop.
-- Never invent MongoDB ObjectIds for `id` fields or `skills[]`/`agents[]` bindings — leave them empty and let push write them back. See [id-lifecycle.md](../skills/resmate-use-case/docs/id-lifecycle.md).
-- Run `resmate` from **workspace root**
-- State: [spec-workflow.md](../skills/resmate-use-case/docs/spec-workflow.md) — no custom persistence; workflow save tools return `workflowPatch` only
+- Push order: **hitl → workflow → tool → agent → assistant** — see [push-pull-wire.md](../skills/vgen-use-case/docs/push-pull-wire.md) for binding rules and the push-wire-re-push loop.
+- Never invent MongoDB ObjectIds for `id` fields or `skills[]`/`agents[]` bindings — leave them empty and let push write them back. See [id-lifecycle.md](../skills/vgen-use-case/docs/id-lifecycle.md).
+- Run `vgen` from **workspace root**
+- State: [spec-workflow.md](../skills/vgen-use-case/docs/spec-workflow.md) — no custom persistence; workflow save tools return `workflowPatch` only
 
 ## Reference samples
 

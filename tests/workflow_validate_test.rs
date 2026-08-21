@@ -1,6 +1,6 @@
-//! Integration tests for `resmate workflow validate`.
+//! Integration tests for `vgen workflow validate`.
 
-use resmate::workflow_validate::validate_workflow_dir;
+use vgen::workflow_validate::validate_workflow_dir;
 use std::path::PathBuf;
 
 fn pr_agent_v2_root() -> PathBuf {
@@ -28,7 +28,7 @@ fn pr_agent_v2_oracle_purchase_requisition_passes() {
 
 #[test]
 fn missing_schema_yaml_fails_with_layout_error() {
-    let base = std::env::temp_dir().join(format!("resmate-wf-no-schema-{}", uuid::Uuid::new_v4()));
+    let base = std::env::temp_dir().join(format!("vgen-wf-no-schema-{}", uuid::Uuid::new_v4()));
     let _ = std::fs::remove_dir_all(&base);
     std::fs::create_dir_all(&base).unwrap();
     std::fs::write(
@@ -71,7 +71,7 @@ fn cli_validate_oracle_exits_zero() {
         return;
     }
 
-    let output = std::process::Command::new(env!("CARGO_BIN_EXE_resmate"))
+    let output = std::process::Command::new(env!("CARGO_BIN_EXE_vgen"))
         .args([
             "--json",
             "workflow",
@@ -81,7 +81,7 @@ fn cli_validate_oracle_exits_zero() {
         ])
         .arg(root.join("workflows"))
         .output()
-        .expect("run resmate workflow validate");
+        .expect("run vgen workflow validate");
 
     assert!(
         output.status.success(),

@@ -1,7 +1,7 @@
 # Phase 3 (P2) — ResMate CLI agent-authoring hardening
 
 **Status:** Split into Phase 3A (authoring kit) + Phase 3B (validation hardening)  
-**Target repo:** [`resmed_resmate-cli`](../.)  
+**Target repo:** [`resmed_vgen-cli`](../.)  
 **Jira epic:** [CGA-1094](https://resmedglobal.atlassian.net/browse/CGA-1094)  
 **Prerequisite:** [PHASE2-P1-COMPLETE.md](./PHASE2-P1-COMPLETE.md)
 
@@ -11,7 +11,7 @@
 
 | Phase | Focus | Plan | SP (approx.) |
 |-------|--------|------|--------------|
-| **3A** | Authoring kit, `resmate init`, scaffold, CLAD guide, core redirect stub | [PHASE3A-P2-PLAN.md](./PHASE3A-P2-PLAN.md) | ~13 |
+| **3A** | Authoring kit, `vgen init`, scaffold, CLAD guide, core redirect stub | [PHASE3A-P2-PLAN.md](./PHASE3A-P2-PLAN.md) | ~13 |
 | **3B** | Smriti alignment, handler lint, remote validate, diff, local smoke | [PHASE3B-P2-PLAN.md](./PHASE3B-P2-PLAN.md) | ~27 |
 
 **Architecture:** [AUTHORING-KIT-ARCHITECTURE.md](./AUTHORING-KIT-ARCHITECTURE.md)
@@ -34,7 +34,7 @@ IDE agents can `init` → `scaffold` → edit → `validate` → `validate --rem
 | PR14 | 3B | CGA-1109 | Workflow smriti alignment |
 | PR15 | 3B | CGA-1112 | Handler static analysis |
 | PR16 | 3B | CGA-1107 | Remote ID checks |
-| PR17 | 3B | CGA-1108 | `resmate diff` |
+| PR17 | 3B | CGA-1108 | `vgen diff` |
 | PR18 | 3B | CGA-1111 | Local smoke + testdata (no GHA) |
 | PR20 remainder | 3B | CGA-1106 | Kit doc sync for P2 commands |
 

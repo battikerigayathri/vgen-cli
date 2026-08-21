@@ -11,15 +11,15 @@ Stable machine-readable error codes for ResMate CLI JSON envelopes.
 | [workflow.md](workflow.md) | workflow | Workflow schema/semantic/layout codes |
 | [push.md](push.md) | push | push-all preflight and execution codes |
 
-Use `resmate explain <CODE>` for description and remediation hints, or `resmate explain --list [--domain validation]`.
+Use `vgen explain <CODE>` for description and remediation hints, or `vgen explain --list [--domain validation]`.
 
 ## CLI usage
 
 ```bash
-resmate explain BROKEN_AGENT_REF
-resmate --json explain WORKFLOW_SCHEMA_INVALID
-resmate explain --list
-resmate explain --list --domain validation
+vgen explain BROKEN_AGENT_REF
+vgen --json explain WORKFLOW_SCHEMA_INVALID
+vgen explain --list
+vgen explain --list --domain validation
 ```
 
 ## Adding codes

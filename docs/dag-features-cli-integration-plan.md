@@ -1,6 +1,6 @@
 # DAG Workflow Features — CLI Integration Plan
 
-This document is the CLI-side companion to [`resmedai-core-framework/docs/dag-workflow-implementation-plan.md`](../../resmedai-core-framework/docs/dag-workflow-implementation-plan.md) (referenced below as "the DAG plan"). It audits `resmate`'s workflow authoring, validation, push/pull, scaffolding, and documentation surfaces against the four DAG phases already shipped in `resmedai-core-framework` — Conditional Transitions, Path-Aware Completeness, Back-Edges & State Hygiene, and Named Gates — and lays out the concrete engineering work required to bring the CLI's authoring experience in line with what the runtime engine already supports.
+This document is the CLI-side companion to [`resmedai-core-framework/docs/dag-workflow-implementation-plan.md`](../../resmedai-core-framework/docs/dag-workflow-implementation-plan.md) (referenced below as "the DAG plan"). It audits `vgen`'s workflow authoring, validation, push/pull, scaffolding, and documentation surfaces against the four DAG phases already shipped in `resmedai-core-framework` — Conditional Transitions, Path-Aware Completeness, Back-Edges & State Hygiene, and Named Gates — and lays out the concrete engineering work required to bring the CLI's authoring experience in line with what the runtime engine already supports.
 
 Related core-framework ADRs: [015 — Back-edges](../../resmedai-core-framework/context/decisions/015-dag-workflow-phase3-back-edges.md), [016 — Named Gates](../../resmedai-core-framework/context/decisions/016-dag-workflow-phase4-named-gates.md), [017 — Path-Aware Completeness](../../resmedai-core-framework/context/decisions/017-dag-workflow-phase2-path-aware-completeness.md).
 
@@ -8,19 +8,19 @@ Related core-framework ADRs: [015 — Back-edges](../../resmedai-core-framework/
 
 ## 1. Executive Summary
 
-`resmate` (this repo) depends on `resmedai-core-framework`'s `smriti_client` crate as a **local path dependency** (`Cargo.toml`: `smriti_client = { path = "../resmedai-core-framework/lib/smriti_client" }`). Every CLI code path that parses or semantically validates a workflow directory — `resmate workflow validate`, `resmate validate`, `resmate doctor`, `resmate workflow push`, `resmate graph`, `resmate push-all` — routes through `WorkflowDefinitionLoader::load_from_dir`, which is the *exact same* function the runtime engine uses. This is a deliberate architectural choice (confirmed by `src/workflow_loader.rs` and `src/workflow_validate.rs` delegating directly, with zero duplicated schema/validation logic in this repo) and it means one important thing up front:
+`vgen` (this repo) depends on `resmedai-core-framework`'s `smriti_client` crate as a **local path dependency** (`Cargo.toml`: `smriti_client = { path = "../resmedai-core-framework/lib/smriti_client" }`). Every CLI code path that parses or semantically validates a workflow directory — `vgen workflow validate`, `vgen validate`, `vgen doctor`, `vgen workflow push`, `vgen graph`, `vgen push-all` — routes through `WorkflowDefinitionLoader::load_from_dir`, which is the *exact same* function the runtime engine uses. This is a deliberate architectural choice (confirmed by `src/workflow_loader.rs` and `src/workflow_validate.rs` delegating directly, with zero duplicated schema/validation logic in this repo) and it means one important thing up front:
 
 > **The CLI does not need new Rust structs to *parse* `transitions`, `Condition`, `reset`, `requiredFromStage`, or `gates.yaml` — it already parses and semantically validates every DAG feature today, for free, because it is compiled against the live core-framework source tree.**
 
-This finding changes the shape of the gap from "the CLI's parser is unaware of the DAG schema" (the assumption this plan started from) to a more precise and more actionable one: **the CLI's parsing/validation *engine* is current, but every human- and agent-facing *authoring surface* around it — documentation, scaffolding templates, and push/pull field-copy logic — still only knows about the pre-DAG linear model.** A developer (or an authoring agent) running `resmate init --recipe oracle-pr` today gets a workflow directory that validates cleanly, but contains zero examples of `transitions`, `gates.yaml`, `reset`, or `requiredFromStage`, and the only doc that describes `flow.yaml` (`spec-workflow.md`) has no section on any of them. The DAG engine phases are functionally invisible to anyone authoring through this CLI, even though the plumbing underneath already supports them completely.
+This finding changes the shape of the gap from "the CLI's parser is unaware of the DAG schema" (the assumption this plan started from) to a more precise and more actionable one: **the CLI's parsing/validation *engine* is current, but every human- and agent-facing *authoring surface* around it — documentation, scaffolding templates, and push/pull field-copy logic — still only knows about the pre-DAG linear model.** A developer (or an authoring agent) running `vgen init --recipe oracle-pr` today gets a workflow directory that validates cleanly, but contains zero examples of `transitions`, `gates.yaml`, `reset`, or `requiredFromStage`, and the only doc that describes `flow.yaml` (`spec-workflow.md`) has no section on any of them. The DAG engine phases are functionally invisible to anyone authoring through this CLI, even though the plumbing underneath already supports them completely.
 
 Concretely, this plan identifies five real gaps, in priority order:
 
 1. **Documentation gap (highest impact, lowest risk)** — `spec-workflow.md` documents `requiredFromStage` and mentions `gates.yaml` in the layout table, but has no schema section for `transitions`, `Condition` (all 7 variants), `reset`, `gates.yaml`'s own schema, or the `allowedNext`/`lastTransition` snapshot fields. Authors and coding agents have no in-repo reference for any DAG feature beyond one field name.
 2. **Scaffolding gap** — all three shipped workflow templates (`recipes/form-wizard`, `recipes/oracle-pr`, `workspace/examples/purchase-requisition`) are 100% legacy `next`-only `flow.yaml` files with no `gates.yaml` and no commented-out DAG feature examples.
-3. **Push/pull robustness gap** — `specs/workflow.rs::write_workflow_from_definition` (the function `resmate workflow pull` calls to materialize files) hand-extracts a fixed list of top-level keys (`fields`, `stages`, `gates`, `initialStage`, ...) from the API response instead of mirroring the full split-file set the loader understands. This is the direct root cause of the `playbooks.yaml` pull bug (§2) and is a latent risk for `gates.yaml` and any future split file.
+3. **Push/pull robustness gap** — `specs/workflow.rs::write_workflow_from_definition` (the function `vgen workflow pull` calls to materialize files) hand-extracts a fixed list of top-level keys (`fields`, `stages`, `gates`, `initialStage`, ...) from the API response instead of mirroring the full split-file set the loader understands. This is the direct root cause of the `playbooks.yaml` pull bug (§2) and is a latent risk for `gates.yaml` and any future split file.
 4. **Validation regression-lock gap** — the CLI inherits full server-grade semantic validation (dead-end detection, transition target existence, `reset` field existence, gate id uniqueness/cycle detection) via the path dependency, but this repo has **zero test fixtures of its own** that exercise DAG YAML through `validate_workflow_dir`. The inherited behavior is currently un-asserted from the CLI's perspective — a future refactor of the path dependency boundary (e.g. pinning a crates.io version, or changes to `WorkflowDefinitionLoader`'s error mapping) could silently regress CLI-side error reporting for these checks with no CLI test catching it.
-5. **Developer ergonomics gap** — `resmate graph` renders cross-resource edges (workflow→HITL, workflow→agent) but has no visibility into intra-workflow DAG structure (`transitions`, `gates`); `mcp/tools.rs`'s `workflow_validate` MCP tool description and CLI help text do not mention DAG authoring at all.
+5. **Developer ergonomics gap** — `vgen graph` renders cross-resource edges (workflow→HITL, workflow→agent) but has no visibility into intra-workflow DAG structure (`transitions`, `gates`); `mcp/tools.rs`'s `workflow_validate` MCP tool description and CLI help text do not mention DAG authoring at all.
 
 Sections 3–8 below detail each gap and the concrete Rust/YAML changes required, organized to mirror the DAG plan's own structure (schema → validation → push/pull → scaffolding → docs → parallel subagent task breakdown).
 
@@ -32,7 +32,7 @@ Sections 3–8 below detail each gap and the concrete Rust/YAML changes required
 
 ### Symptom
 
-`resmate workflow push <name>` correctly serializes stage-level playbooks into the pushed `authorBundle` — `src/workflow_loader.rs::definition_to_bundle` explicitly walks `def.stages`, collects each stage's `playbook` field, and assembles a `playbooks: { <stageId>: StagePlaybookDef }` map that is included in the outgoing bundle (this is only possible because `WorkflowDefinitionLoader::load_from_dir`, on the read side, already merges a sibling `playbooks.yaml` split file per `lib/smriti_client/src/workflow/loader.rs`). However, `resmate workflow pull <name>` calls `specs::write_workflow_from_definition(&workflow_dir, data)` (`src/specs/workflow.rs`), and that function's field-extraction block only reads `id`, `slug`, `name`, `workflowType`, `version`, `description`, `fields`, `stages`, `gates`, and `initialStage` off the response object — **it never reads a `playbooks` key and never writes a `playbooks.yaml` file.** The net effect: a workflow authored with stage playbooks, pushed successfully, and then pulled back down (e.g. onto a fresh clone, or after `resmate workflow pull` to sync a cloud-assigned ID) silently loses its `playbooks.yaml` file on disk, even though the remote definition still has the playbook data. Push is unaffected; only the local pull materialization is broken.
+`vgen workflow push <name>` correctly serializes stage-level playbooks into the pushed `authorBundle` — `src/workflow_loader.rs::definition_to_bundle` explicitly walks `def.stages`, collects each stage's `playbook` field, and assembles a `playbooks: { <stageId>: StagePlaybookDef }` map that is included in the outgoing bundle (this is only possible because `WorkflowDefinitionLoader::load_from_dir`, on the read side, already merges a sibling `playbooks.yaml` split file per `lib/smriti_client/src/workflow/loader.rs`). However, `vgen workflow pull <name>` calls `specs::write_workflow_from_definition(&workflow_dir, data)` (`src/specs/workflow.rs`), and that function's field-extraction block only reads `id`, `slug`, `name`, `workflowType`, `version`, `description`, `fields`, `stages`, `gates`, and `initialStage` off the response object — **it never reads a `playbooks` key and never writes a `playbooks.yaml` file.** The net effect: a workflow authored with stage playbooks, pushed successfully, and then pulled back down (e.g. onto a fresh clone, or after `vgen workflow pull` to sync a cloud-assigned ID) silently loses its `playbooks.yaml` file on disk, even though the remote definition still has the playbook data. Push is unaffected; only the local pull materialization is broken.
 
 ### Why this matters beyond `playbooks.yaml`
 
@@ -50,7 +50,7 @@ When the `playbooks.yaml` fix lands, the CLI-side pull logic (`write_workflow_fr
 
 Investigation into `src/specs/workflow.rs`, `src/workflow_loader.rs`, and `src/workflow_validate.rs` shows the CLI has **no independent Rust type definitions for the workflow schema at all**. Every parse path funnels through `smriti_client::WorkflowDefinitionLoader`:
 
-```180:161:/Users/roshankgujarathi/Workspace/ResMed/resmed_resmate-cli/src/workflow_loader.rs
+```180:161:/Users/roshankgujarathi/Workspace/ResMed/resmed_vgen-cli/src/workflow_loader.rs
 pub fn load_workflow_from_dir(
     dir: &Path,
 ) -> Result<(Value, PathBuf, AuthorFormat), Box<dyn std::error::Error + Send + Sync>> {
@@ -128,7 +128,7 @@ Rather than duplicating these types, add a thin re-export module so future CLI c
 pub use smriti_client::{Condition, TransitionRule, WorkflowGateDef};
 
 /// Extracts the `transitions` array of a single stage `Value` as typed `TransitionRule`s,
-/// for CLI code (e.g. `resmate graph`, `resmate explain`) that wants structural access
+/// for CLI code (e.g. `vgen graph`, `vgen explain`) that wants structural access
 /// rather than raw JSON traversal. Returns an empty vec for legacy `next`-only stages.
 pub fn stage_transitions(stage: &serde_json::Value) -> Vec<TransitionRule> {
     stage
@@ -156,7 +156,7 @@ pub fn bundle_gates(bundle: &serde_json::Value) -> Vec<WorkflowGateDef> {
 }
 ```
 
-This module is consumed directly by the `resmate graph` DAG-edge rendering proposed in §6.3 and the scaffolding linter proposed in §6.2.
+This module is consumed directly by the `vgen graph` DAG-edge rendering proposed in §6.3 and the scaffolding linter proposed in §6.2.
 
 ---
 
@@ -164,9 +164,9 @@ This module is consumed directly by the `resmate graph` DAG-edge rendering propo
 
 ### 4.1 Finding: server-grade semantic validation is already inherited
 
-`src/workflow_validate.rs::validate_workflow_dir` — the function backing `resmate workflow validate`, and (via `check_workflow_dirs` in `src/validate/workflow_rules.rs`) also backing `resmate validate` and `resmate doctor` — calls `WorkflowDefinitionLoader::load_from_dir` directly:
+`src/workflow_validate.rs::validate_workflow_dir` — the function backing `vgen workflow validate`, and (via `check_workflow_dirs` in `src/validate/workflow_rules.rs`) also backing `vgen validate` and `vgen doctor` — calls `WorkflowDefinitionLoader::load_from_dir` directly:
 
-```26:44:/Users/roshankgujarathi/Workspace/ResMed/resmed_resmate-cli/src/workflow_validate.rs
+```26:44:/Users/roshankgujarathi/Workspace/ResMed/resmed_vgen-cli/src/workflow_validate.rs
 pub fn validate_workflow_dir(dir: &Path) -> Result<WorkflowValidateData, WorkflowValidateError> {
     if !dir.is_dir() {
         return Err(WorkflowValidateError { code: "WORKFLOW_LAYOUT_INVALID", ... });
@@ -198,11 +198,11 @@ And `WorkflowDefinitionLoader::load_from_dir` (`resmedai-core-framework/lib/smri
 
 Because all of the above is inherited transitively, this repo's own test suite (`src/specs/workflow.rs`'s `#[cfg(test)]` module, `src/workflow_loader.rs`'s tests) only exercises the legacy fields (`meta.yaml`/`flow.yaml` round-trips with `next`, no `transitions`). There is no fixture in this repo that proves, from the CLI's own test suite, that:
 
-- `resmate workflow validate` rejects a dangling `transitions[].target`.
-- `resmate workflow validate` rejects a `reset` entry referencing an unknown field key.
-- `resmate workflow validate` rejects a two-gate reference cycle in `gates.yaml`.
-- `resmate workflow validate` rejects a non-terminal dead-end stage.
-- `resmate workflow validate` **accepts** a well-formed DAG workflow (conditional branch + `gates.yaml` + `reset`) end-to-end through `validate_workflow_dir`.
+- `vgen workflow validate` rejects a dangling `transitions[].target`.
+- `vgen workflow validate` rejects a `reset` entry referencing an unknown field key.
+- `vgen workflow validate` rejects a two-gate reference cycle in `gates.yaml`.
+- `vgen workflow validate` rejects a non-terminal dead-end stage.
+- `vgen workflow validate` **accepts** a well-formed DAG workflow (conditional branch + `gates.yaml` + `reset`) end-to-end through `validate_workflow_dir`.
 
 This is a regression-lock gap, not a missing-feature gap: if the path dependency boundary ever changes (e.g. `smriti_client` is vendored, version-pinned from crates.io, or its error-mapping shape changes), these behaviors could silently stop working for CLI users with no CLI test failing. Add the following fixture-driven test module:
 
@@ -226,7 +226,7 @@ mod dag_semantic_tests {
 
     #[test]
     fn rejects_dangling_transition_target() {
-        let dir = std::env::temp_dir().join(format!("resmate-dag-dangling-{}", uuid::Uuid::new_v4()));
+        let dir = std::env::temp_dir().join(format!("vgen-dag-dangling-{}", uuid::Uuid::new_v4()));
         write_dag_fixture(&dir, r#"
 initialStage: collect
 stages:
@@ -251,7 +251,7 @@ stages:
 
     #[test]
     fn rejects_gate_reference_cycle() {
-        let dir = std::env::temp_dir().join(format!("resmate-dag-gatecycle-{}", uuid::Uuid::new_v4()));
+        let dir = std::env::temp_dir().join(format!("vgen-dag-gatecycle-{}", uuid::Uuid::new_v4()));
         write_dag_fixture(&dir, r#"
 initialStage: collect
 stages:
@@ -283,7 +283,7 @@ stages:
 
     #[test]
     fn accepts_well_formed_conditional_branch_with_gates_and_reset() {
-        let dir = std::env::temp_dir().join(format!("resmate-dag-accept-{}", uuid::Uuid::new_v4()));
+        let dir = std::env::temp_dir().join(format!("vgen-dag-accept-{}", uuid::Uuid::new_v4()));
         write_dag_fixture(&dir, r#"
 initialStage: collect
 stages:
@@ -334,7 +334,7 @@ stages:
 
 `src/specs/workflow.rs::write_workflow_from_definition` already round-trips `gates.yaml` correctly on pull:
 
-```199:283:/Users/roshankgujarathi/Workspace/ResMed/resmed_resmate-cli/src/specs/workflow.rs
+```199:283:/Users/roshankgujarathi/Workspace/ResMed/resmed_vgen-cli/src/specs/workflow.rs
     let gates = data_obj
         .get("gates")
         .cloned()
@@ -425,7 +425,7 @@ This is a larger refactor than this plan's scope requires immediately (§8 sched
 
 ### 5.4 Push side: no changes needed
 
-`src/workflow_loader.rs::definition_to_bundle` (used by `resmate workflow push`, `resmate validate`, `resmate graph`, `resmate diff`) already includes `gates: def.gates` and a `playbooks` map built from `def.stages[].playbook` in the outgoing bundle unconditionally — push has never dropped any DAG field, since `WorkflowDefinition` (the typed struct populated by the loader) already carries `transitions`, `gates`, and `required_from_stage` end-to-end. The bug is exclusively in the pull-side *write* function (§2, §5.1–5.3).
+`src/workflow_loader.rs::definition_to_bundle` (used by `vgen workflow push`, `vgen validate`, `vgen graph`, `vgen diff`) already includes `gates: def.gates` and a `playbooks` map built from `def.stages[].playbook` in the outgoing bundle unconditionally — push has never dropped any DAG field, since `WorkflowDefinition` (the typed struct populated by the loader) already carries `transitions`, `gates`, and `required_from_stage` end-to-end. The bug is exclusively in the pull-side *write* function (§2, §5.1–5.3).
 
 ---
 
@@ -588,7 +588,7 @@ stages:
 
 ### 6.5 Scaffolding linter (optional stretch item)
 
-Using the `stage_transitions`/`bundle_gates` helpers from §3.3, add a `resmate doctor` info-level (non-blocking) hint — not an error — when a workflow directory uses only `next`/`back_to` with no `transitions` at all, pointing authors at the new docs section. This is explicitly informational (`Severity::Info` if the `Finding` enum supports it, otherwise a human-mode-only printed tip) since legacy linear workflows remain fully valid and are not being deprecated.
+Using the `stage_transitions`/`bundle_gates` helpers from §3.3, add a `vgen doctor` info-level (non-blocking) hint — not an error — when a workflow directory uses only `next`/`back_to` with no `transitions` at all, pointing authors at the new docs section. This is explicitly informational (`Severity::Info` if the `Finding` enum supports it, otherwise a human-mode-only printed tip) since legacy linear workflows remain fully valid and are not being deprecated.
 
 ---
 
@@ -596,7 +596,7 @@ Using the `stage_transitions`/`bundle_gates` helpers from §3.3, add a `resmate 
 
 ### 7.1 Scope
 
-The only workflow-authoring doc that ships inside this CLI's own template tree is `templates/workspace/.cursor/skills/resmate-use-case/docs/spec-workflow.md` (verified via directory listing — no `workflow-authoring.md` or `authoring-formats.md` exists under this repo's `templates/`). Those two filenames do exist as separate, already-DAG-plan-adjacent documents in the **`pr-agent-v2`** workspace (`workflows/workflow-authoring.md`, `workflows/authoring-formats.md`), which is a downstream *consumer* of this CLI's authoring conventions, not part of this repo. Updating `pr-agent-v2`'s copies is out of scope for this plan (different repo, different owner) but is flagged here explicitly as required follow-up once this plan's `spec-workflow.md` changes land, so the two stay in sync — `pr-agent-v2/workflows/authoring-formats.md` line 19 already independently mentions `gates.yaml` as "optional" in its layout table, confirming the drift is already starting in both directions.
+The only workflow-authoring doc that ships inside this CLI's own template tree is `templates/workspace/.cursor/skills/vgen-use-case/docs/spec-workflow.md` (verified via directory listing — no `workflow-authoring.md` or `authoring-formats.md` exists under this repo's `templates/`). Those two filenames do exist as separate, already-DAG-plan-adjacent documents in the **`pr-agent-v2`** workspace (`workflows/workflow-authoring.md`, `workflows/authoring-formats.md`), which is a downstream *consumer* of this CLI's authoring conventions, not part of this repo. Updating `pr-agent-v2`'s copies is out of scope for this plan (different repo, different owner) but is flagged here explicitly as required follow-up once this plan's `spec-workflow.md` changes land, so the two stay in sync — `pr-agent-v2/workflows/authoring-formats.md` line 19 already independently mentions `gates.yaml` as "optional" in its layout table, confirming the drift is already starting in both directions.
 
 ### 7.2 `spec-workflow.md` — new §2.4 "Conditional Transitions, `gates.yaml`, and Field Resets"
 
@@ -684,14 +684,14 @@ bag (`inputs`/`artifacts`) before the target stage is entered. This is the mecha
 that makes rework loops safe: without it, a stage that routes back to an earlier
 stage would find its own `doneWhen` fields still populated from the previous pass
 and immediately bounce forward again. Every key in a `reset` list must be a real
-field key declared in `schema.yaml` — `resmate workflow validate` rejects unknown
+field key declared in `schema.yaml` — `vgen workflow validate` rejects unknown
 keys with an error path like `flow.stages[review_summary].transitions[1].reset[0]`.
 
 #### 2.4.4 Dead Ends and the `next` Fallback
 
 A non-terminal stage with `transitions` but no exhaustive coverage and no `next`
 fallback is a **dead end**: if the instance's state doesn't match any declared
-condition, the stage can never advance. `resmate workflow validate` / `resmate
+condition, the stage can never advance. `vgen workflow validate` / `vgen
 doctor` catch this statically at author time. Always give a stage with conditional
 transitions **either** an unconditional catch-all rule (e.g. `when: { all: [] }`)
 **or** a legacy `next` fallback:
@@ -748,7 +748,7 @@ transitions:
       all: []   # unconditional fallback
 ```
 
-`resmate workflow validate` rejects duplicate gate ids, references to unknown gate
+`vgen workflow validate` rejects duplicate gate ids, references to unknown gate
 ids (from a stage transition *or* from inside another gate), and reference cycles
 (e.g. gate A → gate B → gate A), with an actionable path pointing at the offending
 `when` clause.
@@ -877,13 +877,13 @@ Following the DAG plan's own §5 format, this work is divided into three phases,
 +-----------------------------------------------------------------------------------+
 | Sibling A: Typed DAG Access Layer           | Sibling B: Graph/Doctor Enhancements|
 +---------------------------------------------+-------------------------------------+
-| 1. Add `src/specs/workflow_dag.rs` with     | 1. Extend `resmate graph` to render |
+| 1. Add `src/specs/workflow_dag.rs` with     | 1. Extend `vgen graph` to render |
 |    `stage_transitions`/`bundle_gates`        |    intra-workflow `transitions`     |
 |    typed re-export helpers (§3.3).           |    edges (stage -> stage) and       |
 | 2. Wire the new module into `src/specs/      |    `gates.yaml` references as a     |
 |    mod.rs` re-exports so downstream call     |    distinct `EdgeKind` variant,     |
-|    sites (`resmate graph`, `resmate          |    using the Sibling A helpers.     |
-|    explain`) can adopt it incrementally.     | 2. Add the optional `resmate        |
+|    sites (`vgen graph`, `vgen          |    using the Sibling A helpers.     |
+|    explain`) can adopt it incrementally.     | 2. Add the optional `vgen        |
 | 3. Update `mcp/tools.rs`'s `workflow_        |    doctor` info-level hint (§6.5)   |
 |    validate` MCP tool description to         |    surfacing when a workflow only   |
 |    mention DAG authoring is supported,        |    uses legacy `next`/`back_to`,    |

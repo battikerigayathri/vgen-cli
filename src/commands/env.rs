@@ -47,7 +47,7 @@ pub async fn run_env_push(
             return emit_error(
                 ctx,
                 "MANIFEST_LOAD_FAILED",
-                "Failed to load resmate.yaml manifest.",
+                "Failed to load vgen.yaml manifest.",
                 None,
                 CliExitCode::RuntimeError,
             );

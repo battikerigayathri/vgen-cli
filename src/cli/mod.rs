@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
-#[command(name = "resmate")]
+#[command(name = "vgen")]
 #[command(about = "ResMate CLI for tools, agents, assistants, and HITL", long_about = None)]
 pub struct Cli {
     /// Emit machine-readable JSON envelope on stdout; errors on stderr in human mode only
@@ -80,7 +80,7 @@ pub enum ToolSubcommand {
     Push {
         /// Tool name (folder name under tools dir)
         name: String,
-        /// Directory containing tool folders (default: tools, or RESMATE_TOOLS_DIR)
+        /// Directory containing tool folders (default: tools, or VGEN_TOOLS_DIR)
         #[arg(long)]
         tools_dir: Option<std::path::PathBuf>,
     },
@@ -95,7 +95,7 @@ pub enum ToolSubcommand {
     Test {
         /// Tool name (folder name under tools dir)
         name: String,
-        /// Directory containing tool folders (default: tools, or RESMATE_TOOLS_DIR)
+        /// Directory containing tool folders (default: tools, or VGEN_TOOLS_DIR)
         #[arg(long)]
         tools_dir: Option<std::path::PathBuf>,
         /// Path to custom payload JSON file (defaults to <tool-dir>/payload.json)
@@ -207,7 +207,7 @@ pub enum AssistantSubcommand {
     Chat {
         /// Assistant name (filename without extension under assistants dir)
         name: String,
-        /// Directory containing assistant folders (default: assistants, or RESMATE_ASSISTANTS_DIR)
+        /// Directory containing assistant folders (default: assistants, or VGEN_ASSISTANTS_DIR)
         #[arg(long)]
         assistants_dir: Option<std::path::PathBuf>,
         /// Force create a new session instead of reusing the existing one
@@ -228,7 +228,7 @@ pub enum HitlSubcommand {
     Push {
         /// HITL name (folder name under hitl dir)
         name: String,
-        /// Directory containing HITL folders (default: hitl, or RESMATE_HITL_DIR)
+        /// Directory containing HITL folders (default: hitl, or VGEN_HITL_DIR)
         #[arg(long)]
         hitl_dir: Option<std::path::PathBuf>,
     },
@@ -267,7 +267,7 @@ pub enum WorkflowSubcommand {
     Push {
         /// Workflow name (folder name under workflows dir)
         name: String,
-        /// Directory containing workflow folders (default: workflows, or RESMATE_WORKFLOWS_DIR)
+        /// Directory containing workflow folders (default: workflows, or VGEN_WORKFLOWS_DIR)
         #[arg(long)]
         workflows_dir: Option<std::path::PathBuf>,
     },
@@ -278,7 +278,7 @@ pub enum WorkflowSubcommand {
         /// Specific version to pull (optional, pulls latest version if omitted)
         #[arg(long)]
         version: Option<u32>,
-        /// Directory containing workflow folders (default: workflows, or RESMATE_WORKFLOWS_DIR)
+        /// Directory containing workflow folders (default: workflows, or VGEN_WORKFLOWS_DIR)
         #[arg(long)]
         workflows_dir: Option<std::path::PathBuf>,
     },
@@ -286,7 +286,7 @@ pub enum WorkflowSubcommand {
     Validate {
         /// Workflow name (folder name under workflows dir)
         name: String,
-        /// Directory containing workflow folders (default: workflows, or RESMATE_WORKFLOWS_DIR)
+        /// Directory containing workflow folders (default: workflows, or VGEN_WORKFLOWS_DIR)
         #[arg(long)]
         workflows_dir: Option<std::path::PathBuf>,
     },
@@ -294,19 +294,19 @@ pub enum WorkflowSubcommand {
 
 #[derive(Parser)]
 pub struct SyncCmd {
-    /// Directory containing assistant YAML files (default: assistants, or RESMATE_ASSISTANTS_DIR)
+    /// Directory containing assistant YAML files (default: assistants, or VGEN_ASSISTANTS_DIR)
     #[arg(long)]
     pub assistants_dir: Option<std::path::PathBuf>,
-    /// Directory containing agent YAML files (default: agents, or RESMATE_AGENTS_DIR)
+    /// Directory containing agent YAML files (default: agents, or VGEN_AGENTS_DIR)
     #[arg(long)]
     pub agents_dir: Option<std::path::PathBuf>,
-    /// Directory containing tool folders (default: tools, or RESMATE_TOOLS_DIR)
+    /// Directory containing tool folders (default: tools, or VGEN_TOOLS_DIR)
     #[arg(long)]
     pub tools_dir: Option<std::path::PathBuf>,
-    /// Directory containing workflow folders (default: workflows, or RESMATE_WORKFLOWS_DIR)
+    /// Directory containing workflow folders (default: workflows, or VGEN_WORKFLOWS_DIR)
     #[arg(long)]
     pub workflows_dir: Option<std::path::PathBuf>,
-    /// Directory containing HITL folders (default: hitl, or RESMATE_HITL_DIR)
+    /// Directory containing HITL folders (default: hitl, or VGEN_HITL_DIR)
     #[arg(long)]
     pub hitl_dir: Option<std::path::PathBuf>,
 }
@@ -325,15 +325,15 @@ pub struct ExplainCmd {
 
 #[derive(Parser)]
 pub struct InitCmd {
-    /// Project name for resmate.yaml
+    /// Project name for vgen.yaml
     #[arg(long)]
     pub name: Option<String>,
-    /// Description for resmate.yaml (default: "ResMate use case workspace")
+    /// Description for vgen.yaml (default: "ResMate use case workspace")
     #[arg(long)]
     pub description: Option<String>,
     /// Bootstrap-overwrite kit/seed files in a non-init-safe directory (never
     /// deletes live artifacts). To refresh an existing use-case repo, prefer
-    /// `resmate kit update`.
+    /// `vgen kit update`.
     #[arg(long)]
     pub force: bool,
     /// Skip copying the examples/ reference tree
@@ -345,7 +345,7 @@ pub struct InitCmd {
 pub struct ScaffoldCmd {
     /// Recipe name (oracle-pr, minimal, form-wizard)
     pub recipe: String,
-    /// Project slug for resmate.yaml and artifact names
+    /// Project slug for vgen.yaml and artifact names
     #[arg(long)]
     pub name: Option<String>,
     /// Overwrite existing files

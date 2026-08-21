@@ -21,9 +21,9 @@ pub fn list_agent_files(base: &Path) -> Vec<(String, PathBuf)> {
     super::list_yaml_files(base)
 }
 
-/// Resolve agents directory: env RESMATE_AGENTS_DIR or default "agents" under cwd.
+/// Resolve agents directory: env VGEN_AGENTS_DIR or default "agents" under cwd.
 pub fn default_agents_dir() -> PathBuf {
-    std::env::var("RESMATE_AGENTS_DIR")
+    std::env::var("VGEN_AGENTS_DIR")
         .map(PathBuf::from)
         .unwrap_or_else(|_| PathBuf::from("agents"))
 }
@@ -104,7 +104,7 @@ pub fn write_agent_yaml_from_record(
 
 /// Upsert an agent from API response data into agents_dir/<slug>.yaml. Creates the file if it
 /// doesn't exist. The local filename is derived from the `slug` field in the response, falling
-/// back to `name` if slug is absent. Used by `resmate sync`.
+/// back to `name` if slug is absent. Used by `vgen sync`.
 pub fn upsert_agent_from_api_data(
     agents_dir: &Path,
     data: &Value,

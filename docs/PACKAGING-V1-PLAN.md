@@ -2,7 +2,7 @@
 
 **Status:** Planning (not implemented)  
 **Target version:** `1.0.0`  
-**Repo:** [`resmed_resmate-cli`](../.)  
+**Repo:** [`resmed_vgen-cli`](../.)  
 **Related:** [AUTHORING-KIT-ARCHITECTURE.md](./AUTHORING-KIT-ARCHITECTURE.md) · [PHASE3A-P2-PLAN.md](./PHASE3A-P2-PLAN.md) · [README.md](../README.md)
 
 ---
@@ -13,8 +13,8 @@
 
 A **standalone developer package** that lets a ResMate use-case author:
 
-1. Install `resmate` and `resmate-mcp` globally (on `PATH`) without Rust toolchain knowledge.
-2. Run `resmate init`, `resmate scaffold`, and all P0–P3B CLI commands **out of the box**.
+1. Install `vgen` and `vgen-mcp` globally (on `PATH`) without Rust toolchain knowledge.
+2. Run `vgen init`, `vgen scaffold`, and all P0–P3B CLI commands **out of the box**.
 3. Bootstrap a full authoring workspace (kit copy from co-installed templates) on any supported OS.
 
 ### In scope (P0 — must ship)
@@ -23,8 +23,8 @@ A **standalone developer package** that lets a ResMate use-case author:
 |------|--------|
 | Version bump | `0.1.0` → `1.0.0` in `Cargo.toml`; `kit_version` follows via `env!("CARGO_PKG_VERSION")` |
 | Release artifacts | Per-platform `.tar.gz` (macOS, Linux) and `.zip` (Windows; macOS alt) |
-| Binaries | `resmate` + `resmate-mcp` for darwin-arm64, darwin-x64, linux-x64, windows-x64 |
-| Templates | Co-installed under `share/resmate/templates/` (see §6) |
+| Binaries | `vgen` + `vgen-mcp` for darwin-arm64, darwin-x64, linux-x64, windows-x64 |
+| Templates | Co-installed under `share/vgen/templates/` (see §6) |
 | Install scripts | `install.sh` (macOS/Linux), `install.ps1` (Windows) |
 | Build script | `scripts/package-release.sh` — clones sibling core-framework, builds all targets, assembles archives |
 | CLI lookup | Extend `src/kit/load.rs` with install-time default paths (see §8) |
@@ -61,21 +61,21 @@ Same logical contents in every archive; compression differs by platform conventi
 ### Directory tree (inside each archive)
 
 ```
-resmate-1.0.0-<platform>-<arch>/
+vgen-1.0.0-<platform>-<arch>/
 ├── VERSION                          # "1.0.0"
 ├── LICENSE                          # if repo has one; else add
 ├── README-INSTALL.md                # platform-agnostic install + quick start
 ├── install.sh                       # macOS / Linux
 ├── install.ps1                      # Windows (PowerShell; primary on Windows)
 ├── bin/
-│   ├── resmate                      # resmate.exe on Windows
-│   └── resmate-mcp                  # resmate-mcp.exe on Windows
+│   ├── vgen                      # vgen.exe on Windows
+│   └── vgen-mcp                  # vgen-mcp.exe on Windows
 ├── share/
-│   └── resmate/
+│   └── vgen/
 │       └── templates/
 │           ├── workspace/           # authoring kit (copied on init)
 │           ├── recipes/             # scaffold sources
-│           └── seed/                # resmate.yaml.tmpl, gitignore
+│           └── seed/                # vgen.yaml.tmpl, gitignore
 └── docs/
     ├── QUICKSTART.md                # post-install flow (§7)
     └── mcp-setup-snippet.json       # Cursor MCP template with placeholders
@@ -85,11 +85,11 @@ resmate-1.0.0-<platform>-<arch>/
 
 | Platform | Arch | Format | Example filename |
 |----------|------|--------|------------------|
-| macOS | arm64 | `.tar.gz` | `resmate-1.0.0-darwin-arm64.tar.gz` |
-| macOS | x64 | `.tar.gz` | `resmate-1.0.0-darwin-x64.tar.gz` |
-| macOS | arm64/x64 | `.zip` (alt) | `resmate-1.0.0-darwin-arm64.zip` (optional P1) |
-| Linux | x64 | `.tar.gz` | `resmate-1.0.0-linux-x64.tar.gz` |
-| Windows | x64 | `.zip` | `resmate-1.0.0-windows-x64.zip` |
+| macOS | arm64 | `.tar.gz` | `vgen-1.0.0-darwin-arm64.tar.gz` |
+| macOS | x64 | `.tar.gz` | `vgen-1.0.0-darwin-x64.tar.gz` |
+| macOS | arm64/x64 | `.zip` (alt) | `vgen-1.0.0-darwin-arm64.zip` (optional P1) |
+| Linux | x64 | `.tar.gz` | `vgen-1.0.0-linux-x64.tar.gz` |
+| Windows | x64 | `.zip` | `vgen-1.0.0-windows-x64.zip` |
 
 **P0 minimum:** four primary artifacts (darwin-arm64, darwin-x64, linux-x64, windows-x64). Mac `.zip` duplicates are P1 unless release tooling already emits both.
 
@@ -98,8 +98,8 @@ resmate-1.0.0-<platform>-<arch>/
 Ship alongside archives on release page:
 
 ```
-resmate-1.0.0-*.tar.gz.sha256
-resmate-1.0.0-*.zip.sha256
+vgen-1.0.0-*.tar.gz.sha256
+vgen-1.0.0-*.zip.sha256
 ```
 
 ---
@@ -111,7 +111,7 @@ resmate-1.0.0-*.zip.sha256
 | File | Change |
 |------|--------|
 | [`Cargo.toml`](../Cargo.toml) | `version = "1.0.0"` |
-| [`templates/seed/resmate.yaml.tmpl`](../templates/seed/resmate.yaml.tmpl) | No edit required — `kit_version` rendered at init from `kit_version()` → `CARGO_PKG_VERSION` |
+| [`templates/seed/vgen.yaml.tmpl`](../templates/seed/vgen.yaml.tmpl) | No edit required — `kit_version` rendered at init from `kit_version()` → `CARGO_PKG_VERSION` |
 | `CHANGELOG.md` (new) | Add `## [1.0.0] - YYYY-MM-DD` with P0–P3B feature summary |
 | [`README.md`](../README.md) | Add "Installing v1.0" section linking to release artifacts + install scripts |
 | [`docs/agent-authoring-guide.md`](./agent-authoring-guide.md) | Note standalone install path |
@@ -122,10 +122,10 @@ resmate-1.0.0-*.zip.sha256
 Already wired:
 
 - `src/kit/load.rs` — `kit_version()` → `env!("CARGO_PKG_VERSION")`
-- `src/commands/init.rs` — writes `kit_version` into `resmate.yaml`
+- `src/commands/init.rs` — writes `kit_version` into `vgen.yaml`
 - `src/mcp/handler.rs` — MCP `serverInfo.version`
 
-Optional P1: `resmate --version` / `resmate version` subcommand (not required for v1.0 if `--help` shows crate version via clap).
+Optional P1: `vgen --version` / `vgen version` subcommand (not required for v1.0 if `--help` shows crate version via clap).
 
 ### Changelog skeleton
 
@@ -143,7 +143,7 @@ Optional P1: `resmate --version` / `resmate version` subcommand (not required fo
 - Stable 1.0.0 release; kit_version tracks CLI version
 
 ### Known limitations
-- `resmate workflow validate` requires smriti_client linked at build time (path dep); see packaging script
+- `vgen workflow validate` requires smriti_client linked at build time (path dep); see packaging script
 ```
 
 ---
@@ -189,8 +189,8 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 VERSION="$(grep '^version' "$ROOT/Cargo.toml" | head -1 | sed 's/.*"\(.*\)".*/\1/')"
-CORE_REPO="${RESMATE_CORE_FRAMEWORK:-$ROOT/../resmedai-core-framework}"
-CORE_REF="${RESMATE_CORE_REF:-main}"   # or tag, e.g. vX.Y.Z
+CORE_REPO="${VGEN_CORE_FRAMEWORK:-$ROOT/../resmedai-core-framework}"
+CORE_REF="${VGEN_CORE_REF:-main}"   # or tag, e.g. vX.Y.Z
 
 # 1. Ensure core-framework present
 if [[ ! -d "$CORE_REPO/lib/smriti_client" ]]; then
@@ -201,19 +201,19 @@ fi
 # 2. Build release binaries per target (both bins)
 build_target() {
   local target="$1"
-  cargo build --release --target "$target" --bin resmate --bin resmate-mcp
+  cargo build --release --target "$target" --bin vgen --bin vgen-mcp
 }
 
 # 3. Stage share/templates from $ROOT/templates/
 # 4. Write VERSION, README-INSTALL.md, copy install scripts
-# 5. tar.gz or zip → dist/resmate-${VERSION}-<platform>-<arch>.{tar.gz,zip}
+# 5. tar.gz or zip → dist/vgen-${VERSION}-<platform>-<arch>.{tar.gz,zip}
 # 6. sha256sum → dist/*.sha256
 ```
 
 **Document in script header and README:**
 
-- `RESMATE_CORE_FRAMEWORK` — override path to checkout
-- `RESMATE_CORE_REF` — pin framework git ref used for release (record in release notes)
+- `VGEN_CORE_FRAMEWORK` — override path to checkout
+- `VGEN_CORE_REF` — pin framework git ref used for release (record in release notes)
 
 **Future decoupling (not v1.0):**
 
@@ -226,36 +226,36 @@ build_target() {
 
 | Target | Command | Output binaries |
 |--------|---------|-----------------|
-| macOS arm64 | `cargo build --release --target aarch64-apple-darwin --bin resmate --bin resmate-mcp` | `target/aarch64-apple-darwin/release/{resmate,resmate-mcp}` |
-| macOS x64 | `cargo build --release --target x86_64-apple-darwin --bin resmate --bin resmate-mcp` | `target/x86_64-apple-darwin/release/...` |
-| Linux x64 | `cargo build --release --target x86_64-unknown-linux-gnu --bin resmate --bin resmate-mcp` | `target/x86_64-unknown-linux-gnu/release/...` |
-| Windows x64 | `./scripts/build-windows.sh --arch x64` **(extend to build both bins)** | `target/x86_64-pc-windows-gnu/release/{resmate,resmate-mcp}.exe` |
+| macOS arm64 | `cargo build --release --target aarch64-apple-darwin --bin vgen --bin vgen-mcp` | `target/aarch64-apple-darwin/release/{vgen,vgen-mcp}` |
+| macOS x64 | `cargo build --release --target x86_64-apple-darwin --bin vgen --bin vgen-mcp` | `target/x86_64-apple-darwin/release/...` |
+| Linux x64 | `cargo build --release --target x86_64-unknown-linux-gnu --bin vgen --bin vgen-mcp` | `target/x86_64-unknown-linux-gnu/release/...` |
+| Windows x64 | `./scripts/build-windows.sh --arch x64` **(extend to build both bins)** | `target/x86_64-pc-windows-gnu/release/{vgen,vgen-mcp}.exe` |
 
 ### Extend `scripts/build-windows.sh`
 
-Today it only builds `resmate` (default `--bin`). Change to:
+Today it only builds `vgen` (default `--bin`). Change to:
 
 ```bash
-cargo build --release --target "$TARGET" --bin resmate --bin resmate-mcp
+cargo build --release --target "$TARGET" --bin vgen --bin vgen-mcp
 ```
 
 ### Build output directory
 
 ```
 dist/
-├── resmate-1.0.0-darwin-arm64.tar.gz
-├── resmate-1.0.0-darwin-arm64.tar.gz.sha256
-├── resmate-1.0.0-darwin-x64.tar.gz
-├── resmate-1.0.0-linux-x64.tar.gz
-├── resmate-1.0.0-windows-x64.zip
+├── vgen-1.0.0-darwin-arm64.tar.gz
+├── vgen-1.0.0-darwin-arm64.tar.gz.sha256
+├── vgen-1.0.0-darwin-x64.tar.gz
+├── vgen-1.0.0-linux-x64.tar.gz
+├── vgen-1.0.0-windows-x64.zip
 └── …
 ```
 
 ### Pre-release validation (maintainer)
 
 ```bash
-cd resmed_resmate-cli
-RESMATE_CORE_FRAMEWORK=../resmedai-core-framework ./scripts/package-release.sh
+cd resmed_vgen-cli
+VGEN_CORE_FRAMEWORK=../resmedai-core-framework ./scripts/package-release.sh
 cargo test                                    # from source checkout
 ./scripts/smoke-pr-agent.sh                   # against pr-agent-v2 (optional API checks)
 ```
@@ -268,8 +268,8 @@ cargo test                                    # from source checkout
 
 | OS | Binaries (`PATH`) | Templates | Config snippet |
 |----|-------------------|-----------|----------------|
-| **macOS / Linux (user)** | `$HOME/.local/bin/` | `$HOME/.local/share/resmate/templates/` | `$HOME/.resmate/env` |
-| **macOS / Linux (system)** | `$PREFIX/bin/` (default `/usr/local/bin`) | `$PREFIX/share/resmate/templates/` | `/etc/profile.d/resmate.sh` or `$PREFIX/etc/resmate/env` |
+| **macOS / Linux (user)** | `$HOME/.local/bin/` | `$HOME/.local/share/vgen/templates/` | `$HOME/.vgen/env` |
+| **macOS / Linux (system)** | `$PREFIX/bin/` (default `/usr/local/bin`) | `$PREFIX/share/vgen/templates/` | `/etc/profile.d/vgen.sh` or `$PREFIX/etc/vgen/env` |
 | **Windows (user)** | `%LOCALAPPDATA%\Programs\ResMate\bin\` | `%LOCALAPPDATA%\Programs\ResMate\share\templates\` | User env vars via `[Environment]::SetEnvironmentVariable` |
 | **Windows (system)** | `%ProgramFiles%\ResMate\bin\` | `%ProgramFiles%\ResMate\share\templates\` | Machine env (requires admin) |
 
@@ -287,12 +287,12 @@ New file: **`scripts/install.sh`** (copied into release root as `./install.sh`).
 |------|--------|
 | 1 | Detect OS; resolve `INSTALL_ROOT` (user-local or `--prefix`) |
 | 2 | Resolve `BIN_DIR=$INSTALL_ROOT/bin` or `$HOME/.local/bin` |
-| 3 | Resolve `SHARE_DIR=$INSTALL_ROOT/share/resmate` or `$HOME/.local/share/resmate` |
+| 3 | Resolve `SHARE_DIR=$INSTALL_ROOT/share/vgen` or `$HOME/.local/share/vgen` |
 | 4 | Create directories: `$BIN_DIR`, `$SHARE_DIR/templates` |
-| 5 | Copy `bin/resmate`, `bin/resmate-mcp` → `$BIN_DIR/` (mode `755`) |
-| 6 | Copy `share/resmate/templates/*` → `$SHARE_DIR/templates/` (preserve tree) |
-| 7 | Write `$HOME/.resmate/env` (or `$PREFIX/etc/resmate/env`): `export RESMATE_TEMPLATES_DIR="$SHARE_DIR/templates"` |
-| 8 | Idempotent shell hook: append `source "$HOME/.resmate/env"` to `~/.zshrc` / `~/.bashrc` if missing |
+| 5 | Copy `bin/vgen`, `bin/vgen-mcp` → `$BIN_DIR/` (mode `755`) |
+| 6 | Copy `share/vgen/templates/*` → `$SHARE_DIR/templates/` (preserve tree) |
+| 7 | Write `$HOME/.vgen/env` (or `$PREFIX/etc/vgen/env`): `export VGEN_TEMPLATES_DIR="$SHARE_DIR/templates"` |
+| 8 | Idempotent shell hook: append `source "$HOME/.vgen/env"` to `~/.zshrc` / `~/.bashrc` if missing |
 | 9 | Ensure `$BIN_DIR` on `PATH` (append `export PATH="$BIN_DIR:$PATH"` in same env file) |
 | 10 | Print success + **post-install quick start** (§7) |
 | 11 | Optional `--dry-run`: print actions only |
@@ -312,9 +312,9 @@ New file: **`scripts/install.ps1`** (copied into release root).
 | 1 | Require PowerShell 5.1+; `-ExecutionPolicy Bypass` documented in README-INSTALL |
 | 2 | Resolve `$InstallDir`, `$BinDir = Join-Path $InstallDir "bin"`, `$TemplateDir = Join-Path $InstallDir "share\templates" |
 | 3 | Create directories |
-| 4 | Copy `bin\resmate.exe`, `bin\resmate-mcp.exe` → `$BinDir` |
-| 5 | Copy `share\resmate\templates\*` → `$TemplateDir` recursively |
-| 6 | Set **user** environment variables (persistent): `RESMATE_TEMPLATES_DIR=$TemplateDir` |
+| 4 | Copy `bin\vgen.exe`, `bin\vgen-mcp.exe` → `$BinDir` |
+| 5 | Copy `share\vgen\templates\*` → `$TemplateDir` recursively |
+| 6 | Set **user** environment variables (persistent): `VGEN_TEMPLATES_DIR=$TemplateDir` |
 | 7 | Prepend `$BinDir` to user `PATH` if not present |
 | 8 | Print success + quick start; note **new terminal** required for PATH |
 | 9 | Optional: write `%USERPROFILE%\.cursor\mcp.json` snippet if `-ConfigureMcp` (P1) |
@@ -325,7 +325,7 @@ New file: **`scripts/install.ps1`** (copied into release root).
 
 Priority (see §8 for CLI code):
 
-1. `RESMATE_TEMPLATES_DIR` — set by install script (explicit, overridable)
+1. `VGEN_TEMPLATES_DIR` — set by install script (explicit, overridable)
 2. Install-time defaults compiled into `load.rs` (works even if user skips sourcing env file)
 3. `CARGO_MANIFEST_DIR/templates` — dev checkout only
 4. Error with remediation text pointing to re-run install or set env var
@@ -337,20 +337,20 @@ Priority (see §8 for CLI code):
 ### Source of truth
 
 ```
-resmed_resmate-cli/templates/
+resmed_vgen-cli/templates/
 ├── workspace/     # 119 files total under templates/ (~564 KB today)
 ├── recipes/
 └── seed/
 ```
 
-Packaging copies **`templates/`** verbatim to **`share/resmate/templates/`** in the archive.
+Packaging copies **`templates/`** verbatim to **`share/vgen/templates/`** in the archive.
 
 ### Install destinations
 
 | Install mode | Templates path |
 |--------------|----------------|
-| Unix user | `$HOME/.local/share/resmate/templates/` |
-| Unix system | `/usr/local/share/resmate/templates/` (or `$PREFIX/share/resmate/templates/`) |
+| Unix user | `$HOME/.local/share/vgen/templates/` |
+| Unix system | `/usr/local/share/vgen/templates/` (or `$PREFIX/share/vgen/templates/`) |
 | Windows user | `%LOCALAPPDATA%\Programs\ResMate\share\templates\` |
 | Windows system | `%ProgramFiles%\ResMate\share\templates\` |
 
@@ -361,7 +361,7 @@ After copy, verify:
 ```bash
 test -d "$SHARE_DIR/templates/workspace" \
   && test -d "$SHARE_DIR/templates/recipes" \
-  && test -f "$SHARE_DIR/templates/seed/resmate.yaml.tmpl"
+  && test -f "$SHARE_DIR/templates/seed/vgen.yaml.tmpl"
 ```
 
 PowerShell equivalent: `Test-Path` on the same three paths.
@@ -371,10 +371,10 @@ PowerShell equivalent: `Test-Path` on the same three paths.
 Document manual refresh:
 
 ```bash
-cp -a /path/to/new/templates/* "$HOME/.local/share/resmate/templates/"
+cp -a /path/to/new/templates/* "$HOME/.local/share/vgen/templates/"
 ```
 
-Future: `resmate kit refresh` (P3 per AUTHORING-KIT-ARCHITECTURE.md §10).
+Future: `vgen kit refresh` (P3 per AUTHORING-KIT-ARCHITECTURE.md §10).
 
 ---
 
@@ -386,42 +386,42 @@ Include in **`docs/QUICKSTART.md`** (inside archive) and **`README-INSTALL.md`**
 
 ```bash
 # 1. Install (from extracted archive)
-cd resmate-1.0.0-darwin-arm64
+cd vgen-1.0.0-darwin-arm64
 ./install.sh
 
 # 2. Reload shell (or open new terminal)
-source ~/.resmate/env   # if not auto-sourced
+source ~/.vgen/env   # if not auto-sourced
 
 # 3. Verify CLI
-resmate --help
-resmate-mcp --help 2>/dev/null || true   # MCP has no subcommands; smoke via doctor
+vgen --help
+vgen-mcp --help 2>/dev/null || true   # MCP has no subcommands; smoke via doctor
 
 # 4. Bootstrap workspace
 mkdir ~/my-use-case && cd ~/my-use-case
-resmate init --name my-use-case
-resmate scaffold oracle-pr --name my-use-case   # optional
+vgen init --name my-use-case
+vgen scaffold oracle-pr --name my-use-case   # optional
 
 # 5. Configure API access
 cat > .env <<'EOF'
-RESMATE_API_KEY=<your-key>
+VGEN_API_KEY=<your-key>
 EOF
 
 # 6. Pre-push gates
-resmate doctor
-resmate graph
-resmate validate
-resmate push-all --dry-run
+vgen doctor
+vgen graph
+vgen validate
+vgen push-all --dry-run
 ```
 
 ### Windows (PowerShell)
 
 ```powershell
-cd resmate-1.0.0-windows-x64
+cd vgen-1.0.0-windows-x64
 .\install.ps1
 # Open new terminal
 mkdir $HOME\my-use-case; cd $HOME\my-use-case
-resmate init --name my-use-case
-resmate doctor
+vgen init --name my-use-case
+vgen doctor
 ```
 
 ### MCP (Cursor)
@@ -431,12 +431,12 @@ After install, point MCP at installed binary ([`docs/mcp-setup.md`](./mcp-setup.
 ```json
 {
   "mcpServers": {
-    "resmate": {
-      "command": "C:\\Users\\<you>\\AppData\\Local\\Programs\\ResMate\\bin\\resmate-mcp.exe",
+    "vgen": {
+      "command": "C:\\Users\\<you>\\AppData\\Local\\Programs\\ResMate\\bin\\vgen-mcp.exe",
       "args": [],
       "env": {
-        "RESMATE_API_KEY": "${env:RESMATE_API_KEY}",
-        "RESMATE_TEMPLATES_DIR": "${env:RESMATE_TEMPLATES_DIR}"
+        "VGEN_API_KEY": "${env:VGEN_API_KEY}",
+        "VGEN_TEMPLATES_DIR": "${env:VGEN_TEMPLATES_DIR}"
       }
     }
   }
@@ -445,12 +445,12 @@ After install, point MCP at installed binary ([`docs/mcp-setup.md`](./mcp-setup.
 
 Install script can print OS-specific absolute path for copy-paste.
 
-### Expected `resmate init` outcome
+### Expected `vgen init` outcome
 
 Same as dev checkout ([`src/commands/init.rs`](../src/commands/init.rs)):
 
-- `AGENTS.md`, `.cursor/skills/resmate-use-case/SKILL.md`, `platform/`, `cli/`, etc.
-- `resmate.yaml` with `kit_version: "1.0.0"`
+- `AGENTS.md`, `.cursor/skills/vgen-use-case/SKILL.md`, `platform/`, `cli/`, etc.
+- `vgen.yaml` with `kit_version: "1.0.0"`
 - Empty live dirs: `tools/`, `agents/`, `assistants/`, `hitl/`, `workflows/`
 
 ---
@@ -463,14 +463,14 @@ Extend `templates_root()` resolution **before** erroring. Proposed order:
 
 | # | Source | Notes |
 |---|--------|-------|
-| 1 | `RESMATE_TEMPLATES_DIR` | Existing; validate `workspace/` subdir |
-| 2 | **Install-relative to executable** | `canonicalize(exe_dir/../share/resmate/templates)` — works for portable unzip layout |
-| 3 | **Unix user default** | `$HOME/.local/share/resmate/templates` via `dirs` crate (already a dependency) |
-| 4 | **Unix system default** | `/usr/local/share/resmate/templates` |
+| 1 | `VGEN_TEMPLATES_DIR` | Existing; validate `workspace/` subdir |
+| 2 | **Install-relative to executable** | `canonicalize(exe_dir/../share/vgen/templates)` — works for portable unzip layout |
+| 3 | **Unix user default** | `$HOME/.local/share/vgen/templates` via `dirs` crate (already a dependency) |
+| 4 | **Unix system default** | `/usr/local/share/vgen/templates` |
 | 5 | **Windows user default** | `%LOCALAPPDATA%\Programs\ResMate\share\templates` |
 | 6 | **Windows system default** | `%ProgramFiles%\ResMate\share\templates` |
 | 7 | `CARGO_MANIFEST_DIR/templates` | Dev / `cargo test` only (existing) |
-| 8 | Error | Include all attempted paths + "Re-run install.sh or set RESMATE_TEMPLATES_DIR" |
+| 8 | Error | Include all attempted paths + "Re-run install.sh or set VGEN_TEMPLATES_DIR" |
 
 **Estimated diff:** ~60–90 lines in [`src/kit/load.rs`](../src/kit/load.rs); helper `fn candidate_template_roots() -> Vec<PathBuf>`.
 
@@ -480,14 +480,14 @@ fn installed_template_candidates() -> Vec<PathBuf> {
     let mut v = Vec::new();
     if let Ok(exe) = env::current_exe() {
         if let Some(parent) = exe.parent() {
-            v.push(parent.join("../share/resmate/templates"));
+            v.push(parent.join("../share/vgen/templates"));
         }
     }
     if let Some home) = dirs::home_dir() {
-        v.push(home.join(".local/share/resmate/templates"));
+        v.push(home.join(".local/share/vgen/templates"));
     }
     #[cfg(unix)]
-    v.push(PathBuf::from("/usr/local/share/resmate/templates"));
+    v.push(PathBuf::from("/usr/local/share/vgen/templates"));
     #[cfg(windows)]
     { /* LOCALAPPDATA / ProgramFiles */ }
     v
@@ -501,9 +501,9 @@ Each candidate: accept only if `join("workspace").is_dir()`.
 | File | Change |
 |------|--------|
 | `tests/init_authoring_kit_test.rs` (or new `tests/templates_root_test.rs`) | Assert `templates_root()` finds `CARGO_MANIFEST_DIR/templates` in dev |
-| New test with temp dir | Set `RESMATE_TEMPLATES_DIR` to temp templates tree; init succeeds |
+| New test with temp dir | Set `VGEN_TEMPLATES_DIR` to temp templates tree; init succeeds |
 
-### P1 — `resmate doctor`
+### P1 — `vgen doctor`
 
 Add check `templates_available`: calls `templates_root()`; reports path or remediation. Helps authors who installed CLI but skipped env hook.
 
@@ -511,7 +511,7 @@ Add check `templates_available`: calls `templates_root()`; reports path or remed
 
 ### P1 — version command
 
-Optional `resmate version --json` emitting `{ "version": "1.0.0", "kit_templates": "<path>" }`.
+Optional `vgen version --json` emitting `{ "version": "1.0.0", "kit_templates": "<path>" }`.
 
 ### Not needed for v1.0
 
@@ -529,7 +529,7 @@ Optional `resmate version --json` emitting `{ "version": "1.0.0", "kit_templates
 | 1 | Bump version to `1.0.0` | `Cargo.toml`, `CHANGELOG.md` | S |
 | 2 | Extend `templates_root()` default lookup | `src/kit/load.rs`, tests | M |
 | 3 | `scripts/package-release.sh` | new | L |
-| 4 | Extend `scripts/build-windows.sh` for `resmate-mcp` | `scripts/build-windows.sh` | S |
+| 4 | Extend `scripts/build-windows.sh` for `vgen-mcp` | `scripts/build-windows.sh` | S |
 | 5 | `scripts/install.sh` + release copy | new | M |
 | 6 | `scripts/install.ps1` + release copy | new | M |
 | 7 | Archive docs: `README-INSTALL.md`, `docs/QUICKSTART.md`, `VERSION` | new / generated | S |
@@ -541,30 +541,30 @@ Optional `resmate version --json` emitting `{ "version": "1.0.0", "kit_templates
 
 ```bash
 # On clean macOS VM after install.sh:
-resmate init --name test && test -f AGENTS.md
-resmate workflow validate --help   # binary runs; full validate needs workspace workflow
+vgen init --name test && test -f AGENTS.md
+vgen workflow validate --help   # binary runs; full validate needs workspace workflow
 
 # On clean Windows VM after install.ps1:
-resmate init --name test
+vgen init --name test
 ```
 
 ### P1 — Nice to have (v1.0.x)
 
 | Task | Notes |
 |------|-------|
-| `resmate doctor` templates check | §8 |
+| `vgen doctor` templates check | §8 |
 | Mac `.zip` alternate format | Same tree as `.tar.gz` |
 | `install.cmd` Windows wrapper | Calls `install.ps1` |
 | `scripts/uninstall.sh` / `uninstall.ps1` | Reverse install |
 | GitHub Actions `release.yml` | Matrix build on tag push |
-| `resmate version` subcommand | Operator visibility |
+| `vgen version` subcommand | Operator visibility |
 | MCP auto-config flag on install | `-ConfigureMcp` |
 
 ### P2 — Future
 
 | Task | Notes |
 |------|-------|
-| **`smriti_client` standalone** | Git-pinned dep; document `RESMATE_CORE_REF` in releases |
+| **`smriti_client` standalone** | Git-pinned dep; document `VGEN_CORE_REF` in releases |
 | **`rust-embed` templates** | Single-binary distribution; feature flag `embedded-templates` |
 | Linux arm64, musl | Expand matrix |
 | Homebrew formula / winget manifest | Package manager installs |
@@ -574,7 +574,7 @@ resmate init --name test
 
 | Task | Notes |
 |------|-------|
-| `resmate kit refresh` | Merge kit docs without touching live artifacts |
+| `vgen kit refresh` | Merge kit docs without touching live artifacts |
 | Vendored workflow validator crate | Remove core-framework build dependency entirely |
 
 ---
@@ -585,39 +585,39 @@ Run on **fresh machines** (no Rust, no sibling repos) per artifact.
 
 ### macOS (arm64 + x64)
 
-- [ ] Extract `resmate-1.0.0-darwin-*.tar.gz`
+- [ ] Extract `vgen-1.0.0-darwin-*.tar.gz`
 - [ ] `./install.sh` completes without sudo
-- [ ] New shell: `which resmate` → `~/.local/bin/resmate`
-- [ ] `echo $RESMATE_TEMPLATES_DIR` → `~/.local/share/resmate/templates`
-- [ ] `resmate init --name smoke` → `AGENTS.md`, `.cursor/skills/...`, `resmate.yaml` with `kit_version: "1.0.0"`
-- [ ] `resmate scaffold minimal --name smoke` → recipe files
-- [ ] `resmate doctor --offline` → passes workspace checks
-- [ ] `resmate-mcp` responds to `tools/list` JSON-RPC smoke
-- [ ] Optional: `resmate workflow validate` against scaffolded workflow folder
+- [ ] New shell: `which vgen` → `~/.local/bin/vgen`
+- [ ] `echo $VGEN_TEMPLATES_DIR` → `~/.local/share/vgen/templates`
+- [ ] `vgen init --name smoke` → `AGENTS.md`, `.cursor/skills/...`, `vgen.yaml` with `kit_version: "1.0.0"`
+- [ ] `vgen scaffold minimal --name smoke` → recipe files
+- [ ] `vgen doctor --offline` → passes workspace checks
+- [ ] `vgen-mcp` responds to `tools/list` JSON-RPC smoke
+- [ ] Optional: `vgen workflow validate` against scaffolded workflow folder
 
 ### Linux (x64)
 
 - [ ] Same as macOS via `install.sh`
-- [ ] Confirm dynamic linker: `ldd $(which resmate)` — document glibc minimum (build on oldest target or manylinux)
+- [ ] Confirm dynamic linker: `ldd $(which vgen)` — document glibc minimum (build on oldest target or manylinux)
 
 ### Windows (x64)
 
-- [ ] Extract `resmate-1.0.0-windows-x64.zip`
+- [ ] Extract `vgen-1.0.0-windows-x64.zip`
 - [ ] `powershell -ExecutionPolicy Bypass -File .\install.ps1`
-- [ ] New cmd/PowerShell: `where resmate` → `%LOCALAPPDATA%\Programs\ResMate\bin\resmate.exe`
-- [ ] `[Environment]::GetEnvironmentVariable("RESMATE_TEMPLATES_DIR","User")` set correctly
-- [ ] `resmate init --name smoke` succeeds
-- [ ] `resmate-mcp.exe` JSON-RPC smoke
+- [ ] New cmd/PowerShell: `where vgen` → `%LOCALAPPDATA%\Programs\ResMate\bin\vgen.exe`
+- [ ] `[Environment]::GetEnvironmentVariable("VGEN_TEMPLATES_DIR","User")` set correctly
+- [ ] `vgen init --name smoke` succeeds
+- [ ] `vgen-mcp.exe` JSON-RPC smoke
 
 ### Regression (maintainer checkout)
 
 - [ ] `cargo test` still passes with `CARGO_MANIFEST_DIR/templates`
-- [ ] `RESMATE_TEMPLATES_DIR` override still wins over defaults
+- [ ] `VGEN_TEMPLATES_DIR` override still wins over defaults
 - [ ] `./scripts/smoke-pr-agent.sh` against `pr-agent-v2`
 
 ### Negative tests
 
-- [ ] Delete `RESMATE_TEMPLATES_DIR` and default dirs → `resmate init` error message lists remediation
+- [ ] Delete `VGEN_TEMPLATES_DIR` and default dirs → `vgen init` error message lists remediation
 - [ ] Run install twice → idempotent, no duplicate PATH entries
 
 ---
@@ -628,7 +628,7 @@ Run on **fresh machines** (no Rust, no sibling repos) per artifact.
 |----|----------|----------|------|-------|
 | D1 | Co-installed vs `rust-embed` templates? | **Co-installed for v1.0**; rust-embed P2/v1.1 | 2026-07-04 | Packaging plan |
 | D2 | User-local vs system default install? | **User-local default**; `--prefix` / `-Scope Machine` opt-in | 2026-07-04 | Packaging plan |
-| D3 | Pin `resmedai-core-framework` ref per release? | **Yes** — record `RESMATE_CORE_REF` in CHANGELOG/release notes | TBD | Release manager |
+| D3 | Pin `resmedai-core-framework` ref per release? | **Yes** — record `VGEN_CORE_REF` in CHANGELOG/release notes | TBD | Release manager |
 | D4 | Linux build host: cross vs native? | **Prefer native linux-x64 runner** for glibc compatibility; document minimum Ubuntu version | TBD | Release manager |
 | D5 | Ship macOS `.zip` in P0? | **Optional P1** unless dual-format required day one | 2026-07-04 | Packaging plan |
 | D6 | Code signing (macOS/Windows)? | **Defer P2**; document Gatekeeper/SmartScreen bypass for internal dev | 2026-07-04 | Packaging plan |
@@ -663,16 +663,16 @@ Run on **fresh machines** (no Rust, no sibling repos) per artifact.
 # Dev smoke (from source)
 cargo test
 cargo run -- init --name local-test
-RESMATE_TEMPLATES_DIR=./templates resmate init --name explicit
+VGEN_TEMPLATES_DIR=./templates vgen init --name explicit
 
 # Package (once script exists)
-RESMATE_CORE_FRAMEWORK=../resmedai-core-framework \
-RESMATE_CORE_REF=main \
+VGEN_CORE_FRAMEWORK=../resmedai-core-framework \
+VGEN_CORE_REF=main \
   ./scripts/package-release.sh
 
 # Verify archive contents
-tar tzf dist/resmate-1.0.0-darwin-arm64.tar.gz | head
-unzip -l dist/resmate-1.0.0-windows-x64.zip | head
+tar tzf dist/vgen-1.0.0-darwin-arm64.tar.gz | head
+unzip -l dist/vgen-1.0.0-windows-x64.zip | head
 ```
 
 ---

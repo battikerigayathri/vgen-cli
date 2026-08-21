@@ -4,10 +4,10 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PR_AGENT_ROOT="${PR_AGENT_ROOT:-/Users/roshankgujarathi/Workspace/ResMed/pr-agent-v2}"
-BIN="${RESMATE_BIN:-$ROOT/target/debug/resmate}"
+BIN="${VGEN_BIN:-$ROOT/target/debug/vgen}"
 
 if [[ ! -x "$BIN" ]]; then
-  echo "Building resmate..."
+  echo "Building vgen..."
   (cd "$ROOT" && cargo build --quiet)
 fi
 
@@ -33,14 +33,14 @@ echo "== smoke: validate (local) =="
 echo "== smoke: push-all dry-run =="
 "$BIN" --json push-all --dry-run | jq -e '.ok == true' >/dev/null
 
-if [[ -n "${RESMATE_API_KEY:-}" ]]; then
+if [[ -n "${VGEN_API_KEY:-}" ]]; then
   echo "== smoke: validate --remote =="
   "$BIN" --json validate --remote | jq -e '.data.summary.error_count == 0' >/dev/null
 
   echo "== smoke: diff tool roc-search-users =="
   "$BIN" --json diff tool roc-search-users | jq -e '.data.has_changes == false' >/dev/null
 else
-  echo "SKIP: remote checks (RESMATE_API_KEY not set)"
+  echo "SKIP: remote checks (VGEN_API_KEY not set)"
 fi
 
 echo "Smoke passed."

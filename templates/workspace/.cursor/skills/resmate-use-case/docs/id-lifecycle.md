@@ -13,11 +13,11 @@ There are exactly four stages. Do not skip or reorder them.
 1. **Local Creation** — Create `tool.yaml`, `agent.yaml`, `assistant.yaml`, or `hitl/*/meta.yaml` with the `id` field **empty** (`id: ""`) or **omitted entirely**. There is nothing else to fill in for the ID at this stage.
 2. **Platform Registration** — Run the resource's push command, e.g.:
    ```bash
-   resmate tool push <folder-name>
-   resmate agent push <basename>
-   resmate assistant push <basename>
-   resmate hitl push <folder-name>
-   resmate workflow push <folder-name>
+   vgen tool push <folder-name>
+   vgen agent push <basename>
+   vgen assistant push <basename>
+   vgen hitl push <folder-name>
+   vgen workflow push <folder-name>
    ```
    Because the local `id` is empty, the CLI knows this is a **create**, not an **update**, and asks the platform to register a brand-new resource.
 3. **Local Write-Back** — The platform responds with a generated MongoDB ObjectId. The CLI writes that ID directly back into your local YAML file's `id` field, in place, preserving the rest of the file. You do not do this manually — the CLI does it as part of the `push` command.
@@ -51,6 +51,6 @@ Invented or copy-pasted IDs are a top cause of failed deployments:
 - **`404 Not Found` on push**: The CLI tries to update a resource at an ID the platform has never seen (invented or from a different environment). There is nothing there to update.
 - **`403 Forbidden` on push**: The ID happens to collide with an existing platform resource you don't own or aren't scoped to, and the platform correctly refuses the write.
 - **Silent misrouting**: An agent's `skills[]` array pointing at the wrong (but valid) tool ID will bind to someone else's tool instead of yours, producing confusing runtime behavior with no obvious error.
-- **Broken `resmate graph` / `resmate validate --remote`**: Both commands cross-reference local IDs against the platform. Invented IDs show up as `broken_ref` edges or remote-drift warnings, blocking a clean push-all plan.
+- **Broken `vgen graph` / `vgen validate --remote`**: Both commands cross-reference local IDs against the platform. Invented IDs show up as `broken_ref` edges or remote-drift warnings, blocking a clean push-all plan.
 
 **The fix is always the same**: leave the `id` empty, push, and let the CLI write it back. See [push-pull-wire.md](push-pull-wire.md) for the full push-and-wire loop across HITL, Workflow, Tool, Agent, and Assistant layers.

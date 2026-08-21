@@ -8,19 +8,19 @@ use std::env;
 use std::path::{Path, PathBuf};
 
 const DEFAULT_BASE_URL: &str = "https://api-dev.ai.resmed.com";
-pub const ENV_BASE_URL: &str = "RESMATE_BASE_URL";
-pub const ENV_API_KEY: &str = "RESMATE_API_KEY";
-pub const ENV_ROC_SESSION: &str = "RESMATE_ROC_SESSION";
-pub const ENV_TOOLS_DIR: &str = "RESMATE_TOOLS_DIR";
-pub const ENV_AGENTS_DIR: &str = "RESMATE_AGENTS_DIR";
-pub const ENV_ASSISTANTS_DIR: &str = "RESMATE_ASSISTANTS_DIR";
-pub const ENV_HITL_DIR: &str = "RESMATE_HITL_DIR";
-pub const ENV_WORKFLOWS_DIR: &str = "RESMATE_WORKFLOWS_DIR";
-const ENV_CONFIG: &str = "RESMATE_CONFIG";
+pub const ENV_BASE_URL: &str = "VGEN_BASE_URL";
+pub const ENV_API_KEY: &str = "VGEN_API_KEY";
+pub const ENV_ROC_SESSION: &str = "VGEN_ROC_SESSION";
+pub const ENV_TOOLS_DIR: &str = "VGEN_TOOLS_DIR";
+pub const ENV_AGENTS_DIR: &str = "VGEN_AGENTS_DIR";
+pub const ENV_ASSISTANTS_DIR: &str = "VGEN_ASSISTANTS_DIR";
+pub const ENV_HITL_DIR: &str = "VGEN_HITL_DIR";
+pub const ENV_WORKFLOWS_DIR: &str = "VGEN_WORKFLOWS_DIR";
+const ENV_CONFIG: &str = "VGEN_CONFIG";
 
 pub const ENV_CONFIG_VAR: &str = ENV_CONFIG;
 
-/// Artifact directory paths resolved from workspace root and `RESMATE_*_DIR` overrides.
+/// Artifact directory paths resolved from workspace root and `VGEN_*_DIR` overrides.
 #[derive(Debug, Clone, Serialize)]
 pub struct ResolvedPaths {
     pub tools_dir: PathBuf,
@@ -94,7 +94,7 @@ struct ConfigFile {
 }
 
 fn config_dir() -> Option<PathBuf> {
-    dirs::home_dir().map(|h| h.join(".resmate"))
+    dirs::home_dir().map(|h| h.join(".vgen"))
 }
 
 pub fn config_file_path() -> Option<PathBuf> {

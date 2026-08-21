@@ -23,7 +23,7 @@ pub async fn create_assistant(
     payload: &Value,
 ) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
     let cfg = config::load_config().map_err(|e| e.to_string())?;
-    let api_key = cfg.api_key.as_deref().ok_or("RESMATE_API_KEY is not set")?;
+    let api_key = cfg.api_key.as_deref().ok_or("VGEN_API_KEY is not set")?;
     let base = cfg.base_url.trim_end_matches('/');
     let url = format!("{}/create-record", base);
 
@@ -64,7 +64,7 @@ pub async fn update_assistant(
     document: &Value,
 ) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
     let cfg = config::load_config().map_err(|e| e.to_string())?;
-    let api_key = cfg.api_key.as_deref().ok_or("RESMATE_API_KEY is not set")?;
+    let api_key = cfg.api_key.as_deref().ok_or("VGEN_API_KEY is not set")?;
     let base = cfg.base_url.trim_end_matches('/');
     let url = format!("{}/update-record", base);
 
@@ -103,7 +103,7 @@ pub async fn create_assistant_session(
     chat_id: &str,
 ) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
     let cfg = config::load_config().map_err(|e| e.to_string())?;
-    let api_key = cfg.api_key.as_deref().ok_or("RESMATE_API_KEY is not set")?;
+    let api_key = cfg.api_key.as_deref().ok_or("VGEN_API_KEY is not set")?;
     let base = cfg.base_url.trim_end_matches('/');
     let url = format!("{}/create-record", base);
 
@@ -155,7 +155,7 @@ pub async fn ask_assistant(
     payload: &serde_json::Value,
 ) -> Result<serde_json::Value, Box<dyn std::error::Error + Send + Sync>> {
     let cfg = config::load_config().map_err(|e| e.to_string())?;
-    let api_key = cfg.api_key.as_deref().ok_or("RESMATE_API_KEY is not set")?;
+    let api_key = cfg.api_key.as_deref().ok_or("VGEN_API_KEY is not set")?;
     let base = cfg.base_url.trim_end_matches('/');
     let url = format!("{}/chat/{}/session/{}/ask", base, chat_id, session_id);
 

@@ -52,27 +52,27 @@ Copy this folder to your workspace or set dirs for one-shot push:
 ```bash
 cd examples/purchase-requisition
 
-export RESMATE_HITL_DIR=./hitl
-export RESMATE_WORKFLOWS_DIR=./workflows
-export RESMATE_TOOLS_DIR=./tools
-export RESMATE_AGENTS_DIR=./agents
-export RESMATE_ASSISTANTS_DIR=./assistants
+export VGEN_HITL_DIR=./hitl
+export VGEN_WORKFLOWS_DIR=./workflows
+export VGEN_TOOLS_DIR=./tools
+export VGEN_AGENTS_DIR=./agents
+export VGEN_ASSISTANTS_DIR=./assistants
 
-resmate hitl push purchase-req-vendor-form
-resmate hitl push purchase-req-lines-form
-resmate hitl push purchase-req-review
-resmate workflow push purchase-requisition
-resmate tool push purchase-req-vendor-hitlconfig
-resmate tool push purchase-req-vendor-save
-resmate tool push purchase-req-lines-hitlconfig
-resmate tool push purchase-req-lines-save
-resmate tool push purchase-req-review-hitlconfig
-resmate tool push purchase-req-review-confirm
-resmate agent push purchase-req-agent
-resmate assistant push purchase-req-assistant
+vgen hitl push purchase-req-vendor-form
+vgen hitl push purchase-req-lines-form
+vgen hitl push purchase-req-review
+vgen workflow push purchase-requisition
+vgen tool push purchase-req-vendor-hitlconfig
+vgen tool push purchase-req-vendor-save
+vgen tool push purchase-req-lines-hitlconfig
+vgen tool push purchase-req-lines-save
+vgen tool push purchase-req-review-hitlconfig
+vgen tool push purchase-req-review-confirm
+vgen agent push purchase-req-agent
+vgen assistant push purchase-req-assistant
 ```
 
-Requires `.env` with `RESMATE_API_KEY` at workspace root.
+Requires `.env` with `VGEN_API_KEY` at workspace root.
 
 ## Validate
 

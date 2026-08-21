@@ -43,19 +43,19 @@ cargo run -p smriti_client --bin push_workflow_definition -- \
 ```bash
 cd examples/github-pr-create
 
-export RESMATE_HITL_DIR=./hitl
-export RESMATE_WORKFLOWS_DIR=./workflows
-export RESMATE_TOOLS_DIR=./tools
-export RESMATE_AGENTS_DIR=./agents
-export RESMATE_ASSISTANTS_DIR=./assistants
+export VGEN_HITL_DIR=./hitl
+export VGEN_WORKFLOWS_DIR=./workflows
+export VGEN_TOOLS_DIR=./tools
+export VGEN_AGENTS_DIR=./agents
+export VGEN_ASSISTANTS_DIR=./assistants
 
-resmate hitl push github-pr-intent-form
-resmate workflow push github-pr-create
-resmate tool push github-pr-intent-hitlconfig
-resmate tool push github-pr-intent-save
-resmate tool push github-pr-open
-resmate agent push github-pr-agent
-resmate assistant push github-pr-assistant
+vgen hitl push github-pr-intent-form
+vgen workflow push github-pr-create
+vgen tool push github-pr-intent-hitlconfig
+vgen tool push github-pr-intent-save
+vgen tool push github-pr-open
+vgen agent push github-pr-agent
+vgen assistant push github-pr-assistant
 ```
 
 ## Smoke (optional)

@@ -23,7 +23,7 @@ pub async fn create_agent(
     body: &Value,
 ) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
     let cfg = config::load_config().map_err(|e| e.to_string())?;
-    let api_key = cfg.api_key.as_deref().ok_or("RESMATE_API_KEY is not set")?;
+    let api_key = cfg.api_key.as_deref().ok_or("VGEN_API_KEY is not set")?;
     let base = cfg.base_url.trim_end_matches('/');
     let url = format!("{}/agent/create", base);
 
@@ -51,7 +51,7 @@ pub async fn update_agent(
     document: &Value,
 ) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
     let cfg = config::load_config().map_err(|e| e.to_string())?;
-    let api_key = cfg.api_key.as_deref().ok_or("RESMATE_API_KEY is not set")?;
+    let api_key = cfg.api_key.as_deref().ok_or("VGEN_API_KEY is not set")?;
     let base = cfg.base_url.trim_end_matches('/');
     let url = format!("{}/update-record", base);
 

@@ -1,6 +1,6 @@
 # Push Order & ID Wiring
 
-This document explains **what order to push resources in**, **how bindings between layers work** (slug vs. Mongo ObjectId), and **why `resmate push-all` does not fully automate wiring for you**.
+This document explains **what order to push resources in**, **how bindings between layers work** (slug vs. Mongo ObjectId), and **why `vgen push-all` does not fully automate wiring for you**.
 
 Read [id-lifecycle.md](id-lifecycle.md) first if you haven't — this doc assumes you already understand the omit -> push -> write-back lifecycle.
 
@@ -35,19 +35,19 @@ This is exactly why HITL Forms and Workflows can be pushed with zero advance wir
 
 ## 3. The Push-Wire-Re-Push Loop
 
-`resmate push-all` walks every reachable resource in `phase_order` (HITL, Workflow, Tool, Agent, Assistant) and pushes each one, performing create-or-update per resource based on whether its local `id` is empty (see [id-lifecycle.md](id-lifecycle.md)). Critically:
+`vgen push-all` walks every reachable resource in `phase_order` (HITL, Workflow, Tool, Agent, Assistant) and pushes each one, performing create-or-update per resource based on whether its local `id` is empty (see [id-lifecycle.md](id-lifecycle.md)). Critically:
 
 > ⚠️ **`push-all` does not auto-wire IDs into dependents.** It pushes each resource in the correct order and writes back each resource's *own* `id`, but it does **not** reach into `agents/*.yaml` to fill `skills[]` with the Tool IDs it just created, and it does **not** reach into `assistants/*.yaml` to fill `agents[]` with the Agent IDs it just created. That wiring step is manual (by a developer or an agent), every time new Tool/Agent records are created.
 
 ### Step-by-step loop
 
-1. Run `resmate push-all --dry-run` to preview the chronological plan, then `resmate push-all --yes` to push all initial layers (HITL, Workflows, Tools — and Agents/Assistants too, but their `skills[]`/`agents[]` arrays are still empty or stale on this first pass if those IDs didn't exist locally yet).
+1. Run `vgen push-all --dry-run` to preview the chronological plan, then `vgen push-all --yes` to push all initial layers (HITL, Workflows, Tools — and Agents/Assistants too, but their `skills[]`/`agents[]` arrays are still empty or stale on this first pass if those IDs didn't exist locally yet).
 2. Inspect the written-back Tool IDs in `tools/*/tool.yaml` (`id` field, now populated).
 3. Manually copy those Tool IDs into the relevant `agents/*.yaml` file(s) under the `skills` array.
-4. Run `resmate agent push <name>` to redeploy the agent with its now-correct `skills[]`.
+4. Run `vgen agent push <name>` to redeploy the agent with its now-correct `skills[]`.
 5. Inspect the written-back Agent ID in `agents/*.yaml` (`id` field, now populated).
 6. Manually copy that Agent ID into the relevant `assistants/*.yaml` file's `agents` array.
-7. Run `resmate assistant push <name>` to redeploy the assistant with its now-correct `agents[]`.
+7. Run `vgen assistant push <name>` to redeploy the assistant with its now-correct `agents[]`.
 
 On a **fresh bootstrap** (everything starting from empty IDs), expect to run this loop once per use case: `push-all` for the first pass, then two small targeted re-pushes (`agent push`, `assistant push`) after wiring.
 

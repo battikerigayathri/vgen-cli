@@ -1,4 +1,4 @@
-use resmate::sync::extract_hitl_slugs;
+use vgen::sync::extract_hitl_slugs;
 use serde_json::json;
 
 #[test]

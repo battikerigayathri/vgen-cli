@@ -6,8 +6,8 @@ fn pr_agent_v2_root() -> PathBuf {
     PathBuf::from("/Users/roshankgujarathi/Workspace/ResMed/pr-agent-v2")
 }
 
-fn resmate_bin() -> std::path::PathBuf {
-    std::path::PathBuf::from(env!("CARGO_BIN_EXE_resmate"))
+fn vgen_bin() -> std::path::PathBuf {
+    std::path::PathBuf::from(env!("CARGO_BIN_EXE_vgen"))
 }
 
 #[test]
@@ -18,11 +18,11 @@ fn smoke_validate_local_zero_errors() {
         return;
     }
 
-    let output = std::process::Command::new(resmate_bin())
+    let output = std::process::Command::new(vgen_bin())
         .current_dir(&root)
         .args(["--json", "validate"])
         .output()
-        .expect("run resmate validate");
+        .expect("run vgen validate");
 
     assert!(
         output.status.success(),
@@ -43,7 +43,7 @@ fn smoke_workflow_validate_oracle() {
         return;
     }
 
-    let output = std::process::Command::new(resmate_bin())
+    let output = std::process::Command::new(vgen_bin())
         .current_dir(&root)
         .args([
             "--json",
@@ -67,7 +67,7 @@ fn smoke_push_all_dry_run() {
         return;
     }
 
-    let output = std::process::Command::new(resmate_bin())
+    let output = std::process::Command::new(vgen_bin())
         .current_dir(&root)
         .args(["--json", "push-all", "--dry-run"])
         .output()
@@ -88,9 +88,9 @@ fn smoke_workflow_loader_parity() {
     }
 
     let dir = root.join("workflows/oracle-purchase-requisition-v1");
-    let validate = resmate::workflow_validate::validate_workflow_dir(&dir).expect("validate");
+    let validate = vgen::workflow_validate::validate_workflow_dir(&dir).expect("validate");
     let (bundle, _, _) =
-        resmate::workflow_loader::load_workflow_from_dir(&dir).expect("load for push");
+        vgen::workflow_loader::load_workflow_from_dir(&dir).expect("load for push");
     assert_eq!(
         bundle
             .get("meta")

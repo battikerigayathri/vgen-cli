@@ -61,7 +61,7 @@ pub fn handle_request(state: &McpState, request: &Value) -> Value {
         "initialize" => json!({
             "protocolVersion": "2024-11-05",
             "capabilities": { "tools": {} },
-            "serverInfo": { "name": "resmate-mcp", "version": env!("CARGO_PKG_VERSION") }
+            "serverInfo": { "name": "vgen-mcp", "version": env!("CARGO_PKG_VERSION") }
         }),
         "tools/list" => json!({ "tools": list_tool_definitions() }),
         "tools/call" => handle_tool_call(state, &params),

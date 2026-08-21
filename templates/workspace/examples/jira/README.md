@@ -27,22 +27,22 @@
 cd examples/jira    # from workspace root
 ```
 
-Or set `RESMATE_*_DIR` to paths under this folder.
+Or set `VGEN_*_DIR` to paths under this folder.
 
 ```bash
-resmate hitl push jira-read-issue-confirm
-resmate tool push jira-read-issue-hitlconfig
-resmate tool push jira-read-issue
-resmate agent push jira-agent
-resmate assistant push jira-assistants
+vgen hitl push jira-read-issue-confirm
+vgen tool push jira-read-issue-hitlconfig
+vgen tool push jira-read-issue
+vgen agent push jira-agent
+vgen assistant push jira-assistants
 ```
 
-Requires `.env` with `RESMATE_API_KEY` at workspace root.
+Requires `.env` with `VGEN_API_KEY` at workspace root.
 
 ## Test
 
 ```bash
-resmate tool test jira-read-issue
+vgen tool test jira-read-issue
 ```
 
 Assistant test: see [cli/test.md](../../cli/test.md).

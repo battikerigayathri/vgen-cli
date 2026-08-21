@@ -121,7 +121,7 @@ pub fn list_tool_definitions() -> Vec<Value> {
                 "properties": {
                     "workspace_root": { "type": "string" },
                     "name": { "type": "string" },
-                    "description": { "type": "string", "description": "Description for resmate.yaml (default: \"ResMate use case workspace\")" },
+                    "description": { "type": "string", "description": "Description for vgen.yaml (default: \"ResMate use case workspace\")" },
                     "force": { "type": "boolean", "description": "Bootstrap-overwrite kit/seed in a non-init-safe directory; never deletes live artifacts" },
                     "confirm": { "type": "boolean", "description": "Must be true to init" }
                 },
@@ -146,7 +146,7 @@ pub fn list_tool_definitions() -> Vec<Value> {
         ),
         tool(
             "kit_update",
-            "Refresh the authoring kit files (skills, rules, docs, AGENTS.md) in an already-scaffolded workspace without touching live artifacts (tools/agents/assistants/hitl/workflows) or user config; skips examples/ by default; updates kit_version in resmate.yaml",
+            "Refresh the authoring kit files (skills, rules, docs, AGENTS.md) in an already-scaffolded workspace without touching live artifacts (tools/agents/assistants/hitl/workflows) or user config; skips examples/ by default; updates kit_version in vgen.yaml",
             true,
             json!({
                 "type": "object",

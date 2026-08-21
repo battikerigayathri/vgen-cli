@@ -61,7 +61,7 @@ pub fn list_workflow_dirs(base: &Path) -> Vec<PathBuf> {
 }
 
 pub fn default_workflows_dir() -> PathBuf {
-    std::env::var("RESMATE_WORKFLOWS_DIR")
+    std::env::var("VGEN_WORKFLOWS_DIR")
         .map(PathBuf::from)
         .unwrap_or_else(|_| PathBuf::from("workflows"))
 }

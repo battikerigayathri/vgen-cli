@@ -13,7 +13,7 @@ Use this document to create issues on the **CGA** Jira project. Each section is 
 | **Title** | ResMate CLI P0 — Agent-authoring commands |
 | **Issue type** | Epic |
 | **Project** | CGA |
-| **Labels** | `resmate-cli`, `p0`, `agent-authoring` |
+| **Labels** | `vgen-cli`, `p0`, `agent-authoring` |
 
 ### Description
 
@@ -24,16 +24,16 @@ Deliver machine-readable CLI commands so IDE agents (Cursor, Codex, etc.) can in
 h2. Goals
 
 * Global `--json` output layer with stable exit codes (0 success, 1 runtime, 2 usage, 3 validation)
-* Workspace detection and health: `resmate workspace info`, `resmate doctor`
-* Dependency link graph: `resmate graph`
-* Workspace-level validation: `resmate validate`
-* Local workflow schema validation (no API): `resmate workflow validate <folder>`
-* Push plan without side effects: `resmate push-all --dry-run`
+* Workspace detection and health: `vgen workspace info`, `vgen doctor`
+* Dependency link graph: `vgen graph`
+* Workspace-level validation: `vgen validate`
+* Local workflow schema validation (no API): `vgen workflow validate <folder>`
+* Push plan without side effects: `vgen push-all --dry-run`
 
 h2. Reference
 
-* Implementation plan: [PHASE1-P0-PLAN.md](./PHASE1-P0-PLAN.md) (in `resmed_resmate-cli` repo)
-* Target repo: `resmed_resmate-cli`
+* Implementation plan: [PHASE1-P0-PLAN.md](./PHASE1-P0-PLAN.md) (in `resmed_vgen-cli` repo)
+* Target repo: `resmed_vgen-cli`
 * Reference workspace for smoke tests: `pr-agent-v2` (Oracle PR use case)
 * Platform validator: `resmedai-core-framework/lib/smriti_client`
 
@@ -43,25 +43,25 @@ Run from `pr-agent-v2` workspace root:
 
 {code:bash}
 # PR1 — envelope + exit codes
-resmate --json config show | jq '.ok == true'
-resmate --json config validate
+vgen --json config show | jq '.ok == true'
+vgen --json config validate
 
 # PR2 — workspace
-resmate --json workspace info | jq '.data.artifact_dirs.tools.count >= 3'
-resmate --json doctor | jq '.data.checks | length >= 3'
+vgen --json workspace info | jq '.data.artifact_dirs.tools.count >= 3'
+vgen --json doctor | jq '.data.checks | length >= 3'
 
 # PR3 — graph
-resmate --json graph | jq '.data.nodes | map(.kind) | unique'
-resmate --json graph | jq '[.data.edges[] | select(.kind=="broken_ref")] | length'  # expect 0
+vgen --json graph | jq '.data.nodes | map(.kind) | unique'
+vgen --json graph | jq '[.data.edges[] | select(.kind=="broken_ref")] | length'  # expect 0
 
 # PR4 — workflow validate
-resmate --json workflow validate oracle-purchase-requisition | jq '.ok == true'
+vgen --json workflow validate oracle-purchase-requisition | jq '.ok == true'
 
 # PR5 — full validate
-resmate --json validate | jq '.data.summary.error_count == 0'
+vgen --json validate | jq '.data.summary.error_count == 0'
 
 # PR6 — push plan
-resmate --json push-all --dry-run | jq '.data.steps | map(.resource_type)'
+vgen --json push-all --dry-run | jq '.data.steps | map(.resource_type)'
 # Expect order: hitl → workflow → tool → agent → assistant
 {code}
 
@@ -70,7 +70,7 @@ resmate --json push-all --dry-run | jq '.data.steps | map(.resource_type)'
 h2. Non-goals (P1/P2)
 
 * MCP server wrapping the CLI
-* `resmate scaffold` / codegen
+* `vgen scaffold` / codegen
 * `push-all` execute (batch push with rollback)
 * Fix `sync` to pull HITL
 * Remote ID existence checks
@@ -94,7 +94,7 @@ h2. Timeline
 | **Priority** | Highest |
 | **Story points** | 5 |
 | **Effort** | 2–3 person-days |
-| **Labels** | `resmate-cli`, `p0`, `pr1`, `foundation` |
+| **Labels** | `vgen-cli`, `p0`, `pr1`, `foundation` |
 | **Dependencies** | None (foundation PR — unblocks all others) |
 
 ### Description
@@ -120,8 +120,8 @@ h2. Key deliverables
 
 ### Acceptance criteria
 
-- [ ] `resmate --json config show` prints valid envelope with redacted secrets
-- [ ] `resmate --json config validate` returns exit `0` or `1` with `error.code` set
+- [ ] `vgen --json config show` prints valid envelope with redacted secrets
+- [ ] `vgen --json config validate` returns exit `0` or `1` with `error.code` set
 - [ ] Missing subcommand returns exit `2`
 - [ ] `docs/json-output.md` documents envelope + exit codes
 - [ ] Unit test: serialize/deserialize envelope round-trip
@@ -154,7 +154,7 @@ _None required — single cohesive foundation PR._
 | **Priority** | High |
 | **Story points** | 3 |
 | **Effort** | 2 person-days |
-| **Labels** | `resmate-cli`, `p0`, `pr2`, `workspace` |
+| **Labels** | `vgen-cli`, `p0`, `pr2`, `workspace` |
 | **Dependencies** | PR1 (JSON output layer) |
 
 ### Description
@@ -163,17 +163,17 @@ h2. Scope
 
 Workspace detection and environment diagnostics for ResMate use-case directories.
 
-* `resmate workspace info [--json]` — artifact dirs, counts, env summary, redacted config
-* `resmate doctor [--json] [--offline]` — composes workspace + config + connectivity checks
+* `vgen workspace info [--json]` — artifact dirs, counts, env summary, redacted config
+* `vgen doctor [--json] [--offline]` — composes workspace + config + connectivity checks
 
 Doctor checks: `workspace_root`, `config_load`, `api_key_set`, `jwt_secret` (warn), `connectivity` (skip with `--offline`), `artifact_dirs_exist` (warn if missing).
 
-Honors `RESMATE_*_DIR` overrides. `Workspace::detect` walks from cwd; `WorkspaceInfo` reports per-dir existence and artifact counts.
+Honors `VGEN_*_DIR` overrides. `Workspace::detect` walks from cwd; `WorkspaceInfo` reports per-dir existence and artifact counts.
 
 ### Acceptance criteria
 
 - [ ] Against `pr-agent-v2`: reports 3+ tools, 1 agent, 1 assistant, 1+ hitl, 1 workflow
-- [ ] Honors `RESMATE_*_DIR` overrides
+- [ ] Honors `VGEN_*_DIR` overrides
 - [ ] `doctor --offline` skips connectivity but still returns workspace + config checks
 - [ ] JSON envelope matches `docs/json-output.md`
 
@@ -199,7 +199,7 @@ Honors `RESMATE_*_DIR` overrides. `Workspace::detect` walks from cwd; `Workspace
 | **Priority** | High |
 | **Story points** | 5 |
 | **Effort** | 3 person-days |
-| **Labels** | `resmate-cli`, `p0`, `pr3`, `graph` |
+| **Labels** | `vgen-cli`, `p0`, `pr3`, `graph` |
 | **Dependencies** | PR2 (workspace detection) |
 
 ### Description
@@ -208,7 +208,7 @@ h2. Scope
 
 Build and emit the assistant → agent → tool → hitl → workflow link graph with broken-ref detection.
 
-* `resmate graph [--json] [--assistant <name>]` — optional filter to one assistant subtree
+* `vgen graph [--json] [--assistant <name>]` — optional filter to one assistant subtree
 * Nodes: assistant, agent, tool, hitl, workflow (with `missing_id` flag when platform id empty)
 * Edges: `AssistantAgent`, `AgentTool`, `AssistantWorkflow`, `WorkflowHitl`, `WorkflowAgent`, `BrokenRef`
 * Orphans: nodes not reachable from any assistant
@@ -246,7 +246,7 @@ Resolution: match assistant `agents[]` → agent `id`; agent `skills[]` → tool
 | **Priority** | High |
 | **Story points** | 5 |
 | **Effort** | 2–3 person-days (+1 day monorepo if needed) |
-| **Labels** | `resmate-cli`, `p0`, `pr4`, `workflow`, `smriti_client` |
+| **Labels** | `vgen-cli`, `p0`, `pr4`, `workflow`, `smriti_client` |
 | **Dependencies** | PR1 (JSON output layer). Can parallelize with PR2–PR3 after PR1 merges. |
 
 ### Description
@@ -255,7 +255,7 @@ h2. Scope
 
 Local workflow bundle validation without API push — schema + semantics identical to platform via `smriti_client`.
 
-* `resmate workflow validate <folder-name> [--json] [--workflows-dir PATH]`
+* `vgen workflow validate <folder-name> [--json] [--workflows-dir PATH]`
 * Uses `WorkflowDefinitionLoader::load_from_dir` (requires `schema.yaml` in split layout)
 * Map errors: `WORKFLOW_SCHEMA_INVALID`, `WORKFLOW_SEMANTIC_INVALID`, `WORKFLOW_LAYOUT_INVALID`
 * Exit `3` on validation failure; no network calls
@@ -286,9 +286,9 @@ Monorepo (if Option A): `lib/smriti_client/Cargo.toml` — add `validate` featur
 | Sub-task | Repo | Description |
 |----------|------|-------------|
 | **CGA-?-a** | `resmedai-core-framework` | Add `validate` feature to `smriti_client` (`workflow_schema`, `jsonschema`, `serde_yaml`; `default-features = false` for CLI) |
-| **CGA-?-b** | `resmed_resmate-cli` | Wire git dep: `smriti_client` with `features = ["validate"]`, pin rev |
-| **CGA-?-c** | `resmed_resmate-cli` | Implement `workflow validate` handler + error code mapping |
-| **CGA-?-d** | `resmed_resmate-cli` | Integration tests against `oracle-purchase-requisition` + invalid fixtures |
+| **CGA-?-b** | `resmed_vgen-cli` | Wire git dep: `smriti_client` with `features = ["validate"]`, pin rev |
+| **CGA-?-c** | `resmed_vgen-cli` | Implement `workflow validate` handler + error code mapping |
+| **CGA-?-d** | `resmed_vgen-cli` | Integration tests against `oracle-purchase-requisition` + invalid fixtures |
 
 ---
 
@@ -303,7 +303,7 @@ Monorepo (if Option A): `lib/smriti_client/Cargo.toml` — add `validate` featur
 | **Priority** | High |
 | **Story points** | 8 |
 | **Effort** | 3–4 person-days |
-| **Labels** | `resmate-cli`, `p0`, `pr5`, `validation` |
+| **Labels** | `vgen-cli`, `p0`, `pr5`, `validation` |
 | **Dependencies** | PR3 (graph), PR4 (workflow validate) |
 
 ### Description
@@ -312,7 +312,7 @@ h2. Scope
 
 Aggregate workspace validation: graph integrity + per-artifact lint + workflow validate + secrets scan + push readiness.
 
-* `resmate validate [--json] [--strict] [--offline]`
+* `vgen validate [--json] [--strict] [--offline]`
 * `--strict`: warnings → exit `3`; default: exit `3` only on errors
 * Reuses `graph::build_graph` and workflow validate internally (no duplicate logic)
 
@@ -347,7 +347,7 @@ P0 validation codes include: `BROKEN_AGENT_REF`, `BROKEN_TOOL_REF`, `WORKFLOW_SL
 | **Priority** | Medium |
 | **Story points** | 3 |
 | **Effort** | 2 person-days |
-| **Labels** | `resmate-cli`, `p0`, `pr6`, `push-plan` |
+| **Labels** | `vgen-cli`, `p0`, `pr6`, `push-plan` |
 | **Dependencies** | PR5 (workspace validate) |
 
 ### Description
@@ -356,7 +356,7 @@ h2. Scope
 
 Emit ordered push plan as JSON; no API calls, no file writes.
 
-* `resmate push-all --dry-run [--json] [--assistant <name>]`
+* `vgen push-all --dry-run [--json] [--assistant <name>]`
 * Order: **hitl → workflow → tool → agent → assistant** (alphabetical within phase)
 * `Create` if `id` missing/empty; `Update` if present
 * Attach `blockers` from validation errors touching that resource
@@ -438,7 +438,7 @@ PR1 (json) ──┬──> PR2 (workspace) ──> PR3 (graph) ──> PR5 (val
 
 | Label | Use |
 |-------|-----|
-| `resmate-cli` | All issues |
+| `vgen-cli` | All issues |
 | `p0` | All issues |
 | `agent-authoring` | Epic + all stories |
 | `pr1` … `pr6` | Per-story |

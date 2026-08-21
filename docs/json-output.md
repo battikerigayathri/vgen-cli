@@ -27,7 +27,7 @@ All agent-facing ResMate CLI commands support a global `--json` flag that emits 
 ```json
 {
   "code": "CONFIG_MISSING_API_KEY",
-  "message": "RESMATE_API_KEY is not set.",
+  "message": "VGEN_API_KEY is not set.",
   "details": null
 }
 ```
@@ -43,7 +43,7 @@ All agent-facing ResMate CLI commands support a global `--json` flag that emits 
 ```json
 {
   "code": "JWT_SECRET_MISSING",
-  "message": "RESMATE_SECRET is not set; JWT auth may fail."
+  "message": "VGEN_SECRET is not set; JWT auth may fail."
 }
 ```
 
@@ -104,7 +104,7 @@ Additional commands gain JSON envelopes in PR2–PR6.
 | `skipped` | array | Out-of-scope resources (orphans) with `action: "skip"` |
 | `steps[].order` | number | 1-based position in the plan |
 | `steps[].resource_type` | string | `hitl`, `workflow`, `tool`, `agent`, or `assistant` |
-| `steps[].name` | string | Folder or file stem used by `resmate <type> push <name>` |
+| `steps[].name` | string | Folder or file stem used by `vgen <type> push <name>` |
 | `steps[].action` | string | `create`, `update`, or `skip` |
 | `steps[].has_id` | boolean | Whether local YAML/meta already has a platform id |
 | `steps[].blockers` | array | Validation error codes that would block push for this resource |
@@ -113,17 +113,17 @@ Additional commands gain JSON envelopes in PR2–PR6.
 
 ```bash
 # Success
-resmate --json config show | jq '.ok'
+vgen --json config show | jq '.ok'
 # true
 
 # Connectivity failure
-resmate --json config validate
+vgen --json config validate
 echo $?
 # 1
 # envelope: { "ok": false, "error": { "code": "CONNECTIVITY_FAILED", ... } }
 
 # Missing subcommand (clap usage error)
-resmate --json
+vgen --json
 echo $?
 # 2
 ```

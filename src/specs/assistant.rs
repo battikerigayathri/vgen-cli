@@ -42,9 +42,9 @@ pub fn list_assistant_files(base: &Path) -> Vec<(String, PathBuf)> {
     super::list_yaml_files(base)
 }
 
-/// Resolve assistants directory: env RESMATE_ASSISTANTS_DIR or default "assistants" under cwd.
+/// Resolve assistants directory: env VGEN_ASSISTANTS_DIR or default "assistants" under cwd.
 pub fn default_assistants_dir() -> PathBuf {
-    std::env::var("RESMATE_ASSISTANTS_DIR")
+    std::env::var("VGEN_ASSISTANTS_DIR")
         .map(PathBuf::from)
         .unwrap_or_else(|_| PathBuf::from("assistants"))
 }

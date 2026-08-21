@@ -144,7 +144,7 @@ Strict rules dictate how state is managed across the platform.
 
 | Concept | Scope | Saved Location | Modification Action |
 | :--- | :--- | :--- | :--- |
-| **Definition** | The static structural blueprint of the workflow (metadata, stages, schemas, playbooks). | Smriti Definitions collection (MongoDB). Pushed via `resmate workflow push`. | Edit the workspace source files (`flow.yaml`, `schema.yaml`, `playbooks.yaml`). Each push appends a new immutable version. |
+| **Definition** | The static structural blueprint of the workflow (metadata, stages, schemas, playbooks). | Smriti Definitions collection (MongoDB). Pushed via `vgen workflow push`. | Edit the workspace source files (`flow.yaml`, `schema.yaml`, `playbooks.yaml`). Each push appends a new immutable version. |
 | **Instance** | The active, running state machine created for a specific transaction or user session. | Smriti Instance collection (MongoDB) and cached in Redis. | Never edited directly. Modified programmatically by the platform when save tools return a `workflowPatch`. |
 
 #### State Save Tool Decision Tree
@@ -168,7 +168,7 @@ This decision determines where your tool handler scripts execute. JS tools run i
 
 | Architectural Dimension | JS (V8 Isolate) | Executing in FaaS (Node/Lambda) |
 | :--- | :--- | :--- |
-| **External Dependencies** | **None**. Only standard JavaScript and platform-provided polyfills (`resmate-polyfills`) are available. | **Full npm Support**. Can include any external npm packages via a standard `package.json` file. |
+| **External Dependencies** | **None**. Only standard JavaScript and platform-provided polyfills (`vgen-polyfills`) are available. | **Full npm Support**. Can include any external npm packages via a standard `package.json` file. |
 | **Execution Timeout** | **Strictly < 500ms**. Designed for ultra-fast, stateless data transformations and quick queries. | **Up to 30 seconds**. Designed for long-running computations, heavy API integrations, and file processing. |
 | **Smriti Secrets Access** | Direct and secure via the `getSecret` platform polyfill. | Indirect. Requires secure environment variable injection or API gateway mapping. |
 | **Cold Start Performance** | **Near-Zero (Sub-millisecond)**. Isolates are extremely lightweight and spin up instantly. | **Variable (100ms to 3s)**. Subject to container spin-up latencies and network attachment delays. |

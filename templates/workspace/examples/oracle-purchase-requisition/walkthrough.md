@@ -176,20 +176,20 @@ workflow_definition_slug: oracle-purchase-requisition-v1
 
 Orchestrator reads workflow snapshot stage each turn and assigns jobs aligned with stage kind.
 
-Optional test: `assistants/oracle-pr-assistant/prompt.json` at workspace root, then `resmate assistant test oracle-pr-assistant` — see [cli/test.md](../../cli/test.md).
+Optional test: `assistants/oracle-pr-assistant/prompt.json` at workspace root, then `vgen assistant test oracle-pr-assistant` — see [cli/test.md](../../cli/test.md).
 
 ---
 
 ## Push order
 
 ```bash
-resmate hitl push roc-select-requester-form
-resmate workflow push oracle-purchase-requisition
-resmate tool push roc-search-users
-resmate tool push roc-select-requester-hitlconfig
-resmate tool push roc-select-requester-save
-resmate agent push oracle-pr-agent
-resmate assistant push oracle-pr-assistant
+vgen hitl push roc-select-requester-form
+vgen workflow push oracle-purchase-requisition
+vgen tool push roc-search-users
+vgen tool push roc-select-requester-hitlconfig
+vgen tool push roc-select-requester-save
+vgen agent push oracle-pr-agent
+vgen assistant push oracle-pr-assistant
 ```
 
 ---

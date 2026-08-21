@@ -53,7 +53,7 @@ pub fn run_scaffold(
             return emit_error(
                 ctx,
                 "KIT_NOT_PRESENT",
-                "Authoring kit not found. Run `resmate init` first or pass --with-kit",
+                "Authoring kit not found. Run `vgen init` first or pass --with-kit",
                 Some(serde_json::json!({ "root": root.display().to_string() })),
                 CliExitCode::UsageError,
             );

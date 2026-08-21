@@ -1,21 +1,21 @@
 use clap::Parser;
-use resmate::api;
-use resmate::cli::{
+use vgen::api;
+use vgen::cli::{
     AgentSubcommand, AssistantSubcommand, Cli, Commands, ConfigSubcommand, EnvSubcommand,
     HitlSubcommand, KitSubcommand, ToolSubcommand, WorkflowSubcommand, WorkspaceSubcommand,
 };
-use resmate::commands::{
+use vgen::commands::{
     chat as chat_cmd, diff as diff_cmd, doctor as doctor_cmd, env as env_cmd,
     explain as explain_cmd, graph as graph_cmd, init as init_cmd, kit as kit_cmd,
     push_all as push_all_cmd, scaffold as scaffold_cmd, validate as validate_cmd,
     workflow as workflow_cmd, workspace as workspace_cmd,
 };
-use resmate::config;
-use resmate::http_client;
-use resmate::output::{CliContext, OutputMode};
-use resmate::specs;
-use resmate::store;
-use resmate::sync::{run_sync_command, sync_options_from_cmd};
+use vgen::config;
+use vgen::http_client;
+use vgen::output::{CliContext, OutputMode};
+use vgen::specs;
+use vgen::store;
+use vgen::sync::{run_sync_command, sync_options_from_cmd};
 use std::process::ExitCode;
 
 fn read_json_file(
@@ -99,13 +99,13 @@ fn rewrite_faas_runtime_imports(code: &str) -> String {
 /// chat/session pipeline, so `kriya.process.publishStatus` is often undefined. Tools that
 /// call it (Teemo FAAS handlers) would otherwise fail before real logic runs.
 fn inject_faas_debug_shims(code: &str) -> String {
-    const SHIM: &str = r#"/* resmate tool-test FAAS debug shim */
-import { kriya as __resmateKriya } from "./runtime/runtime-sdks/kriya.js";
+    const SHIM: &str = r#"/* vgen tool-test FAAS debug shim */
+import { kriya as __vgenKriya } from "./runtime/runtime-sdks/kriya.js";
 try {
-  if (__resmateKriya && typeof __resmateKriya === "object") {
-    __resmateKriya.process = __resmateKriya.process || {};
-    if (typeof __resmateKriya.process.publishStatus !== "function") {
-      __resmateKriya.process.publishStatus = async () => {};
+  if (__vgenKriya && typeof __vgenKriya === "object") {
+    __vgenKriya.process = __vgenKriya.process || {};
+    if (typeof __vgenKriya.process.publishStatus !== "function") {
+      __vgenKriya.process.publishStatus = async () => {};
     }
   }
 } catch (_) {}
@@ -116,7 +116,7 @@ try {
 /// Build the FaaS `/invoke` ad-hoc body expected by Tantra → FAAS.
 ///
 /// FAAS `/invoke` accepts either `(function_id, event)` or `(runtime, cmd, payload)`.
-/// Local `resmate tool test` for FAAS must use the ad-hoc shape so local `handler.js`
+/// Local `vgen tool test` for FAAS must use the ad-hoc shape so local `handler.js`
 /// runs without a prior `/deploy`. Nested `payload` matches runtime-node `run.js`:
 /// `{ code, packageJson, event }` where `event.context.input` is tool arguments.
 ///
@@ -239,7 +239,7 @@ fn format_and_print_execution_result(res: &serde_json::Value) {
 
 #[tokio::main]
 async fn main() -> ExitCode {
-    // Load .env from cwd so RESMATE_SECRET and others are available
+    // Load .env from cwd so VGEN_SECRET and others are available
     dotenvy::dotenv().ok();
 
     let cli = match Cli::try_parse() {

@@ -1,18 +1,18 @@
 # ResMate CLI Command Reference
 
-This document provides a complete, high-fidelity reference for the `resmate` CLI (`resmed_resmate-cli`). Running commands from the **workspace root** (the folder containing `resmate.yaml` bootstrapped with `resmate init`) ensures proper path resolution for tools, agents, assistants, HITL, and workflows.
+This document provides a complete, high-fidelity reference for the `vgen` CLI (`resmed_vgen-cli`). Running commands from the **workspace root** (the folder containing `vgen.yaml` bootstrapped with `vgen init`) ensures proper path resolution for tools, agents, assistants, HITL, and workflows.
 
 ---
 
 ## 1. CLI Setup, Prerequisites & Environment
 
 ### Where to Run Commands
-You should run `resmate` commands from your **workspace root**. A standardized workspace directory layout looks like this:
+You should run `vgen` commands from your **workspace root**. A standardized workspace directory layout looks like this:
 
 ```text
-my-workspace/                 ← resmate init output
+my-workspace/                 ← vgen init output
 ├── .env                      ← Local secrets (ignored by Git)
-├── resmate.yaml              ← Workspace manifest and env mapping
+├── vgen.yaml              ← Workspace manifest and env mapping
 ├── tools/
 │   └── my-tool/              ← Live tool folder
 │       ├── tool.yaml
@@ -36,40 +36,40 @@ my-workspace/                 ← resmate init output
 Developing under the `examples/` directory is strictly forbidden; `examples/` is for reference patterns only.
 
 ### Prerequisites
-1. **ResMate CLI**: The `resmate` binary must be compiled and available in your system `PATH`.
-2. **API Credentials**: A valid `RESMATE_API_KEY` (and `RESMATE_SECRET` when utilizing signed JWT authentication) is required for remote commands such as pushing, pulling, validating, and syncing.
-3. **Workspace Root**: A valid folder containing `resmate.yaml`.
+1. **ResMate CLI**: The `vgen` binary must be compiled and available in your system `PATH`.
+2. **API Credentials**: A valid `VGEN_API_KEY` (and `VGEN_SECRET` when utilizing signed JWT authentication) is required for remote commands such as pushing, pulling, validating, and syncing.
+3. **Workspace Root**: A valid folder containing `vgen.yaml`.
 
 ### Environment Variables
 The CLI parses configuration from the host environment. At startup, the CLI automatically loads variables from a `.env` file located at the workspace root (or active working directory) using the `dotenvy` library. Because this file contains sensitive local credentials, it must be added to `.gitignore` and never committed.
 
 | Variable Name | Purpose | Default Value (if omitted) |
 | :--- | :--- | :--- |
-| `RESMATE_BASE_URL` | Specifies the base API URL of the Tantra/Prajna platform. | `https://api-dev.ai.resmed.com` |
-| `RESMATE_API_KEY` | Platform API key used for JWT signing and resource operations. | *Required for sync, push, or pull* |
-| `RESMATE_SECRET` | Client secret used to sign secure JWT authentication headers. | *Required if utilizing JWT auth* |
-| `RESMATE_ROC_SESSION` | Overrides the default session value for API handshakes. | *Omitted* |
-| `RESMATE_CONFIG` | Overrides the global configuration path on the filesystem. | `~/.resmate/config.yaml` |
-| `RESMATE_IDS_FILE` | Specifies the path to the local Slug-to-ID mapping store. | `~/.resmate/ids.yaml` |
-| `RESMATE_TOOLS_DIR` | Absolute or relative path to the tools directory. | `tools/` under workspace root |
-| `RESMATE_AGENTS_DIR` | Absolute or relative path to the agents directory. | `agents/` under workspace root |
-| `RESMATE_ASSISTANTS_DIR` | Absolute or relative path to the assistants directory. | `assistants/` under workspace root |
-| `RESMATE_HITL_DIR` | Absolute or relative path to the HITL forms directory. | `hitl/` under workspace root |
-| `RESMATE_WORKFLOWS_DIR` | Absolute or relative path to the workflow definitions directory. | `workflows/` under workspace root |
+| `VGEN_BASE_URL` | Specifies the base API URL of the Tantra/Prajna platform. | `https://api-dev.ai.resmed.com` |
+| `VGEN_API_KEY` | Platform API key used for JWT signing and resource operations. | *Required for sync, push, or pull* |
+| `VGEN_SECRET` | Client secret used to sign secure JWT authentication headers. | *Required if utilizing JWT auth* |
+| `VGEN_ROC_SESSION` | Overrides the default session value for API handshakes. | *Omitted* |
+| `VGEN_CONFIG` | Overrides the global configuration path on the filesystem. | `~/.vgen/config.yaml` |
+| `VGEN_IDS_FILE` | Specifies the path to the local Slug-to-ID mapping store. | `~/.vgen/ids.yaml` |
+| `VGEN_TOOLS_DIR` | Absolute or relative path to the tools directory. | `tools/` under workspace root |
+| `VGEN_AGENTS_DIR` | Absolute or relative path to the agents directory. | `agents/` under workspace root |
+| `VGEN_ASSISTANTS_DIR` | Absolute or relative path to the assistants directory. | `assistants/` under workspace root |
+| `VGEN_HITL_DIR` | Absolute or relative path to the HITL forms directory. | `hitl/` under workspace root |
+| `VGEN_WORKFLOWS_DIR` | Absolute or relative path to the workflow definitions directory. | `workflows/` under workspace root |
 
 ### Working Directory Recommendations
 *   **Recommended**: Execute commands directly from the workspace root folder:
     ```bash
     cd my-workspace
-    resmate tool push my-tool
+    vgen tool push my-tool
     ```
 *   **Alternative**: Override target directories explicitly via environment variables if running from outside the workspace root:
     ```bash
-    export RESMATE_TOOLS_DIR=/path/to/my-workspace/tools
-    export RESMATE_AGENTS_DIR=/path/to/my-workspace/agents
-    export RESMATE_ASSISTANTS_DIR=/path/to/my-workspace/assistants
-    export RESMATE_HITL_DIR=/path/to/my-workspace/hitl
-    export RESMATE_WORKFLOWS_DIR=/path/to/my-workspace/workflows
+    export VGEN_TOOLS_DIR=/path/to/my-workspace/tools
+    export VGEN_AGENTS_DIR=/path/to/my-workspace/agents
+    export VGEN_ASSISTANTS_DIR=/path/to/my-workspace/assistants
+    export VGEN_HITL_DIR=/path/to/my-workspace/hitl
+    export VGEN_WORKFLOWS_DIR=/path/to/my-workspace/workflows
     ```
 
 ---
@@ -90,23 +90,23 @@ flowchart LR
 ```
 
 ### The 10-Step Authoring Checklist
-1. **Setup**: Copy/rename a standard `cli-context` directory, or initialize via `resmate init` / `resmate scaffold <recipe>`. Create your `.env` file at the workspace root.
+1. **Setup**: Copy/rename a standard `cli-context` directory, or initialize via `vgen init` / `vgen scaffold <recipe>`. Create your `.env` file at the workspace root.
 2. **HITL Records**: Define form schemas under `hitl/<name>/config.json` and `meta.yaml` if the use case requires human-in-the-loop interaction.
-3. **Workflow Definitions**: For workflow-bound use cases, author your split YAML definition (`meta.yaml`, `schema.yaml`, `flow.yaml`, `playbooks.yaml`) in `workflows/<name>/`. Validate the definition locally via `resmate workflow validate <name>` prior to deployment.
+3. **Workflow Definitions**: For workflow-bound use cases, author your split YAML definition (`meta.yaml`, `schema.yaml`, `flow.yaml`, `playbooks.yaml`) in `workflows/<name>/`. Validate the definition locally via `vgen workflow validate <name>` prior to deployment.
 4. **Tools**: Create tool configurations (`tool.yaml`) and implement handlers (`handler.js`) under `tools/<name>/`. For workflow-bound save tools, ensure they return a valid `workflowPatch` mapping to the central state schema. Leave `id` fields empty for initial push.
 5. **Agent**: Define your agent configuration under `agents/<name>.yaml`. Map the required tool IDs into the `skills` array. Draft stage-aware system instructions if binding the agent to a business workflow.
 6. **Assistant**: Define the assistant configuration under `assistants/<name>.yaml`. Link agent IDs in the `agents` array and define orchestration routing constraints (such as the Orchestration Contract inside `systemContext` or decoupled workflows block).
 7. **Cross-Check IDs**: Double-check that every ID listed in an agent's `skills` exists in a valid tool config, every ID in an assistant's `agents` exists in an agent config, and workflow slugs/fields match those utilized by save tools and HITL forms.
 8. **Validate Before Push**: Run the following sequence from your workspace root:
-   - `resmate doctor` to confirm API credentials and network connectivity.
-   - `resmate graph` to ensure there are no `broken_ref` edges in your local dependency tree.
-   - `resmate workflow validate <name>` for any active workflow definitions.
-   - `resmate validate` to confirm complete syntactic and semantic readiness (`error_count == 0`). Append `--strict` to treat warnings as errors.
-   - `resmate validate --remote` to cross-reference local ID records against the platform's API state.
-   - `resmate diff <type> <name>` to review structural drift between your local files and platform records.
-   - `resmate push-all --dry-run` to preview the chronological deployment plan and check remote drift flags.
-9. **Push**: Execute deployment in strict dependency order (`resmate push-all --yes`).
-10. **Test**: Run `resmate tool test <name>` to execute code handlers, and interactive sessions via `resmate assistant chat <name>`.
+   - `vgen doctor` to confirm API credentials and network connectivity.
+   - `vgen graph` to ensure there are no `broken_ref` edges in your local dependency tree.
+   - `vgen workflow validate <name>` for any active workflow definitions.
+   - `vgen validate` to confirm complete syntactic and semantic readiness (`error_count == 0`). Append `--strict` to treat warnings as errors.
+   - `vgen validate --remote` to cross-reference local ID records against the platform's API state.
+   - `vgen diff <type> <name>` to review structural drift between your local files and platform records.
+   - `vgen push-all --dry-run` to preview the chronological deployment plan and check remote drift flags.
+9. **Push**: Execute deployment in strict dependency order (`vgen push-all --yes`).
+10. **Test**: Run `vgen tool test <name>` to execute code handlers, and interactive sessions via `vgen assistant chat <name>`.
 
 ### Instruction Split Guidelines
 To avoid prompt dilution and overlapping agent-planner behaviors, adhere to the strict layer boundaries:
@@ -123,18 +123,18 @@ To avoid prompt dilution and overlapping agent-planner behaviors, adhere to the 
 
 | Command | Syntax / Examples | Description | Primary Options |
 | :--- | :--- | :--- | :--- |
-| **`init`** | `resmate init --name my-project` | Bootstraps a standardized workspace into an **empty or allowlisted** directory (allowlist: `.git`, `.gitignore`, `README.md`, `.DS_Store`). Refuses with `INIT_REFUSED` (listing offenders) otherwise. Writes `resmate.yaml` with `kit_version` and an RFC3339 `initialized_at`. | `--name <str>`: Manifest project name<br>`--description <str>`: Manifest description (default: `ResMate use case workspace`)<br>`--force`: Bootstrap-overwrite kit/seed in a non-init-safe dir (never deletes live artifacts; prefer `resmate kit update` for existing repos)<br>`--no-examples`: Skip the `examples/` tree |
-| **`kit update`** | `resmate kit update [--examples] [--dry-run]` (alias: `resmate kit refresh`) | Refreshes kit-owned files (skills, rules, docs, `AGENTS.md`) in an **already-scaffolded** workspace (requires `resmate.yaml`; fails with `NOT_A_WORKSPACE` otherwise). Not gated by the `init` emptiness check. **Never** touches live artifacts (`tools/`, `agents/`, `assistants/`, `hitl/`, `workflows/` authored files) and updates `kit_version` in `resmate.yaml` in place, preserving comments/formatting. | `--examples`: Also refresh the `examples/` reference tree (skipped by default)<br>`--dry-run`: List files that would be written without modifying the filesystem or manifest |
-| **`scaffold`** | `resmate scaffold oracle-pr --name oracle-pr` | Scaffolds a project using an existing recipe template. | `--name <str>`: Project directory name |
-| **`doctor`** | `resmate doctor` | Runs local environment checks, verifies credentials, and tests API connectivity. | `--offline`: Skip remote API connectivity checks |
-| **`workspace info`** | `resmate workspace info` | Displays detected workspace root, active config path, and counts of local resources. | `--json`: Output machine-readable JSON envelope |
-| **`graph`** | `resmate graph` | Generates a local dependency link graph across assistants, agents, tools, workflows, and HITL. | `--assistant <id>`: Filter subtree reachable from a specific assistant |
-| **`validate`** | `resmate validate --remote` | Performs comprehensive local semantic and schema validation of all local resources. | `--strict`: Exit with error on warnings<br>`--offline`: Skip remote validation<br>`--remote`: Verify IDs exist on the API |
-| **`diff`** | `resmate diff tool my-lookup-tool` | Performs field-by-field structural diff between local definitions and platform records. | `<type>`: `tool`, `agent`, `assistant`, `hitl`, `workflow`<br>`<name>`: Resource slug / folder name |
-| **`push-all`** | `resmate push-all --dry-run` | Deploys all local changes to the platform in strict dependency order. | `--dry-run`: Preview deployment plan<br>`--yes`: Confirm and execute push<br>`--force`: Bypass validation warnings |
-| **`sync`** | `resmate sync` | Bootstraps a local workspace by pulling an assistant's entire dependency graph from the API. | `--json`: Return structured `SyncReport` |
-| **`explain`** | `resmate explain BROKEN_AGENT_REF` | Resolves stable platform error codes into detailed human-readable causes and mitigations. | `--list`: List all codes<br>`--domain <name>`: Filter by subsystem |
-| **`config`** | `resmate config show` | Displays resolved environment configurations. | `show`: Print config (secrets redacted)<br>`validate`: Test credentials |
+| **`init`** | `vgen init --name my-project` | Bootstraps a standardized workspace into an **empty or allowlisted** directory (allowlist: `.git`, `.gitignore`, `README.md`, `.DS_Store`). Refuses with `INIT_REFUSED` (listing offenders) otherwise. Writes `vgen.yaml` with `kit_version` and an RFC3339 `initialized_at`. | `--name <str>`: Manifest project name<br>`--description <str>`: Manifest description (default: `ResMate use case workspace`)<br>`--force`: Bootstrap-overwrite kit/seed in a non-init-safe dir (never deletes live artifacts; prefer `vgen kit update` for existing repos)<br>`--no-examples`: Skip the `examples/` tree |
+| **`kit update`** | `vgen kit update [--examples] [--dry-run]` (alias: `vgen kit refresh`) | Refreshes kit-owned files (skills, rules, docs, `AGENTS.md`) in an **already-scaffolded** workspace (requires `vgen.yaml`; fails with `NOT_A_WORKSPACE` otherwise). Not gated by the `init` emptiness check. **Never** touches live artifacts (`tools/`, `agents/`, `assistants/`, `hitl/`, `workflows/` authored files) and updates `kit_version` in `vgen.yaml` in place, preserving comments/formatting. | `--examples`: Also refresh the `examples/` reference tree (skipped by default)<br>`--dry-run`: List files that would be written without modifying the filesystem or manifest |
+| **`scaffold`** | `vgen scaffold oracle-pr --name oracle-pr` | Scaffolds a project using an existing recipe template. | `--name <str>`: Project directory name |
+| **`doctor`** | `vgen doctor` | Runs local environment checks, verifies credentials, and tests API connectivity. | `--offline`: Skip remote API connectivity checks |
+| **`workspace info`** | `vgen workspace info` | Displays detected workspace root, active config path, and counts of local resources. | `--json`: Output machine-readable JSON envelope |
+| **`graph`** | `vgen graph` | Generates a local dependency link graph across assistants, agents, tools, workflows, and HITL. | `--assistant <id>`: Filter subtree reachable from a specific assistant |
+| **`validate`** | `vgen validate --remote` | Performs comprehensive local semantic and schema validation of all local resources. | `--strict`: Exit with error on warnings<br>`--offline`: Skip remote validation<br>`--remote`: Verify IDs exist on the API |
+| **`diff`** | `vgen diff tool my-lookup-tool` | Performs field-by-field structural diff between local definitions and platform records. | `<type>`: `tool`, `agent`, `assistant`, `hitl`, `workflow`<br>`<name>`: Resource slug / folder name |
+| **`push-all`** | `vgen push-all --dry-run` | Deploys all local changes to the platform in strict dependency order. | `--dry-run`: Preview deployment plan<br>`--yes`: Confirm and execute push<br>`--force`: Bypass validation warnings |
+| **`sync`** | `vgen sync` | Bootstraps a local workspace by pulling an assistant's entire dependency graph from the API. | `--json`: Return structured `SyncReport` |
+| **`explain`** | `vgen explain BROKEN_AGENT_REF` | Resolves stable platform error codes into detailed human-readable causes and mitigations. | `--list`: List all codes<br>`--domain <name>`: Filter by subsystem |
+| **`config`** | `vgen config show` | Displays resolved environment configurations. | `show`: Print config (secrets redacted)<br>`validate`: Test credentials |
 
 ### Global Flags
 *   `--json`: Appended to any command to redirect human-readable text to `stderr` (except during catastrophic crashes) and emit a structured JSON envelope on `stdout` containing the command results.
@@ -154,49 +154,49 @@ When a resource is pushed and its local configuration contains an empty `id` fie
 
 Never hand-author an `id` value — always leave it empty and let push write it back. See [id-lifecycle.md](id-lifecycle.md) for the full omit -> push -> write-back lifecycle and its anti-patterns (copy-pasted IDs, invented hex strings, etc.).
 
-> ⚠️ **`push-all` does not auto-wire IDs into dependents.** `resmate push-all` pushes every resource in `phase_order` (HITL -> Workflow -> Tool -> Agent -> Assistant) and write-backs each resource's own `id`, but it does **not** copy those written-back Tool IDs into Agent `skills[]`, nor written-back Agent IDs into Assistant `agents[]`. After a bulk push you must:
+> ⚠️ **`push-all` does not auto-wire IDs into dependents.** `vgen push-all` pushes every resource in `phase_order` (HITL -> Workflow -> Tool -> Agent -> Assistant) and write-backs each resource's own `id`, but it does **not** copy those written-back Tool IDs into Agent `skills[]`, nor written-back Agent IDs into Assistant `agents[]`. After a bulk push you must:
 > 1. Read the written-back Tool IDs from `tools/*/tool.yaml`.
-> 2. Paste them into the owning `agents/*.yaml` file's `skills` array, then run `resmate agent push <name>`.
+> 2. Paste them into the owning `agents/*.yaml` file's `skills` array, then run `vgen agent push <name>`.
 > 3. Read the written-back Agent ID from `agents/*.yaml`.
-> 4. Paste it into the owning `assistants/*.yaml` file's `agents` array, then run `resmate assistant push <name>`.
+> 4. Paste it into the owning `assistants/*.yaml` file's `agents` array, then run `vgen assistant push <name>`.
 >
 > Full walkthrough, including which bindings use slugs vs. Mongo ObjectIds, is in [push-pull-wire.md](push-pull-wire.md).
 
 ### HITL Forms
 Deploy or retrieve form schemas (`meta.yaml` and `config.json`) under the `hitl/` directory.
 ```bash
-resmate hitl push <folder-name>
-resmate hitl pull <folder-name>
+vgen hitl push <folder-name>
+vgen hitl pull <folder-name>
 ```
 
 ### Workflow Definitions
 Deploy or retrieve split YAML workflow files (`meta.yaml`, `schema.yaml`, `flow.yaml`, `playbooks.yaml`) under the `workflows/` directory.
 ```bash
-resmate workflow push <folder-name>
-resmate workflow pull <folder-name> [--version <number>]
-resmate workflow validate <folder-name>
+vgen workflow push <folder-name>
+vgen workflow pull <folder-name> [--version <number>]
+vgen workflow validate <folder-name>
 ```
 *   **Version Immutability**: Every push of a workflow definition appends a new immutable version index on the platform. Direct modification of active versions is forbidden. If a conflict occurs on push, the CLI automatically increments the version inside the local manifest (`meta.yaml`) and retries.
 
 ### Tool Records
 Deploy, retrieve, or test a tool configuration (`tool.yaml`) and code handler (`handler.js`).
 ```bash
-resmate tool push <folder-name>
-resmate tool pull <folder-name>
+vgen tool push <folder-name>
+vgen tool pull <folder-name>
 ```
 
 ### Agent Definitions
 Deploy or retrieve agent configurations (`agents/<basename>.yaml`).
 ```bash
-resmate agent push <basename>
-resmate agent pull <basename>
+vgen agent push <basename>
+vgen agent pull <basename>
 ```
 
 ### Assistant Definitions
 Deploy or retrieve assistant configurations (`assistants/<basename>.yaml`).
 ```bash
-resmate assistant push <basename>
-resmate assistant pull <basename>
+vgen assistant push <basename>
+vgen assistant pull <basename>
 ```
 
 ### Sync Conventions Summary
@@ -204,21 +204,21 @@ Use the following approaches based on your development scenario:
 
 | Scenario | Practical Approach |
 | :--- | :--- |
-| **New use case bootstrap** | Push all resources in full order (from empty IDs) via `resmate push-all --yes`, then manually wire written-back Tool/Agent IDs into dependents and re-push (see [push-pull-wire.md](push-pull-wire.md)). |
-| **Update workflow schema** | Run `resmate workflow push <name>` to compile a new version, then re-push the assistant if version binding is hardcoded. |
-| **Update handler code only** | Run `resmate tool push <folder>` after editing `handler.js`. The schema is untouched. |
-| **Update agent instructions** | Run `resmate agent push <name>`. Ensure mapped `skills` (Tool IDs) remain synchronized. |
-| **Refresh local files** | Pull a specific resource type, or run `resmate sync` to refresh the entire dependency graph. |
-| **Clone deployed assistant** | Configure your target assistant slug inside `resmate.yaml`, then execute `resmate sync`. |
+| **New use case bootstrap** | Push all resources in full order (from empty IDs) via `vgen push-all --yes`, then manually wire written-back Tool/Agent IDs into dependents and re-push (see [push-pull-wire.md](push-pull-wire.md)). |
+| **Update workflow schema** | Run `vgen workflow push <name>` to compile a new version, then re-push the assistant if version binding is hardcoded. |
+| **Update handler code only** | Run `vgen tool push <folder>` after editing `handler.js`. The schema is untouched. |
+| **Update agent instructions** | Run `vgen agent push <name>`. Ensure mapped `skills` (Tool IDs) remain synchronized. |
+| **Refresh local files** | Pull a specific resource type, or run `vgen sync` to refresh the entire dependency graph. |
+| **Clone deployed assistant** | Configure your target assistant slug inside `vgen.yaml`, then execute `vgen sync`. |
 
 ---
 
-## 5. High-Fidelity Local Testing: `resmate tool test`
+## 5. High-Fidelity Local Testing: `vgen tool test`
 
-The `resmate tool test` command executes local Javascript and FaaS handlers in a sandboxed, platform-simulated environment to eliminate build-and-deployment latencies.
+The `vgen tool test` command executes local Javascript and FaaS handlers in a sandboxed, platform-simulated environment to eliminate build-and-deployment latencies.
 
 ```bash
-resmate tool test <tool-folder> [options]
+vgen tool test <tool-folder> [options]
 ```
 
 ### Supported Runtimes
@@ -278,18 +278,18 @@ The console outputs are parsed and formatted using highly readable, color-coded 
 
 ---
 
-## 6. Interactive Live Testing: `resmate assistant chat`
+## 6. Interactive Live Testing: `vgen assistant chat`
 
-The `resmate assistant chat` command opens an interactive REPL (Read-Eval-Print Loop) to test assistant routing, multi-turn dialogue, agent planning, and workflow stage progression in real-time.
+The `vgen assistant chat` command opens an interactive REPL (Read-Eval-Print Loop) to test assistant routing, multi-turn dialogue, agent planning, and workflow stage progression in real-time.
 
 ```bash
-resmate assistant chat <assistant-basename> [--new-session]
+vgen assistant chat <assistant-basename> [--new-session]
 ```
 
 ### REPL Shell Features
 *   **Rustyline Integration**: Full support for interactive CLI capabilities (line editing, command history search with Up/Down arrow keys, and multi-line inputs).
-*   **Session History**: CLI-wide input history is saved locally to `~/.resmate/repl_history.txt` to maintain continuity between testing sessions.
-*   **Diagnostic Logs**: Low-level session logs and execution traces are recorded locally under the workspace root inside `.resmate/debug/sessions/<session_id>.json`.
+*   **Session History**: CLI-wide input history is saved locally to `~/.vgen/repl_history.txt` to maintain continuity between testing sessions.
+*   **Diagnostic Logs**: Low-level session logs and execution traces are recorded locally under the workspace root inside `.vgen/debug/sessions/<session_id>.json`.
 
 ### Dual-Channel WebSocket & HTTP Streaming
 To match production low-latency requirements, the REPL orchestrates a dual-channel transport mechanism:
@@ -340,20 +340,20 @@ Reply Policy: Tone must be professional, concise, and helpful (Limit: 120 words)
 
 ---
 
-## 7. Bulk Secret Deployment: `resmate env push`
+## 7. Bulk Secret Deployment: `vgen env push`
 
-The `resmate env push` command parses your local workspace environment variable mappings, performs dynamic interpolation of placeholders, and compiles them into a single payload deployed securely to Smriti's vault.
+The `vgen env push` command parses your local workspace environment variable mappings, performs dynamic interpolation of placeholders, and compiles them into a single payload deployed securely to Smriti's vault.
 
 ```bash
-resmate env push [--service-type <type>] [--description <desc>]
+vgen env push [--service-type <type>] [--description <desc>]
 ```
 
 ### Compiler Processing & Agent Interpolation
-When `resmate env push` is executed, the CLI performs the following operations:
+When `vgen env push` is executed, the CLI performs the following operations:
 
 1.  **Workspace Detection**: Locates the workspace root and loads the local `.env` file via `dotenvy`.
-2.  **Agent Discovery**: Scans the workspace's local `agents/` folder (resolving its path via `RESMATE_AGENTS_DIR` or defaulting to `agents/` relative to workspace root) for all active YAML or YML agent definitions. It extracts the file stems to compile a list of active agent slugs (e.g., `agents/oracle-pr-agent.yaml` resolves to slug `oracle-pr-agent`).
-3.  **Key Compilation & Interpolation**: The compiler loops through the declared `env_mappings` block from `resmate.yaml`:
+2.  **Agent Discovery**: Scans the workspace's local `agents/` folder (resolving its path via `VGEN_AGENTS_DIR` or defaulting to `agents/` relative to workspace root) for all active YAML or YML agent definitions. It extracts the file stems to compile a list of active agent slugs (e.g., `agents/oracle-pr-agent.yaml` resolves to slug `oracle-pr-agent`).
+3.  **Key Compilation & Interpolation**: The compiler loops through the declared `env_mappings` block from `vgen.yaml`:
     *   If a `remote_key` contains the dynamic `${assigned_agent}` placeholder and `agent_interpolation` is `true`, the compiler duplicates the mapping once for every active agent slug discovered in Step 2.
     *   For each active agent slug, it replaces the placeholder with the slug, creating unique scoped secrets.
 4.  **Value Resolution**: Fetches the raw value for each mapping's `local_key` variable from the loaded environment.
@@ -361,9 +361,9 @@ When `resmate env push` is executed, the CLI performs the following operations:
 
 #### Example Walkthrough
 Given the following environment state:
-*   Local `.env` contains: `LOCAL_ROC_AUTH_TOKEN="sk_resmate_9921"`
+*   Local `.env` contains: `LOCAL_ROC_AUTH_TOKEN="sk_vgen_9921"`
 *   Workspace contains agents: `oracle-pr-agent.yaml` and `jira-sync-agent.yaml`
-*   `resmate.yaml` contains:
+*   `vgen.yaml` contains:
     ```yaml
     env_mappings:
       - local_key: LOCAL_ROC_AUTH_TOKEN
@@ -373,8 +373,8 @@ Given the following environment state:
     ```
 
 The compiled target secret payload will generate two separate, agent-scoped credentials:
-1.  **Secret Key**: `ROC_AUTH_oracle-pr-agent` | **Secret Value**: `"sk_resmate_9921"`
-2.  **Secret Key**: `ROC_AUTH_jira-sync-agent` | **Secret Value**: `"sk_resmate_9921"`
+1.  **Secret Key**: `ROC_AUTH_oracle-pr-agent` | **Secret Value**: `"sk_vgen_9921"`
+2.  **Secret Key**: `ROC_AUTH_jira-sync-agent` | **Secret Value**: `"sk_vgen_9921"`
 
 ### Payload Dispatching
 Once compilation is complete, the CLI packages the credentials into a structured `SetSecretsRequest` compatible with Smriti's server-side API:
@@ -386,11 +386,11 @@ Once compilation is complete, the CLI packages the credentials into a structured
   "secret": [
     {
       "key": "ROC_AUTH_oracle-pr-agent",
-      "value": "sk_resmate_9921"
+      "value": "sk_vgen_9921"
     },
     {
       "key": "ROC_AUTH_jira-sync-agent",
-      "value": "sk_resmate_9921"
+      "value": "sk_vgen_9921"
     }
   ]
 }

@@ -156,7 +156,7 @@ mod phase1_transition_tests {
     #[test]
     fn rejects_dangling_transition_target() {
         let dir =
-            std::env::temp_dir().join(format!("resmate-phase1-dangling-{}", uuid::Uuid::new_v4()));
+            std::env::temp_dir().join(format!("vgen-phase1-dangling-{}", uuid::Uuid::new_v4()));
         write_minimal_fixture(
             &dir,
             r#"initialStage: collect
@@ -199,7 +199,7 @@ stages:
     #[test]
     fn rejects_invalid_when_tree() {
         let dir = std::env::temp_dir().join(format!(
-            "resmate-phase1-invalid-when-{}",
+            "vgen-phase1-invalid-when-{}",
             uuid::Uuid::new_v4()
         ));
         write_minimal_fixture(
@@ -329,7 +329,7 @@ stages:
     #[test]
     fn rejects_dangling_required_from_stage_ref() {
         let dir = std::env::temp_dir().join(format!(
-            "resmate-phase2-dangling-required-from-stage-{}",
+            "vgen-phase2-dangling-required-from-stage-{}",
             uuid::Uuid::new_v4()
         ));
         write_minimal_fixture(
@@ -362,7 +362,7 @@ stages:
     #[test]
     fn emits_conflict_hint_when_required_and_required_from_stage_both_set() {
         let dir = std::env::temp_dir().join(format!(
-            "resmate-phase2-required-conflict-{}",
+            "vgen-phase2-required-conflict-{}",
             uuid::Uuid::new_v4()
         ));
         write_minimal_fixture(
@@ -439,7 +439,7 @@ mod phase3_reset_tests {
     #[test]
     fn rejects_unknown_reset_key_in_temp_dir() {
         let dir = std::env::temp_dir().join(format!(
-            "resmate-phase3-unknown-reset-{}",
+            "vgen-phase3-unknown-reset-{}",
             uuid::Uuid::new_v4()
         ));
         write_minimal_fixture(
@@ -602,7 +602,7 @@ mod phase4_named_gates_tests {
     #[test]
     fn rejects_duplicate_gate_ids_in_temp_dir() {
         let dir = std::env::temp_dir().join(format!(
-            "resmate-phase4-duplicate-gate-{}",
+            "vgen-phase4-duplicate-gate-{}",
             uuid::Uuid::new_v4()
         ));
         write_minimal_fixture(

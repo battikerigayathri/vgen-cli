@@ -1,12 +1,12 @@
 {
   "mcpServers": {
-    "resmate": {
-      "command": "<RESMATE_MCP_PATH>",
+    "vgen": {
+      "command": "<VGEN_MCP_PATH>",
       "args": [],
       "env": {
-        "RESMATE_API_KEY": "${env:RESMATE_API_KEY}",
-        "RESMATE_BASE_URL": "${env:RESMATE_BASE_URL}",
-        "RESMATE_TEMPLATES_DIR": "${env:RESMATE_TEMPLATES_DIR}"
+        "VGEN_API_KEY": "${env:VGEN_API_KEY}",
+        "VGEN_BASE_URL": "${env:VGEN_BASE_URL}",
+        "VGEN_TEMPLATES_DIR": "${env:VGEN_TEMPLATES_DIR}"
       }
     }
   }

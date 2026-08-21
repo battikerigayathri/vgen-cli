@@ -325,7 +325,7 @@ mod tests {
     #[test]
     fn detect_finds_workspace_from_subdirectory() {
         let _guard = lock_test_env();
-        let base = std::env::temp_dir().join(format!("resmate-ws-{}", std::process::id()));
+        let base = std::env::temp_dir().join(format!("vgen-ws-{}", std::process::id()));
         let _ = fs::remove_dir_all(&base);
         write_minimal_workspace(&base);
         fs::create_dir_all(base.join("nested/deep")).unwrap();
@@ -342,9 +342,9 @@ mod tests {
     #[test]
     fn honors_tools_dir_override() {
         let _guard = lock_test_env();
-        let base = std::env::temp_dir().join(format!("resmate-ws-override-{}", std::process::id()));
+        let base = std::env::temp_dir().join(format!("vgen-ws-override-{}", std::process::id()));
         let custom_tools =
-            std::env::temp_dir().join(format!("resmate-custom-tools-{}", std::process::id()));
+            std::env::temp_dir().join(format!("vgen-custom-tools-{}", std::process::id()));
         let _ = fs::remove_dir_all(&base);
         let _ = fs::remove_dir_all(&custom_tools);
 

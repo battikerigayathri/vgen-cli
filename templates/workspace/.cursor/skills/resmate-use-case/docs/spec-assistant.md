@@ -12,7 +12,7 @@ Every ResMate assistant is defined in a single YAML file named `assistants/<assi
 
 | Field | Type | Required | Description |
 | :--- | :--- | :--- | :--- |
-| `id` | `string` | After first push | Stable MongoDB identifier for the assistant. Leave empty or omit during initial creation; the platform populates this on the first `resmate assistant push`. |
+| `id` | `string` | After first push | Stable MongoDB identifier for the assistant. Leave empty or omit during initial creation; the platform populates this on the first `vgen assistant push`. |
 | `name` | `string` | Yes | Display name of the assistant. |
 | `slug` | `string` | Yes | Stable, unique slug identifier. |
 | `description` | `string` | Yes | Short description of the assistant's scope and purpose. |
@@ -202,7 +202,7 @@ guardrailsViolationFallback: "I am sorry, but I am not authorized to perform tha
 To push an assistant definition to the platform, run the following command from the workspace root:
 
 ```bash
-resmate assistant push <assistant-folder-name>
+vgen assistant push <assistant-folder-name>
 ```
 
 *Note: Agent IDs referenced in the `agents` array must exist on the platform before pushing the assistant.*

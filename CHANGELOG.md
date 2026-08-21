@@ -15,11 +15,11 @@ All notable changes to the ResMate CLI are documented here.
 
 ### Changed
 
-- Stable 1.0.0 release; `kit_version` in `resmate.yaml` tracks CLI version via `CARGO_PKG_VERSION`
+- Stable 1.0.0 release; `kit_version` in `vgen.yaml` tracks CLI version via `CARGO_PKG_VERSION`
 
 ### Known limitations
 
-- `resmate workflow validate` requires `smriti_client` linked at build time (path dependency to `resmedai-core-framework`); release builds must use `RESMATE_CORE_FRAMEWORK`
-- Templates are co-installed under `share/resmate/templates/` (not embedded in the binary); `rust-embed` deferred to v1.1
+- `vgen workflow validate` requires `smriti_client` linked at build time (path dependency to `resmedai-core-framework`); release builds must use `VGEN_CORE_FRAMEWORK`
+- Templates are co-installed under `share/vgen/templates/` (not embedded in the binary); `rust-embed` deferred to v1.1
 - Linux x64 builds should be produced on a Linux host for glibc compatibility; macOS cross-compile to Linux is not included in P0
 - macOS/Windows code signing and notarization deferred

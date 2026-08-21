@@ -11,7 +11,7 @@ systemInstructions:
 - Never call a save/confirm tool on the same turn as its HITLConfig tool.
 - Save tools return workflowPatch.inputs only — do not request stage advance.
 skills: []
-# Wire after pushing the tools below (see docs/push-pull-wire.md), then re-run `resmate agent push purchase-req-agent`:
+# Wire after pushing the tools below (see docs/push-pull-wire.md), then re-run `vgen agent push purchase-req-agent`:
 #   - <tool-id-after-push> (copy the written-back id from tools/purchase-req-vendor-hitlconfig/tool.yaml)
 #   - <tool-id-after-push> (copy the written-back id from tools/purchase-req-vendor-save/tool.yaml)
 #   - <tool-id-after-push> (copy the written-back id from tools/purchase-req-lines-hitlconfig/tool.yaml)

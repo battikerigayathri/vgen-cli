@@ -43,10 +43,10 @@ This is the smallest possible ResMate use case, serving as the starting layout f
 To test this sample, configure your local environment and deploy from the `examples/minimal` folder:
 ```bash
 cd examples/minimal
-resmate config validate
-resmate tool push greet
-resmate agent push greet-agent
-resmate assistant push greet-assistant
+vgen config validate
+vgen tool push greet
+vgen agent push greet-agent
+vgen assistant push greet-assistant
 ```
 
 ---
@@ -78,22 +78,22 @@ Deploy the resources sequentially in chronological dependency order:
 ```bash
 cd examples/jira
 
-export RESMATE_HITL_DIR=./hitl
-export RESMATE_TOOLS_DIR=./tools
-export RESMATE_AGENTS_DIR=./agents
-export RESMATE_ASSISTANTS_DIR=./assistants
+export VGEN_HITL_DIR=./hitl
+export VGEN_TOOLS_DIR=./tools
+export VGEN_AGENTS_DIR=./agents
+export VGEN_ASSISTANTS_DIR=./assistants
 
-resmate hitl push jira-read-issue-confirm
-resmate tool push jira-read-issue-hitlconfig
-resmate tool push jira-read-issue
-resmate agent push jira-agent
-resmate assistant push jira-assistants
+vgen hitl push jira-read-issue-confirm
+vgen tool push jira-read-issue-hitlconfig
+vgen tool push jira-read-issue
+vgen agent push jira-agent
+vgen assistant push jira-assistants
 ```
 
 #### Local Testing
 Run a simulated local test of your slow FaaS API tool using payload records:
 ```bash
-resmate tool test jira-read-issue
+vgen tool test jira-read-issue
 ```
 
 ---
@@ -131,24 +131,24 @@ To push the split workflow and its associated resources, execute:
 ```bash
 cd examples/purchase-requisition
 
-export RESMATE_HITL_DIR=./hitl
-export RESMATE_WORKFLOWS_DIR=./workflows
-export RESMATE_TOOLS_DIR=./tools
-export RESMATE_AGENTS_DIR=./agents
-export RESMATE_ASSISTANTS_DIR=./assistants
+export VGEN_HITL_DIR=./hitl
+export VGEN_WORKFLOWS_DIR=./workflows
+export VGEN_TOOLS_DIR=./tools
+export VGEN_AGENTS_DIR=./agents
+export VGEN_ASSISTANTS_DIR=./assistants
 
-resmate hitl push purchase-req-vendor-form
-resmate hitl push purchase-req-lines-form
-resmate hitl push purchase-req-review
-resmate workflow push purchase-requisition
-resmate tool push purchase-req-vendor-hitlconfig
-resmate tool push purchase-req-vendor-save
-resmate tool push purchase-req-lines-hitlconfig
-resmate tool push purchase-req-lines-save
-resmate tool push purchase-req-review-hitlconfig
-resmate tool push purchase-req-review-confirm
-resmate agent push purchase-req-agent
-resmate assistant push purchase-req-assistant
+vgen hitl push purchase-req-vendor-form
+vgen hitl push purchase-req-lines-form
+vgen hitl push purchase-req-review
+vgen workflow push purchase-requisition
+vgen tool push purchase-req-vendor-hitlconfig
+vgen tool push purchase-req-vendor-save
+vgen tool push purchase-req-lines-hitlconfig
+vgen tool push purchase-req-lines-save
+vgen tool push purchase-req-review-hitlconfig
+vgen tool push purchase-req-review-confirm
+vgen agent push purchase-req-agent
+vgen assistant push purchase-req-assistant
 ```
 
 #### Smoke Testing
@@ -275,10 +275,10 @@ Specifying the correct execution environment is critical for managing latency, e
 
 When initializing a new use case, follow this checklist to adapt patterns from the reference directory:
 
-1.  **Bootstrap the Workspace**: Run `resmate init --name my-use-case` to scaffold the correct directory tree.
+1.  **Bootstrap the Workspace**: Run `vgen init --name my-use-case` to scaffold the correct directory tree.
 2.  **Analyze the Requirements**: Identify your targets:
     *   If you need a simple lookup, copy the structure of `examples/minimal/`.
     *   If you need multi-turn HITL forms, copy the code files from `examples/jira/`.
     *   If you are building a structured business process, copy the split YAML structures from `examples/purchase-requisition/`.
 3.  **Draft the Schemas**: Write your local YAMLs (`tool.yaml`, `agent.yaml`, `assistant.yaml`) and implement your handlers under `tools/<name>/handler.js`.
-4.  **Validate Locally**: Execute `resmate validate` and run smoke tests with `resmate tool test <name>` to ensure all local schemas and Javascript handlers parse correctly before deploying.
+4.  **Validate Locally**: Execute `vgen validate` and run smoke tests with `vgen tool test <name>` to ensure all local schemas and Javascript handlers parse correctly before deploying.

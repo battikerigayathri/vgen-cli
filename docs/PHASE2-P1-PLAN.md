@@ -1,7 +1,7 @@
 # Phase 2 (P1) — ResMate CLI agent-authoring improvements
 
 **Status:** Draft for approval  
-**Target repo:** [`resmed_resmate-cli`](../.)  
+**Target repo:** [`resmed_vgen-cli`](../.)  
 **Reference workspace:** [`pr-agent-v2`](../../pr-agent-v2) (Oracle PR use case)  
 **Jira epic:** [CGA-1094](https://resmedglobal.atlassian.net/browse/CGA-1094)  
 **Prerequisite:** [PHASE1-P0-COMPLETE.md](./PHASE1-P0-COMPLETE.md) (CGA-1095–CGA-1100)
@@ -16,47 +16,47 @@ IDE agents can **bootstrap workspaces, execute batch pushes, sync full artifact 
 
 | # | Capability | Command(s) / artifact | Jira |
 |---|------------|----------------------|------|
-| 1 | Error code explanations for agents | `resmate explain <code>`, `resmate explain --list` | [CGA-1105](https://resmedglobal.atlassian.net/browse/CGA-1105) |
-| 2 | Workspace bootstrap + manifest | `resmate init`, `resmate scaffold <recipe>`, `resmate.yaml` | [CGA-1102](https://resmedglobal.atlassian.net/browse/CGA-1102) |
-| 3 | Batch push execution | `resmate push-all` (without `--dry-run`) | [CGA-1103](https://resmedglobal.atlassian.net/browse/CGA-1103) |
-| 4 | Sync pulls HITL configs | `resmate sync` includes HITL | [CGA-1104](https://resmedglobal.atlassian.net/browse/CGA-1104) |
-| 5 | MCP server for IDE integration | `resmate-mcp` (stdio) | [CGA-1101](https://resmedglobal.atlassian.net/browse/CGA-1101) |
+| 1 | Error code explanations for agents | `vgen explain <code>`, `vgen explain --list` | [CGA-1105](https://resmedglobal.atlassian.net/browse/CGA-1105) |
+| 2 | Workspace bootstrap + manifest | `vgen init`, `vgen scaffold <recipe>`, `vgen.yaml` | [CGA-1102](https://resmedglobal.atlassian.net/browse/CGA-1102) |
+| 3 | Batch push execution | `vgen push-all` (without `--dry-run`) | [CGA-1103](https://resmedglobal.atlassian.net/browse/CGA-1103) |
+| 4 | Sync pulls HITL configs | `vgen sync` includes HITL | [CGA-1104](https://resmedglobal.atlassian.net/browse/CGA-1104) |
+| 5 | MCP server for IDE integration | `vgen-mcp` (stdio) | [CGA-1101](https://resmedglobal.atlassian.net/browse/CGA-1101) |
 | 6 | cli-context KB sync | commands-reference, checklist, skill | [CGA-1106](https://resmedglobal.atlassian.net/browse/CGA-1106) |
 
 ### Success criteria (smoke test against `pr-agent-v2`)
 
-Run from `pr-agent-v2` workspace root with `resmate` on `PATH` and valid `.env` for API commands:
+Run from `pr-agent-v2` workspace root with `vgen` on `PATH` and valid `.env` for API commands:
 
 ```bash
 # PR7 — explain (CGA-1105)
-resmate explain BROKEN_AGENT_REF | grep -qi remediation
-resmate --json explain WORKFLOW_SCHEMA_INVALID | jq '.ok == true and .data.code != null'
-resmate explain --list | grep -q BROKEN_TOOL_REF
+vgen explain BROKEN_AGENT_REF | grep -qi remediation
+vgen --json explain WORKFLOW_SCHEMA_INVALID | jq '.ok == true and .data.code != null'
+vgen explain --list | grep -q BROKEN_TOOL_REF
 
 # PR8 — sync HITL (CGA-1104) — requires assistant with id + remote HITL refs
 # (destructive: run in temp copy or verify counts only)
-resmate sync 2>&1 | grep -i hitl
-resmate --json workspace info | jq '.data.counts.hitl >= 1'
+vgen sync 2>&1 | grep -i hitl
+vgen --json workspace info | jq '.data.counts.hitl >= 1'
 
 # PR9 — init/scaffold (CGA-1102) — run in temp dir
 tmpdir=$(mktemp -d) && cd "$tmpdir"
-resmate init --json | jq '.ok == true'
-test -d tools && test -d agents && test -f resmate.yaml
-resmate scaffold oracle-pr --json | jq '.ok == true'
-resmate --json workspace info | jq '.data.detected == true'
+vgen init --json | jq '.ok == true'
+test -d tools && test -d agents && test -f vgen.yaml
+vgen scaffold oracle-pr --json | jq '.ok == true'
+vgen --json workspace info | jq '.data.detected == true'
 
 # PR10 — push-all execute (CGA-1103) — dry-run first, then execute with --yes in dev env
-resmate --json push-all --dry-run | jq '.data.steps | map(.resource_type)'
+vgen --json push-all --dry-run | jq '.data.steps | map(.resource_type)'
 # expect: hitl → workflow → tool → agent → assistant
-resmate --json push-all --yes  # only against dev/staging with intentional changes
+vgen --json push-all --yes  # only against dev/staging with intentional changes
 
 # PR11 — MCP (CGA-1101) — manual or integration test harness
-# echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | resmate-mcp | jq '.result.tools | length >= 6'
+# echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | vgen-mcp | jq '.result.tools | length >= 6'
 # MCP tool `validate` against pr-agent-v2 → error_count == 0
 
 # P0 regression (must still pass)
-resmate --json validate | jq '.data.summary.error_count == 0'
-resmate --json graph | jq '[.data.edges[] | select(.kind=="broken_ref")] | length'  # expect 0
+vgen --json validate | jq '.data.summary.error_count == 0'
+vgen --json graph | jq '[.data.edges[] | select(.kind=="broken_ref")] | length'  # expect 0
 ```
 
 **Agent ergonomics:** An agent can `init` → edit artifacts → `validate` → `push-all --dry-run` → `push-all --yes`, or call the same flow via MCP tools without shell parsing.
@@ -69,7 +69,7 @@ resmate --json graph | jq '[.data.edges[] | select(.kind=="broken_ref")] | lengt
 |------|-----------|------|
 | Remote ID existence checks (`validate --remote`) | Needs authenticated round-trips per ref | CGA-1107 |
 | Handler static analysis beyond secrets grep | AST/heuristics for `workflowPatch` | CGA-1112 |
-| `resmate diff` local vs remote | Depends on GET APIs + drift model | CGA-1108 |
+| `vgen diff` local vs remote | Depends on GET APIs + drift model | CGA-1108 |
 | Workflow push loader ↔ smriti validator alignment | Validate-pass / push-fail divergence | CGA-1109 |
 | Full CLAD doc replacement | External stakeholder doc | CGA-1110 |
 | CI integration test suite vs `pr-agent-v2` | Submodule/sparse checkout job | CGA-1111 |
@@ -99,7 +99,7 @@ src/
 ├── validate/               # graph_rules, artifact_rules, workflow_rules, secrets, push_readiness
 ├── api/                    # create/update/get per resource
 ├── specs/                  # load/write YAML, discovery helpers, ResourceIndex
-└── config.rs               # ResolvedPaths, RESMATE_*_DIR
+└── config.rs               # ResolvedPaths, VGEN_*_DIR
 ```
 
 P0 commands emit JSON via `output.rs`. `push-all` execute returns `NOT_IMPLEMENTED` in `commands/push_all.rs` (lines 13–21). `sync` in `main.rs` (lines 485–639) pulls assistant → workflow → agents → tools but **not HITL**.
@@ -108,7 +108,7 @@ P0 commands emit JSON via `output.rs`. `push-all` execute returns `NOT_IMPLEMENT
 
 ```
 src/
-├── manifest.rs             # NEW — resmate.yaml parse, merge with ResolvedPaths
+├── manifest.rs             # NEW — vgen.yaml parse, merge with ResolvedPaths
 ├── errors_registry.rs      # NEW — codegen or parse docs/errors for explain
 ├── push_executor.rs        # NEW — execute_push_step, PushRunReport, rollback journal
 ├── sync.rs                 # NEW — extract sync logic from main.rs; add HITL branch
@@ -119,7 +119,7 @@ src/
 │   ├── scaffold.rs         # NEW — CGA-1102
 │   └── push_all.rs         # MODIFY — wire execute path
 ├── bin/
-│   └── resmate_mcp.rs      # NEW — MCP stdio server (CGA-1101)
+│   └── vgen_mcp.rs      # NEW — MCP stdio server (CGA-1101)
 ├── workspace.rs            # MODIFY — manifest-aware detect + info
 ├── cli/mod.rs              # MODIFY — Explain, Init, Scaffold subcommands; push-all flags
 └── main.rs                 # MODIFY — delegate sync to sync.rs; thinner match arms
@@ -130,7 +130,7 @@ src/
 ```mermaid
 flowchart TB
   subgraph inputs [Workspace]
-    M[resmate.yaml]
+    M[vgen.yaml]
     FS[tools agents assistants hitl workflows]
   end
 
@@ -140,7 +140,7 @@ flowchart TB
   PP[push_plan::build]
   PE[push_executor::run]
   SYNC[sync::run]
-  MCP[resmate_mcp]
+  MCP[vgen_mcp]
 
   M --> MAN
   MAN --> WS
@@ -171,7 +171,7 @@ flowchart TB
 
 ## 4. PR breakdown
 
-### PR7 — `resmate explain` error codes
+### PR7 — `vgen explain` error codes
 
 **Jira:** [CGA-1105](https://resmedglobal.atlassian.net/browse/CGA-1105) · **SP:** 3 · **Depends on:** P0 PR1 (CGA-1095)
 
@@ -211,14 +211,14 @@ pub fn list_all() -> Vec<ErrorCodeDoc>;
 **CLI**
 
 ```
-resmate explain <CODE> [--json]
-resmate explain --list [--json] [--domain validation]
+vgen explain <CODE> [--json]
+vgen explain --list [--json] [--domain validation]
 ```
 
 **Acceptance criteria**
 
-- [ ] `resmate explain BROKEN_AGENT_REF` prints description + remediation hints.
-- [ ] `resmate --json explain WORKFLOW_SCHEMA_INVALID` returns `ErrorCodeDoc` in `data`.
+- [ ] `vgen explain BROKEN_AGENT_REF` prints description + remediation hints.
+- [ ] `vgen --json explain WORKFLOW_SCHEMA_INVALID` returns `ErrorCodeDoc` in `data`.
 - [ ] All codes in `docs/errors/*.md` discoverable via `--list`.
 - [ ] Unknown code → exit `2`, envelope `error.code = "UNKNOWN_ERROR_CODE"`.
 
@@ -226,7 +226,7 @@ resmate explain --list [--json] [--domain validation]
 
 ---
 
-### PR8 — Fix `resmate sync` to pull HITL
+### PR8 — Fix `vgen sync` to pull HITL
 
 **Jira:** [CGA-1104](https://resmedglobal.atlassian.net/browse/CGA-1104) · **SP:** 3 · **Depends on:** — (parallel with PR7)
 
@@ -271,7 +271,7 @@ assistant → workflow → hitl (from workflow stages) → agents → tools
 
 **Acceptance criteria**
 
-- [ ] `resmate sync` pulls HITL when workflow stages reference `hitlSlug`.
+- [ ] `vgen sync` pulls HITL when workflow stages reference `hitlSlug`.
 - [ ] Summary includes hitl count: `N assistant(s), …, N hitl(s), …`.
 - [ ] `pr-agent-v2` after sync: `workspace info` hitl count ≥ 1.
 - [ ] cli-context `push-pull-sync.md` matches behavior.
@@ -280,7 +280,7 @@ assistant → workflow → hitl (from workflow stages) → agents → tools
 
 ---
 
-### PR9 — `resmate init` / `scaffold` + `resmate.yaml` manifest
+### PR9 — `vgen init` / `scaffold` + `vgen.yaml` manifest
 
 **Jira:** [CGA-1102](https://resmedglobal.atlassian.net/browse/CGA-1102) · **SP:** 5 · **Depends on:** P0 PR1 (CGA-1095)
 
@@ -293,10 +293,10 @@ assistant → workflow → hitl (from workflow stages) → agents → tools
 | Add | `src/manifest.rs` |
 | Add | `src/scaffold.rs` — template copy / render |
 | Add | `src/commands/init.rs`, `src/commands/scaffold.rs` |
-| Add | `templates/init/` — `.gitignore`, `resmate.yaml`, empty dir placeholders |
+| Add | `templates/init/` — `.gitignore`, `vgen.yaml`, empty dir placeholders |
 | Add | `templates/recipes/oracle-pr/` — from `cli-context/examples/oracle-purchase-requisition/` subset |
-| Add | `docs/resmate-yaml.md` — manifest spec |
-| Modify | `src/workspace.rs` — `find_workspace_root` checks `resmate.yaml`; `ResolvedPaths` reads manifest |
+| Add | `docs/vgen-yaml.md` — manifest spec |
+| Modify | `src/workspace.rs` — `find_workspace_root` checks `vgen.yaml`; `ResolvedPaths` reads manifest |
 | Modify | `src/config.rs` — manifest paths override defaults before env vars (env still wins) |
 | Modify | `src/cli/mod.rs`, `src/main.rs` |
 | Add | `tests/init_scaffold_test.rs` |
@@ -304,16 +304,16 @@ assistant → workflow → hitl (from workflow stages) → agents → tools
 **CLI**
 
 ```
-resmate init [--name <project>] [--json] [--force]   # refuse if artifacts exist unless --force
-resmate scaffold <recipe> [--name <slug>] [--json]   # recipes: oracle-pr, minimal, form-wizard
+vgen init [--name <project>] [--json] [--force]   # refuse if artifacts exist unless --force
+vgen scaffold <recipe> [--name <slug>] [--json]   # recipes: oracle-pr, minimal, form-wizard
 ```
 
 **Acceptance criteria**
 
-- [ ] `resmate init` creates `tools/`, `agents/`, `assistants/`, `hitl/`, `workflows/`, `resmate.yaml`.
-- [ ] `resmate scaffold oracle-pr` produces layout compatible with `validate` (may have intentional placeholder IDs for user to fill).
-- [ ] `workspace info` reports `manifest: { present: true, name: "..." }` when `resmate.yaml` exists.
-- [ ] Env `RESMATE_*_DIR` still overrides manifest paths.
+- [ ] `vgen init` creates `tools/`, `agents/`, `assistants/`, `hitl/`, `workflows/`, `vgen.yaml`.
+- [ ] `vgen scaffold oracle-pr` produces layout compatible with `validate` (may have intentional placeholder IDs for user to fill).
+- [ ] `workspace info` reports `manifest: { present: true, name: "..." }` when `vgen.yaml` exists.
+- [ ] Env `VGEN_*_DIR` still overrides manifest paths.
 
 **Effort:** 3–4 person-days
 
@@ -370,8 +370,8 @@ pub async fn execute_push_plan(
 
 **Acceptance criteria**
 
-- [ ] `resmate push-all --dry-run` unchanged (no HTTP).
-- [ ] `resmate push-all --yes` executes hitl → workflow → tool → agent → assistant.
+- [ ] `vgen push-all --dry-run` unchanged (no HTTP).
+- [ ] `vgen push-all --yes` executes hitl → workflow → tool → agent → assistant.
 - [ ] Steps with validation `blockers` skipped unless `--force` (emit warning).
 - [ ] Failed step stops run; JSON report includes `failed_at` and `rollback_journal`.
 - [ ] ID write-back matches Appendix A (P0 plan) — reuse `specs::write_*_id_*`.
@@ -390,16 +390,16 @@ pub async fn execute_push_plan(
 
 | Action | Path |
 |--------|------|
-| Add | `src/bin/resmate_mcp.rs` |
+| Add | `src/bin/vgen_mcp.rs` |
 | Add | `src/mcp/mod.rs`, `src/mcp/tools.rs`, `src/mcp/handler.rs` |
-| Modify | `Cargo.toml` — `[[bin]] name = "resmate-mcp"`; dep `rmcp` or `mcp-sdk` (evaluate crate maturity) |
+| Modify | `Cargo.toml` — `[[bin]] name = "vgen-mcp"`; dep `rmcp` or `mcp-sdk` (evaluate crate maturity) |
 | Add | `docs/mcp-setup.md` |
 | Modify | `README.md` — Cursor `mcp.json` example |
 | Add | `tests/mcp_tools_test.rs` |
 
 **Acceptance criteria**
 
-- [ ] `resmate-mcp` starts on stdio; `tools/list` returns ≥ 8 tools.
+- [ ] `vgen-mcp` starts on stdio; `tools/list` returns ≥ 8 tools.
 - [ ] Each tool returns **parsed** JSON envelope in `content[].text` (not raw unparseable stdout).
 - [ ] Mutating tool `push_all_execute` requires `confirm: true` parameter.
 - [ ] Smoke: MCP `validate` against `pr-agent-v2` → zero errors.
@@ -421,15 +421,15 @@ pub async fn execute_push_plan(
 | Modify | `cli-context/cli/commands-reference.md` |
 | Modify | `cli-context/cli/authoring-checklist.md` |
 | Modify | `cli-context/cli/push-pull-sync.md` |
-| Modify | `cli-context/.cursor/skills/resmate-use-case/SKILL.md` |
+| Modify | `cli-context/.cursor/skills/vgen-use-case/SKILL.md` |
 | Modify | `cli-context/AGENTS.md` — P1 pre-push loop if needed |
 | Optional | `pr-agent-v2` copied docs sync |
 
 **Acceptance criteria**
 
 - [ ] All P1 commands documented with `--json` examples.
-- [ ] MCP setup section links to `resmed_resmate-cli/docs/mcp-setup.md`.
-- [ ] `resmate.yaml` documented in `cli/setup.md` or new manifest section.
+- [ ] MCP setup section links to `resmed_vgen-cli/docs/mcp-setup.md`.
+- [ ] `vgen.yaml` documented in `cli/setup.md` or new manifest section.
 
 **Effort:** 1–2 person-days (incremental across PR7–PR11)
 
@@ -515,12 +515,12 @@ On CLI failure, set `isError: true` and include full envelope with `ok: false`.
 
 ---
 
-## 6. `resmate.yaml` manifest spec
+## 6. `vgen.yaml` manifest spec
 
-Optional file at workspace root. **Env vars (`RESMATE_*_DIR`) override manifest values.**
+Optional file at workspace root. **Env vars (`VGEN_*_DIR`) override manifest values.**
 
 ```yaml
-# resmate.yaml — schema version 1
+# vgen.yaml — schema version 1
 version: 1
 name: oracle-pr-agent-v2
 description: Oracle purchase requisition use case
@@ -553,11 +553,11 @@ platform:
 | `recipe` | No | Records which scaffold was used |
 | `platform.base_url` | No | Documentation only; auth still via env |
 
-**Discovery rule:** `find_workspace_root` treats presence of `resmate.yaml` **or** any artifact dir as workspace (see `workspace.rs::is_workspace_root`).
+**Discovery rule:** `find_workspace_root` treats presence of `vgen.yaml` **or** any artifact dir as workspace (see `workspace.rs::is_workspace_root`).
 
 **Implementation:** `manifest::load(root) -> Option<Manifest>`; `ResolvedPaths::resolve_with_manifest(root, manifest)`.
 
-Full spec: `docs/resmate-yaml.md` (PR9).
+Full spec: `docs/vgen-yaml.md` (PR9).
 
 ---
 
@@ -619,18 +619,18 @@ Emit progressive JSON in human mode as plain logs; in JSON mode emit **one final
 ### Repo layout
 
 ```
-resmed_resmate-cli/
+resmed_vgen-cli/
 ├── src/
-│   ├── bin/resmate_mcp.rs      # entry: stdio transport loop
+│   ├── bin/vgen_mcp.rs      # entry: stdio transport loop
 │   └── mcp/
 │       ├── mod.rs
 │       ├── tools.rs            # tool descriptors + JSON schemas
 │       └── handler.rs          # dispatch → library fns (not shell spawn)
 ├── docs/mcp-setup.md
-└── Cargo.toml                  # [[bin]] resmate-mcp
+└── Cargo.toml                  # [[bin]] vgen-mcp
 ```
 
-**Design choice:** Call `resmate` library functions (`commands::*`, `workspace::detect`) **in-process** — not `std::process::Command("resmate")` — for lower latency and shared config.
+**Design choice:** Call `vgen` library functions (`commands::*`, `workspace::detect`) **in-process** — not `std::process::Command("vgen")` — for lower latency and shared config.
 
 ### Transport
 
@@ -640,11 +640,11 @@ resmed_resmate-cli/
 ```json
 {
   "mcpServers": {
-    "resmate": {
-      "command": "/path/to/resmate-mcp",
+    "vgen": {
+      "command": "/path/to/vgen-mcp",
       "args": [],
       "env": {
-        "RESMATE_API_KEY": "${env:RESMATE_API_KEY}"
+        "VGEN_API_KEY": "${env:VGEN_API_KEY}"
       }
     }
   }
@@ -658,7 +658,7 @@ resmed_resmate-cli/
 | Accidental batch push | `push_all_execute` requires `confirm: true` |
 | Init over existing workspace | `init_workspace` requires `confirm: true`; refuse without `--force` equivalent |
 | API key exposure | MCP inherits env; never return secrets in tool results |
-| Path traversal | Resolve `workspace_root` to absolute; must contain artifact dirs or `resmate.yaml` |
+| Path traversal | Resolve `workspace_root` to absolute; must contain artifact dirs or `vgen.yaml` |
 
 ### Dependency
 
@@ -751,7 +751,7 @@ for each hitlSlug:
 
 1. P0 regression script from [PHASE1-P0-COMPLETE.md](./PHASE1-P0-COMPLETE.md)
 2. P1 script from §1 above
-3. Cursor: add `resmate-mcp`, run validate tool on `pr-agent-v2`
+3. Cursor: add `vgen-mcp`, run validate tool on `pr-agent-v2`
 
 ### Test data
 
@@ -765,22 +765,22 @@ for each hitlSlug:
 
 | When | Repo | File |
 |------|------|------|
-| PR7 | `resmed_resmate-cli` | `docs/errors/*.md`, `docs/json-output.md` |
+| PR7 | `resmed_vgen-cli` | `docs/errors/*.md`, `docs/json-output.md` |
 | PR8 | both | `cli-context/cli/push-pull-sync.md` |
-| PR9 | `resmed_resmate-cli` | `docs/resmate-yaml.md`, `README.md` |
-| PR10 | `resmed_resmate-cli` | `docs/json-output.md#push-run`, `docs/errors/push.md` |
-| PR11 | `resmed_resmate-cli` | `docs/mcp-setup.md`, `README.md` |
+| PR9 | `resmed_vgen-cli` | `docs/vgen-yaml.md`, `README.md` |
+| PR10 | `resmed_vgen-cli` | `docs/json-output.md#push-run`, `docs/errors/push.md` |
+| PR11 | `resmed_vgen-cli` | `docs/mcp-setup.md`, `README.md` |
 | PR12 | `resmedai-core-framework` | `cli-context/cli/commands-reference.md`, `authoring-checklist.md`, skill |
 
 **`commands-reference.md` draft entries (P1)**
 
 ```markdown
-### `resmate explain <code> [--list]`
-### `resmate init [--name]`
-### `resmate scaffold <recipe>`
-### `resmate push-all [--yes] [--force]`  # execute
-### `resmate sync`  # includes HITL
-### MCP: see resmed_resmate-cli/docs/mcp-setup.md
+### `vgen explain <code> [--list]`
+### `vgen init [--name]`
+### `vgen scaffold <recipe>`
+### `vgen push-all [--yes] [--force]`  # execute
+### `vgen sync`  # includes HITL
+### MCP: see resmed_vgen-cli/docs/mcp-setup.md
 ```
 
 ---
@@ -800,8 +800,8 @@ for each hitlSlug:
 
 ### Decision log (confirm at kickoff)
 
-- [ ] **D1:** MCP in-process library calls vs subprocess `resmate --json` (plan: **in-process**)
-- [ ] **D2:** `resmate.yaml` `version: 1` schema frozen in PR9
+- [ ] **D1:** MCP in-process library calls vs subprocess `vgen --json` (plan: **in-process**)
+- [ ] **D2:** `vgen.yaml` `version: 1` schema frozen in PR9
 - [ ] **D3:** Rollback = journal only, no remote delete (plan: **yes**)
 - [ ] **D4:** MCP mutating tools require `confirm: true` (plan: **yes**)
 - [ ] **D5:** Split `docs/errors/` into domain files in PR7 (plan: **yes**)
@@ -841,7 +841,7 @@ for each hitlSlug:
 | `docs/json-output.md` | CGA-1095 | MCP contracts |
 | `docs/errors/README.md` | CGA-1095 | explain command source |
 
-**Gate:** Do not start PR10 until `resmate --json push-all --dry-run` passes smoke on `pr-agent-v2` (see [PHASE1-P0-COMPLETE.md](./PHASE1-P0-COMPLETE.md)).
+**Gate:** Do not start PR10 until `vgen --json push-all --dry-run` passes smoke on `pr-agent-v2` (see [PHASE1-P0-COMPLETE.md](./PHASE1-P0-COMPLETE.md)).
 
 ---
 
@@ -890,9 +890,9 @@ async fn execute_push_plan(...) -> PushRunReport {
 
 | Key | PR | Title |
 |-----|-----|-------|
-| [CGA-1105](https://resmedglobal.atlassian.net/browse/CGA-1105) | PR7 | resmate explain error codes |
-| [CGA-1104](https://resmedglobal.atlassian.net/browse/CGA-1104) | PR8 | Fix resmate sync to pull HITL |
-| [CGA-1102](https://resmedglobal.atlassian.net/browse/CGA-1102) | PR9 | resmate init/scaffold + resmate.yaml |
+| [CGA-1105](https://resmedglobal.atlassian.net/browse/CGA-1105) | PR7 | vgen explain error codes |
+| [CGA-1104](https://resmedglobal.atlassian.net/browse/CGA-1104) | PR8 | Fix vgen sync to pull HITL |
+| [CGA-1102](https://resmedglobal.atlassian.net/browse/CGA-1102) | PR9 | vgen init/scaffold + vgen.yaml |
 | [CGA-1103](https://resmedglobal.atlassian.net/browse/CGA-1103) | PR10 | push-all execute |
 | [CGA-1101](https://resmedglobal.atlassian.net/browse/CGA-1101) | PR11 | MCP server wrapping CLI |
 | [CGA-1106](https://resmedglobal.atlassian.net/browse/CGA-1106) | PR12 | Update cli-context Phase 1–2 |

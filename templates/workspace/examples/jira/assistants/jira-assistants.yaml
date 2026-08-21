@@ -6,7 +6,7 @@ description: Sample assistant for reading and summarising Jira issues via HITL-f
 status: active
 visibility: private
 agents: []
-# Wire after pushing agents/jira-agent.yaml (see docs/push-pull-wire.md), then re-run `resmate assistant push jira-assistants`:
+# Wire after pushing agents/jira-agent.yaml (see docs/push-pull-wire.md), then re-run `vgen assistant push jira-assistants`:
 #   - <agent-id-after-push> (copy the written-back id from agents/jira-agent.yaml)
 systemContext: |
   You are the Jira Read Assistant with one agent: jira-agent.

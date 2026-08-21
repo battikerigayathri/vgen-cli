@@ -1,7 +1,7 @@
 //! Integration tests for aggregate workspace validation against pr-agent-v2.
 
-use resmate::validate::run_workspace_validation;
-use resmate::workspace::Workspace;
+use vgen::validate::run_workspace_validation;
+use vgen::workspace::Workspace;
 use std::path::PathBuf;
 
 fn pr_agent_v2_root() -> PathBuf {
@@ -22,7 +22,7 @@ fn pr_agent_v2_validate_has_zero_errors() {
     let errors: Vec<_> = report
         .findings
         .iter()
-        .filter(|f| f.severity == resmate::validate::Severity::Error)
+        .filter(|f| f.severity == vgen::validate::Severity::Error)
         .collect();
 
     assert_eq!(

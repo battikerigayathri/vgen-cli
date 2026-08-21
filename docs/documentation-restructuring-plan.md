@@ -1,6 +1,6 @@
 # ResMate Knowledge Base Restructuring and Update Plan (v2)
 
-This document details the comprehensive restructuring plan for the ResMate developer and agent knowledge base inside the `resmed_resmate-cli` repository. By transitioning from a single massive `SKILL.md` to the **Master Router & Index** pattern, we resolve the dual problems of "cognitive fragmentation" (where agents traverse dozens of scattered files) and "context bloat" (where loading a single massive file consumes excessive token budgets and degrades performance).
+This document details the comprehensive restructuring plan for the ResMate developer and agent knowledge base inside the `resmed_vgen-cli` repository. By transitioning from a single massive `SKILL.md` to the **Master Router & Index** pattern, we resolve the dual problems of "cognitive fragmentation" (where agents traverse dozens of scattered files) and "context bloat" (where loading a single massive file consumes excessive token budgets and degrades performance).
 
 ---
 
@@ -13,13 +13,13 @@ While consolidating all documentation into a single `SKILL.md` solves fragmentat
 3. **Maintenance Overhead**: Merging diverse topics (CLI, YAML specs, execution models, decision matrices) into one file makes it difficult for multiple developers to update specifications without merge conflicts.
 
 ### The Solution: Master Router & Index
-We propose a clean, modular subfolder structure under the Cursor Agent Skill `templates/workspace/.cursor/skills/resmate-use-case/`:
+We propose a clean, modular subfolder structure under the Cursor Agent Skill `templates/workspace/.cursor/skills/vgen-use-case/`:
 - **`SKILL.md`**: A lightweight, high-density entry point that acts as the Master Router, Index, and Decision Guide. It provides high-level routing rules and maps developer/agent intents to specific sub-documents.
 - **`docs/`**: A consolidated subfolder containing on-demand, highly specialized reference files. This keeps the workspace root completely clean and allows the agent to selectively load only the relevant file for its current subtask, optimizing context window usage and token efficiency.
 
 ### Target Directory Tree
 ```text
-templates/workspace/.cursor/skills/resmate-use-case/
+templates/workspace/.cursor/skills/vgen-use-case/
 ├── SKILL.md                       # Master Router, Index, and Decision Guide
 └── docs/                          # Consolidated, on-demand reference files
     ├── decision-matrix.md         # Single vs. Multi-Agent, Standard vs. Workflow, JS vs. FaaS
@@ -28,7 +28,7 @@ templates/workspace/.cursor/skills/resmate-use-case/
     ├── spec-assistant.md          # assistant.yaml, decoupled workflows
     ├── spec-workflow.md           # flow.yaml, schema.yaml, playbooks.yaml
     ├── cli-commands.md            # push, pull, validate, doctor, graph, diff, tool test, assistant chat, env push
-    ├── env-secrets.md             # env variables, .env, resmate.yaml mapping, write-only secrets push policy
+    ├── env-secrets.md             # env variables, .env, vgen.yaml mapping, write-only secrets push policy
     └── examples-guide.md          # reference examples in examples/
 ```
 
@@ -52,7 +52,7 @@ templates/workspace/.cursor/skills/resmate-use-case/
 | "I am writing assistant routing or decoupled workflows" | `docs/spec-assistant.md` | `assistant.yaml` schema, decoupled workflows array, and compatibility fallback. |
 | "I am writing a workflow flow, schema, or stage playbook" | `docs/spec-workflow.md` | `flow.yaml`, `schema.yaml`, `playbooks.yaml` schemas, and state save tool contracts. |
 | "I need to run, test, validate, or push my use case" | `docs/cli-commands.md` | Complete reference for all CLI commands, including `tool test`, `assistant chat`, and `env push`. |
-| "I need to manage environment variables or secrets" | `docs/env-secrets.md` | `.env` file usage, `resmate.yaml` mapping, and write-only secrets push policy. |
+| "I need to manage environment variables or secrets" | `docs/env-secrets.md` | `.env` file usage, `vgen.yaml` mapping, and write-only secrets push policy. |
 | "I want to explore reference examples" | `docs/examples-guide.md` | Mapping of available examples and how they demonstrate specific architectural choices. |
 
 ---
@@ -89,7 +89,7 @@ templates/workspace/.cursor/skills/resmate-use-case/
 #### Example JS Handler with Polyfills
 ```javascript
 // tools/vendor-lookup/handler.js
-const { getSecret, queryRecords } = require('resmate-polyfills');
+const { getSecret, queryRecords } = require('vgen-polyfills');
 
 module.exports = async function(context) {
   const apiKey = await getSecret('VENDOR_API_KEY');
@@ -197,11 +197,11 @@ stage_playbooks:
 - **Role**: Complete reference for all CLI commands.
 - **Content Outline**:
   - Standard commands: `push`, `pull`, `validate`, `doctor`, `graph`, `diff`.
-  - **`resmate tool test <tool-folder>`**: Local JS V8 simulation, flags (`--payload`, `--integration`, `--session`, `--skill-id`, `--no-pull`), color-coded console output (Cyan logs, Green duration, Magenta outcome).
-  - **`resmate assistant chat <assistant-basename>`**: Multi-turn interactive test console (REPL), flags (`--new-session`), dual-channel transport (WebSocket for streaming/thoughts, HTTP POST for state/sync), console commands (`/status` with ASCII progress, `/help`, `/quit`), history (`~/.resmate/repl_history.txt`) and debug logging (`.resmate/debug/sessions/<session_id>.json`).
-  - **`resmate env push`**: Compile-deploys secrets.
+  - **`vgen tool test <tool-folder>`**: Local JS V8 simulation, flags (`--payload`, `--integration`, `--session`, `--skill-id`, `--no-pull`), color-coded console output (Cyan logs, Green duration, Magenta outcome).
+  - **`vgen assistant chat <assistant-basename>`**: Multi-turn interactive test console (REPL), flags (`--new-session`), dual-channel transport (WebSocket for streaming/thoughts, HTTP POST for state/sync), console commands (`/status` with ASCII progress, `/help`, `/quit`), history (`~/.vgen/repl_history.txt`) and debug logging (`.vgen/debug/sessions/<session_id>.json`).
+  - **`vgen env push`**: Compile-deploys secrets.
 
-#### `resmate tool test` Output Format
+#### `vgen tool test` Output Format
 - **Logs (Cyan)**: Plaintext output from `console.log()` statements and system polyfill tracers.
 - **Duration (Green)**: Total runtime latency of the handler.
 - **Outcome (Magenta)**: Pretty-printed JSON returned by the script.
@@ -209,10 +209,10 @@ stage_playbooks:
 ---
 
 ### VIII. `docs/env-secrets.md`
-- **Role**: How environment variables, `.env`, and `resmate.yaml` mapping work, and the write-only secrets push policy.
+- **Role**: How environment variables, `.env`, and `vgen.yaml` mapping work, and the write-only secrets push policy.
 - **Content Outline**:
   - Local environment variables and `.env` file usage.
-  - **`env_mappings` section of `resmate.yaml`**: mapping config with fields: `local_key`, `remote_key`, `scope`, `agent_interpolation`.
+  - **`env_mappings` section of `vgen.yaml`**: mapping config with fields: `local_key`, `remote_key`, `scope`, `agent_interpolation`.
   - **Dynamic Interpolation**: Replacing `${assigned_agent}` with active agent slugs.
   - **Write-Only Secrets Push Policy**: Smriti enforces a strict write-only policy (no GET endpoint, success hashes and modified key listings).
 
@@ -234,26 +234,26 @@ env_mappings:
 
 ---
 
-## 3. Updates to CLI Scaffolding (`resmate init` and `scaffold`)
+## 3. Updates to CLI Scaffolding (`vgen init` and `scaffold`)
 
-To ensure that when a developer initializes a workspace, it scaffolds this clean folder structure (with all documentation tucked away inside `.cursor/skills/resmate-use-case/docs/`, keeping the workspace root clean).
+To ensure that when a developer initializes a workspace, it scaffolds this clean folder structure (with all documentation tucked away inside `.cursor/skills/vgen-use-case/docs/`, keeping the workspace root clean).
 
 ### Scaffolding Mechanics
 1. **Directory Structure**:
-   The CLI `resmate init` command copies the workspace kit from `templates/workspace/` to the target workspace root.
-   By moving the documentation files under `templates/workspace/.cursor/skills/resmate-use-case/docs/` in the CLI repository, the `copy_workspace_kit` function will automatically copy this structure to the developer's workspace under `.cursor/skills/resmate-use-case/docs/`.
+   The CLI `vgen init` command copies the workspace kit from `templates/workspace/` to the target workspace root.
+   By moving the documentation files under `templates/workspace/.cursor/skills/vgen-use-case/docs/` in the CLI repository, the `copy_workspace_kit` function will automatically copy this structure to the developer's workspace under `.cursor/skills/vgen-use-case/docs/`.
 2. **Code Updates**:
    - `src/kit/copy.rs` and `src/kit/load.rs` already recursively copy directories under `templates/workspace/`.
-   - We will update the seed files and template directories in `templates/workspace/` to remove any scattered markdown files from the workspace root (like `AGENTS.md` or `links.md` if they are no longer needed there, or keep them as minimal redirection stubs pointing to `.cursor/skills/resmate-use-case/SKILL.md`).
-   - Specifically, we will update `templates/workspace/AGENTS.md` to be a lightweight redirection stub pointing to `.cursor/skills/resmate-use-case/SKILL.md`.
+   - We will update the seed files and template directories in `templates/workspace/` to remove any scattered markdown files from the workspace root (like `AGENTS.md` or `links.md` if they are no longer needed there, or keep them as minimal redirection stubs pointing to `.cursor/skills/vgen-use-case/SKILL.md`).
+   - Specifically, we will update `templates/workspace/AGENTS.md` to be a lightweight redirection stub pointing to `.cursor/skills/vgen-use-case/SKILL.md`.
 3. **Scaffolding Flow**:
    ```text
-   resmate init --name my-project
+   vgen init --name my-project
    ┌─────────────────────────────────────────────────────────┐
    │ 1. Create directory structure                           │
-   │ 2. Copy resmate.yaml & .env templates                   │
-   │ 3. Copy .cursor/skills/resmate-use-case/SKILL.md        │
-   │ 4. Copy .cursor/skills/resmate-use-case/docs/*.md       │
+   │ 2. Copy vgen.yaml & .env templates                   │
+   │ 3. Copy .cursor/skills/vgen-use-case/SKILL.md        │
+   │ 4. Copy .cursor/skills/vgen-use-case/docs/*.md       │
    └─────────────────────────────────────────────────────────┘
    ```
 

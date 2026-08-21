@@ -51,9 +51,9 @@ pub fn list_tool_dirs(base: &Path) -> Vec<PathBuf> {
         .collect()
 }
 
-/// Resolve tools directory: env RESMATE_TOOLS_DIR or default "tools" under cwd.
+/// Resolve tools directory: env VGEN_TOOLS_DIR or default "tools" under cwd.
 pub fn default_tools_dir() -> PathBuf {
-    std::env::var("RESMATE_TOOLS_DIR")
+    std::env::var("VGEN_TOOLS_DIR")
         .map(PathBuf::from)
         .unwrap_or_else(|_| PathBuf::from("tools"))
 }
@@ -283,7 +283,7 @@ fn tool_name_to_folder(name: &str) -> String {
 
 /// Upsert a tool from API response data into tools_dir/<folder>/. Creates the directory and a
 /// stub tool.yaml if the folder doesn't already exist, then writes the full record (YAML + handler
-/// + package.json). Used by `resmate sync`.
+/// + package.json). Used by `vgen sync`.
 pub fn upsert_tool_from_api_data(
     tools_dir: &Path,
     data: &serde_json::Value,
